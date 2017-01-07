@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ <!--
+      loads the http over https ssl -
+      welcome to my website!
+
+	this theme is based off the Ice & Fire theme created by Lucas Gatsas
+      https://www.twitter.com/LucasGatsas
+      www.lucasgatsas.ch - switzerland.
+  -->
+
+
+<!-- Microsoft Internet Explorer documentMode compatMode setting IE Modus -->
+<script type="text/javascript">
+var IE = null;
+if (window.navigator.appName == "Microsoft Internet Explorer") {
+  if (document.documentMode) {
+
+    IE = document.documentMode;
+    } else {
+
+        IE = 5;
+          if (document.compatMode) {
+      if (document.compatMode == "CSS1Compat")
+      IE = 11;
+      }
+    }
+  }
+</script>
+
+    <meta charset="utf-8">
+    <!-- X-UA -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <link rel="author" title="Ranjit Jhala" href="http://ranjitjhala.github.io" />
+
+    <meta name="google" content="notranslate" />
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- index ROBOTS follow -->
+    <meta name="robots" content="index, follow" />
+    <!-- Site Desciption -->
+    <meta name="description" content="LiquidHaskell Blog">
+    <!-- Site Desciption -->
+    <meta name="keywords" content="haskell, refinement types, liquid types, formal methods, type systems">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="http://localhost:8000/static/img/ico.png" type="image/x-icon" />
+    <!-- Blog Title -->
+    <title>LiquidHaskell</title>
+
+    <!--     <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+-->
+    <!-- Property Metas -->
+    <meta property="og:image" content="http://localhost:8000/static/img/ix.png" />
+    <meta property="og:title" content="LiquidHaskell Blog" />
+    <meta property="og:site_name" content="LiquidHaskell Blog" />
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseUrl | prepend: site.url }}">
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="http://localhost:8000/static/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="http://localhost:8000/static/css/spaceg.stylesheets.css"> -->
+    <link rel="stylesheet" href="http://localhost:8000/static/css/ronacher.css" type="text/css">
+
+    <link rel="stylesheet" href="http://localhost:8000/static/css/syntax.css">
+    <link rel="stylesheet" href="http://localhost:8000/static/css/liquid-light.css">
+
+    <!-- Fonts
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+    -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+	#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:url("/static/img/preloader.gif"); /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	ul, ol {margin-top: 0;margin-bottom: 10px;}
+	.navbar-inverse {background-color: #FFF;border-color: #FFFFFF;}
+</style>
+<!--link rel="stylesheet" href="http://localhost:8000/static/css/prettify.css"-->
+<style>
+  /* HEADER IMAGE */
+  header.intro-header {background: #6f5499;background: no-repeat center center;background-attachment: scroll;-webkit-background-size: cover;-moz-background-size: cover;background-size: cover;-o-background-size: cover;}
+
+	/* Preloader */#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:; /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	li {list-style: none;}
+            body.modal-open
+            {overflow: hidden;padding-right: 0px;
+        }
+	article li {list-style: inherit;}
+	article .figure {text-align: center}
+    </style>
+    <!-- end Loading front stylesheet here -->
+    </head>
+
+    <body>
+	<div id="preloader">
+	    <div id="status">
+
+	    </div>
+
+	</div>  
+	<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://localhost:8000" id="blog-title-left-top">LiquidHaskell</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <!-- <li class="dropdown">
+                    <a href="#portfolioModal2" data-toggle="modal"><i class="fa fa-random" id="icon-top"></i></a>
+                <ul class="dropdown-menu"></ul>
+                </li>-->
+                
+                <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=SimpleRefinements.hs" target="_blank">Demo</a></li>
+                <li><a href="http://localhost:8000/about.html" target="_blank">About</a></li>
+                <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
+                <li><a href="http://localhost:8000/archive.html" target="_blank">Archive</a></li>
+                <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Github</a></li>
+                <!--
+                <li><a href="http://localhost:8000/archive.html">Archive</a></li>
+                <li><a href="https://www.twitter.com/ranjitjhala" id="roundbutton" target="_blank"><i class="fa fa-twitter"></i>RanjitJhala</a></li>
+                -->
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<!-- Portfolio Modals -->
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <img src="http://localhost:8000/static/img/kc.jpg" class="img-responsive img-centered" alt title>
+                            <p class="font-style-inline-small">
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow me</a>. <br>
+                                <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                                <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>
+                            </p>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Menu Modals Add New Sa.21.Feb.2015 03:22:25 -->
+    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <p class="font-style-inline-small">
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow</a>. <br>
+                        <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>  <br>
+                    <li><a href="http://localhost:8000/">Home</a></li>
+                    <li><a href="http://localhost:8000/about.html">About Me</a></li>
+                    <li><a href="http://localhost:8000/archive.html/">Archive</a></li>
+                            </p>
+
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <div id="content">
+            <!-- Post Header -->
+<header class="intro-header" style="background-image: url('http://localhost:8000/static/img/sea.jpg')" alt title>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Refinement Types 101</h1>
+                    
+                    <span class="meta">
+		    
+			Posted by Ranjit Jhala
+		    
+			January  1, 2013
+		    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+			<p>One of the great things about Haskell is its brainy type system that allows one to enforce a variety of invariants at compile time, thereby nipping a large swathe of run-time errors in the bud. Refinement types allow us to use modern logic solvers (<em>aka</em> SAT and SMT engines) to dramatically extend the scope of invariants that can be statically verified.</p>
+<h2 id="what-is-a-refinement-type">What is a Refinement Type?</h2>
+<p>In a nutshell,</p>
+<blockquote>
+<p>
+Refinement Types = Types + Logical Predicates
+</p>
+</blockquote>
+<p>That is, refinement types allow us to decorate types with <em>logical predicates</em> (think <em>boolean-valued</em> Haskell expressions) which constrain the set of values described by the type, and hence allow us to specify sophisticated invariants of the underlying values.</p>
+<p>Say what?</p>
+<!-- more -->
+<p>(Btw, <em>click the title</em> to demo LiquidHaskell on the code in this article)</p>
+<pre><span class="hs-linenum">42: </span><span class="hs-keyword">module</span> <span class="hs-conid">Intro</span> <span class="hs-keyword">where</span>
+<span class="hs-linenum">43: </span>
+<span class="hs-linenum">44: </span><span class="hs-keyword">import</span> <span class="hs-conid">Language</span><span class="hs-varop">.</span><span class="hs-conid">Haskell</span><span class="hs-varop">.</span><span class="hs-conid">Liquid</span><span class="hs-varop">.</span><span class="hs-conid">Prelude</span>  <span class="hs-layout">(</span><span class="hs-varid">liquidAssert</span><span class="hs-layout">)</span>
+</pre>
+<p>Let us jump right in with a simple example, the number <code>0 :: Int</code>. As far as Haskell is concerned, the number is simply an <code>Int</code> (lets not worry about things like <code>Num</code> for the moment). So are <code>2</code>, <code>7</code>, and <code>904</code>. With refinements we can dress up these values so that they stand apart. For example, consider the binder</p>
+<pre><span class="hs-linenum">54: </span><span class="hs-definition">zero'</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">55: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-definition">zero'</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x:(GHC.Prim.Int#) -&gt; {VV : (GHC.Types.Int) | (VV = (x  :  int))}</span><span class="hs-num">0</span></a>
+</pre>
+<p>We can ascribe to the variable <code>zero'</code> the refinement type</p>
+<pre><span class="hs-linenum">61: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">zero'</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| 0 &lt;= v}</span> <span class="hs-keyword">@-}</span>
+</pre>
+<p>which is simply the basic type <code>Int</code> dressed up with a predicate. The binder <code>v</code> is called the <em>value variable</em>, and so the above denotes the set of <code>Int</code> values which are greater than <code>0</code>. Of course, we can attach other predicates to the above value, for example</p>
+<p><strong>Note:</strong> We will use <code>@</code>-marked comments to write refinement type annotations the Haskell source file, making these types, quite literally, machine-checked comments!</p>
+<pre><span class="hs-linenum">75: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">zero''</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| (0 &lt;= v &amp;&amp; v &lt; 100) }</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">76: </span><span class="hs-definition">zero''</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">77: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &lt; 100),(0 &lt;= VV)}</span><span class="hs-definition">zero''</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x:(GHC.Prim.Int#) -&gt; {VV : (GHC.Types.Int) | (VV = (x  :  int))}</span><span class="hs-num">0</span></a>
+</pre>
+<p>which states that the number is in the range <code>0</code> to <code>100</code>, or</p>
+<pre><span class="hs-linenum">83: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">zero'''</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| ((v mod 2) = 0) }</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">84: </span><span class="hs-definition">zero'''</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">85: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | ((VV mod 2) = 0)}</span><span class="hs-definition">zero'''</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x:(GHC.Prim.Int#) -&gt; {VV : (GHC.Types.Int) | (VV = (x  :  int))}</span><span class="hs-num">0</span></a>
+</pre>
+<p>where <code>mod</code> is the <em>modulus</em> operator in the refinement logic. Thus, the type above states that zero is an <em>even</em> number.</p>
+<p>We can also use a singleton type that precisely describes the constant</p>
+<pre><span class="hs-linenum">94: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">zero''''</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| v = 0 }</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">95: </span><span class="hs-definition">zero''''</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">96: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = 0)}</span><span class="hs-definition">zero''''</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x:(GHC.Prim.Int#) -&gt; {VV : (GHC.Types.Int) | (VV = (x  :  int))}</span><span class="hs-num">0</span></a>
+</pre>
+<p>(Aside: we use a different names <code>zero'</code>, <code>zero''</code> etc. for a silly technical reason – LiquidHaskell requires that we ascribe a single refinement type to a top-level name.)</p>
+<p>Finally, we could write a single type that captures all the properties above:</p>
+<pre><span class="hs-linenum">106: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">zero</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| ((0 &lt;= v) &amp;&amp; ((v mod 2) = 0) &amp;&amp; (v &lt; 100)) }</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">107: </span><span class="hs-definition">zero</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">108: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | ((VV mod 2) = 0),(VV &lt; 100),(0 &lt;= VV)}</span><span class="hs-definition">zero</span></a>     <span class="hs-keyglyph">=</span>  <a class="annot" href="#"><span class="annottext">x:(GHC.Prim.Int#) -&gt; {VV : (GHC.Types.Int) | (VV = (x  :  int))}</span><span class="hs-num">0</span></a>
+</pre>
+<p>The key points are:</p>
+<ol style="list-style-type: decimal">
+<li>A refinement type is just a type <em>decorated</em> with logical predicates.</li>
+<li>A value can have <em>different</em> refinement types that describe different properties.</li>
+<li>If we <em>erase</em> the green bits (i.e. the logical predicates) we get back <em>exactly</em> the usual Haskell types that we know and love.</li>
+<li>A vanilla Haskell type, say <code>Int</code> has the trivial refinement <code>true</code> i.e. is really <code>{v: Int | true}</code>.</li>
+</ol>
+<p>We have built a refinement type-based verifier called LiquidHaskell. Lets see how we can use refinement types to specify and verify interesting program invariants in LiquidHaskell.</p>
+<h2 id="writing-safety-specifications">Writing Safety Specifications</h2>
+<p>We can use refinement types to write various kinds of more interesting safety specifications.</p>
+<p>First, we can write a wrapper around the usual <code>error</code> function</p>
+<pre><span class="hs-linenum">133: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">error'</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">String</span> <span class="hs-keyword">| false }</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>  <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">134: </span><span class="hs-definition">error'</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">String</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
+<span class="hs-linenum">135: </span><a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | false} -&gt; a</span><span class="hs-definition">error'</span></a>     <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">[(GHC.Types.Char)] -&gt; a</span><span class="hs-varid">error</span></a>
+</pre>
+<p>The interesting thing about the type signature for <code>error'</code> is that the input type has the refinement <code>false</code>. That is, the function must only be called with <code>String</code>s that satisfy the predicate <code>false</code>. Of course, there are <em>no</em> such values. Thus, a program containing the above function typechecks <em>exactly</em> when LiquidHaskell can prove that the function <code>error'</code> is <em>never called</em>.</p>
+<p>Next, we can use refinements to encode arbitrary programmer-specified <strong>assertions</strong> by defining a function</p>
+<pre><span class="hs-linenum">149: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">lAssert</span>     <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Bool</span> <span class="hs-keyword">| (Prop v)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>  <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">150: </span><span class="hs-definition">lAssert</span>         <span class="hs-keyglyph">::</span> <span class="hs-conid">Bool</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> 
+<span class="hs-linenum">151: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Bool) | (? Prop([VV]))} -&gt; a -&gt; a</span><span class="hs-definition">lAssert</span></a> <span class="hs-conid">True</span>  <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">x</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a>
+<span class="hs-linenum">152: </span><span class="hs-definition">lAssert</span> <span class="hs-conid">False</span> <span class="hs-keyword">_</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | false} -&gt; {VV : a | false}</span><span class="hs-varid">error'</span></a> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"lAssert failure"</span></a> 
+</pre>
+<p>In the refinement, <code>(Prop v)</code> denotes the Haskell <code>Bool</code> value <code>v</code> interpreted as a logical predicate. In other words, the input type for this function specifies that the function must <em>only</em> be called with the value <code>True</code>.</p>
+<h2 id="refining-function-types-preconditions">Refining Function Types : Preconditions</h2>
+<p>Lets use the above to write a <em>divide</em> function that <em>only accepts</em> non-zero denominators.</p>
+<pre><span class="hs-linenum">168: </span><span class="hs-definition">divide</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">169: </span><a class="annot" href="#"><span class="annottext">(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Int) | (VV != 0)} -&gt; (GHC.Types.Int)</span><span class="hs-definition">divide</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">n</span></a> <span class="hs-num">0</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | false} -&gt; {VV : (GHC.Types.Int) | false}</span><span class="hs-varid">error'</span></a> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"divide by zero"</span></a>
+<span class="hs-linenum">170: </span><span class="hs-definition">divide</span> <span class="hs-varid">n</span> <span class="hs-varid">d</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = n)}</span><span class="hs-varid">n</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV = (x / y))}</span><span class="hs-varop">`div`</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV != 0)}</span><span class="hs-varid">d</span></a>
+</pre>
+<p>We can specify that the non-zero denominator <em>precondition</em> with a suitable refinement on the <em>input</em> component of the function’s type</p>
+<pre><span class="hs-linenum">177: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">divide</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| v != 0 }</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyword">@-}</span>
+</pre>
+<p>How <em>does</em> LiquidHaskell verify the above function?</p>
+<p>The key step is that LiquidHaskell deduces that the expression <code>&quot;divide by zero&quot;</code> is not merely of type <code>String</code>, but in fact has the the refined type <code>{v:String | false}</code> <em>in the context</em> in which the call to <code>error'</code> occurs.</p>
+<p>LiquidHaskell arrives at this conclusion by using the fact that in the first equation for <code>divide</code> the <em>denominator</em> parameter is in fact <code>0 :: {v: Int | v = 0}</code> which <em>contradicts</em> the precondition (i.e. input) type.</p>
+<p>In other words, LiquidHaskell deduces by contradiction, that the first equation is <strong>dead code</strong> and hence <code>error'</code> will not be called at run-time.</p>
+<p>If you are paranoid, you can put in an explicit assertion</p>
+<pre><span class="hs-linenum">199: </span><span class="hs-definition">divide'</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">200: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | false}
+-&gt; {VV : (GHC.Types.Int) | false} -&gt; {VV : (GHC.Types.Int) | false}</span><span class="hs-definition">divide'</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | false}</span><span class="hs-varid">n</span></a> <span class="hs-num">0</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | false} -&gt; {VV : (GHC.Types.Int) | false}</span><span class="hs-varid">error'</span></a> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"divide by zero"</span></a>
+<span class="hs-linenum">201: </span><span class="hs-definition">divide'</span> <span class="hs-varid">n</span> <span class="hs-varid">d</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Bool) | (? Prop([VV]))}
+-&gt; {VV : (GHC.Types.Int) | false} -&gt; {VV : (GHC.Types.Int) | false}</span><span class="hs-varid">lAssert</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | false}</span><span class="hs-varid">d</span></a> <a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | false}
+-&gt; y:{VV : (GHC.Types.Int) | false}
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x != y))}</span><span class="hs-varop">/=</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">({VV : (GHC.Types.Int) | false} -&gt; {VV : (GHC.Types.Int) | false})
+-&gt; {VV : (GHC.Types.Int) | false} -&gt; {VV : (GHC.Types.Int) | false}</span><span class="hs-varop">$</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | false}</span><span class="hs-varid">n</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV = (x / y))}</span><span class="hs-varop">`div`</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | false}</span><span class="hs-varid">d</span></a>
+</pre>
+<p>and LiquidHaskell will verify the assertion (by verifying the call to <code>lAssert</code>) for you.</p>
+<h2 id="refining-function-types-postconditions">Refining Function Types : Postconditions</h2>
+<p>Next, lets see how we can use refinements to describe the <em>outputs</em> of a function. Consider the following simple <em>absolute value</em> function</p>
+<pre><span class="hs-linenum">214: </span><span class="hs-definition">abz</span>               <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">215: </span><a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-definition">abz</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">n</span></a> <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x &lt; y))}</span><span class="hs-varop">&lt;</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = n)}</span><span class="hs-varid">n</span></a>     <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = n)}</span><span class="hs-varid">n</span></a>
+<span class="hs-linenum">216: </span>      <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV = (x - y))}</span><span class="hs-comment">-</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = n)}</span><span class="hs-varid">n</span></a>
+</pre>
+<p>We can use a refinement on the output type to specify that the function returns non-negative values</p>
+<pre><span class="hs-linenum">223: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">abz</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| 0 &lt;= v }</span> <span class="hs-keyword">@-}</span>
+</pre>
+<p>LiquidHaskell <em>verifies</em> that <code>abz</code> indeed enjoys the above type by deducing that <code>n</code> is trivially non-negative when <code>0 &lt; n</code> and that in the <code>otherwise</code> case, i.e. when <code>not (0 &lt; n)</code> the value <code>0 - n</code> is indeed non-negative (lets not worry about underflows for the moment.) LiquidHaskell is able to automatically make these arithmetic deductions by using an <a href="http://rise4fun.com/Z3/">SMT solver</a> which has decision built-in procedures for arithmetic, to reason about the logical refinements.</p>
+<h2 id="putting-it-all-together">Putting It All Together</h2>
+<p>Lets wrap up this introduction with a simple <code>truncate</code> function that connects all the dots.</p>
+<pre><span class="hs-linenum">244: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">truncate</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">245: </span><a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; (GHC.Types.Int) -&gt; (GHC.Types.Int)</span><span class="hs-definition">truncate</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">max</span></a>  
+<span class="hs-linenum">246: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i'),(0 &lt;= VV)}</span><span class="hs-varid">i'</span></a> <a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | (VV &gt;= 0),(VV &gt;= zero''''),(0 &lt;= VV)}
+-&gt; y:{VV : (GHC.Types.Int) | (VV &gt;= 0),(VV &gt;= zero''''),(0 &lt;= VV)}
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x &lt;= y))}</span><span class="hs-varop">&lt;=</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = max'),(0 &lt;= VV)}</span><span class="hs-varid">max'</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a>
+<span class="hs-linenum">247: </span>  <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = max'),(0 &lt;= VV)}</span><span class="hs-varid">max'</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Int) | (&amp;&amp; [(x &gt;= 0); (y &gt;= 0)] =&gt; (VV &gt;= 0))}</span><span class="hs-varop">*</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Int) | (VV != 0)} -&gt; (GHC.Types.Int)</span><span class="hs-varop">`divide`</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i'),(0 &lt;= VV)}</span><span class="hs-varid">i'</span></a><span class="hs-layout">)</span>
+<span class="hs-linenum">248: </span>    <span class="hs-keyword">where</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">i'</span></a>   <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">abz</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a>
+<span class="hs-linenum">249: </span>          <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">max'</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">abz</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = max)}</span><span class="hs-varid">max</span></a> 
+</pre>
+<p><code>truncate i n</code> simply returns <code>i</code> if its absolute value is less the upper bound <code>max</code>, and otherwise <em>truncates</em> the value at the maximum. LiquidHaskell verifies that the use of <code>divide</code> is safe by inferring that at the call site</p>
+<ol style="list-style-type: decimal">
+<li><code>i' &gt; max'</code> from the branch condition.</li>
+<li><code>0 &lt;= i'</code> from the <code>abz</code> postcondition (hover mouse over <code>i'</code>).</li>
+<li><code>0 &lt;= max'</code> from the <code>abz</code> postcondition (hover mouse over <code>max'</code>).</li>
+</ol>
+<p>From the above, LiquidHaskell infers that <code>i' != 0</code>. That is, at the call site <code>i' :: {v: Int | v != 0}</code>, thereby satisfying the precondition for <code>divide</code> and verifying that the program has no pesky divide-by-zero errors. Again, if you <em>really</em> want to make sure, put in an assertion</p>
+<pre><span class="hs-linenum">268: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">truncate'</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">269: </span><a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; (GHC.Types.Int) -&gt; (GHC.Types.Int)</span><span class="hs-definition">truncate'</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">max</span></a>  
+<span class="hs-linenum">270: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i'),(0 &lt;= VV)}</span><span class="hs-varid">i'</span></a> <a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | (VV &gt;= 0),(VV &gt;= zero''''),(0 &lt;= VV)}
+-&gt; y:{VV : (GHC.Types.Int) | (VV &gt;= 0),(VV &gt;= zero''''),(0 &lt;= VV)}
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x &lt;= y))}</span><span class="hs-varop">&lt;=</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = max'),(0 &lt;= VV)}</span><span class="hs-varid">max'</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a>
+<span class="hs-linenum">271: </span>  <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Bool) | (? Prop([VV]))}
+-&gt; (GHC.Types.Int) -&gt; (GHC.Types.Int)</span><span class="hs-varid">lAssert</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i'),(0 &lt;= VV)}</span><span class="hs-varid">i'</span></a> <a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                          (VV &gt;= zero''''),
+                          (0 &lt;= VV),
+                          (VV &lt;= i')}
+-&gt; y:{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                             (VV &gt;= zero''''),
+                             (0 &lt;= VV),
+                             (VV &lt;= i')}
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x != y))}</span><span class="hs-varop">/=</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">((GHC.Types.Int) -&gt; (GHC.Types.Int))
+-&gt; (GHC.Types.Int) -&gt; (GHC.Types.Int)</span><span class="hs-varop">$</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = max'),(0 &lt;= VV)}</span><span class="hs-varid">max'</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Int) | (&amp;&amp; [(x &gt;= 0); (y &gt;= 0)] =&gt; (VV &gt;= 0))}</span><span class="hs-varop">*</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Int) | (VV != 0)} -&gt; (GHC.Types.Int)</span><span class="hs-varop">`divide`</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i'),(0 &lt;= VV)}</span><span class="hs-varid">i'</span></a><span class="hs-layout">)</span>
+<span class="hs-linenum">272: </span>    <span class="hs-keyword">where</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">i'</span></a>   <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">abz</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a>
+<span class="hs-linenum">273: </span>          <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">max'</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">abz</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = max)}</span><span class="hs-varid">max</span></a> 
+</pre>
+<p>and <em>lo!</em> LiquidHaskell will verify it for you.</p>
+<h2 id="modular-verification">Modular Verification</h2>
+<p>Incidentally, note the <code>import</code> statement at the top. Rather than rolling our own <code>lAssert</code> we can import and use a pre-defined version <code>liquidAssert</code> defined in an external <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/master/include/Language/Haskell/Liquid/Prelude.hs">module</a></p>
+<pre><span class="hs-linenum">286: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">truncate''</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">287: </span><a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; (GHC.Types.Int) -&gt; (GHC.Types.Int)</span><span class="hs-definition">truncate''</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">max</span></a>  
+<span class="hs-linenum">288: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i'),(0 &lt;= VV)}</span><span class="hs-varid">i'</span></a> <a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | (VV &gt;= 0),(VV &gt;= zero''''),(0 &lt;= VV)}
+-&gt; y:{VV : (GHC.Types.Int) | (VV &gt;= 0),(VV &gt;= zero''''),(0 &lt;= VV)}
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x &lt;= y))}</span><span class="hs-varop">&lt;=</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = max'),(0 &lt;= VV)}</span><span class="hs-varid">max'</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a>
+<span class="hs-linenum">289: </span>  <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Bool) | (? Prop([VV]))}
+-&gt; (GHC.Types.Int) -&gt; (GHC.Types.Int)</span><span class="hs-varid">liquidAssert</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i'),(0 &lt;= VV)}</span><span class="hs-varid">i'</span></a> <a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                          (VV &gt;= zero''''),
+                          (0 &lt;= VV),
+                          (VV &lt;= i')}
+-&gt; y:{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                             (VV &gt;= zero''''),
+                             (0 &lt;= VV),
+                             (VV &lt;= i')}
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x != y))}</span><span class="hs-varop">/=</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">((GHC.Types.Int) -&gt; (GHC.Types.Int))
+-&gt; (GHC.Types.Int) -&gt; (GHC.Types.Int)</span><span class="hs-varop">$</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = max'),(0 &lt;= VV)}</span><span class="hs-varid">max'</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Int) | (&amp;&amp; [(x &gt;= 0); (y &gt;= 0)] =&gt; (VV &gt;= 0))}</span><span class="hs-varop">*</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Int) | (VV != 0)} -&gt; (GHC.Types.Int)</span><span class="hs-varop">`divide`</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i'),(0 &lt;= VV)}</span><span class="hs-varid">i'</span></a><span class="hs-layout">)</span>
+<span class="hs-linenum">290: </span>    <span class="hs-keyword">where</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">i'</span></a>   <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">abz</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a>
+<span class="hs-linenum">291: </span>          <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">max'</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">abz</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = max)}</span><span class="hs-varid">max</span></a> 
+</pre>
+<p>In fact, LiquidHaskell comes equipped with suitable refinements for standard functions and it is easy to add refinements as we shall demonstrate in subsequent articles.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>This concludes our quick introduction to Refinement Types and LiquidHaskell. Hopefully you have some sense of how to</p>
+<ol style="list-style-type: decimal">
+<li><strong>Specify</strong> fine-grained properties of values by decorating their types with logical predicates.</li>
+<li><strong>Encode</strong> assertions, preconditions, and postconditions with suitable function types.</li>
+<li><strong>Verify</strong> semantic properties of code by using automatic logic engines (SMT solvers) to track and establish the key relationships between program values.</li>
+</ol>
+                <hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+<hr>
+
+        </div>
+        <div id="footer">
+        </div>
+      <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="http://localhost:8000/feed.xml" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/ranjitjhala" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/ucsd-progsys" target="_blank">
+                            <span class="fa-stack fa-lg">
+
+                              <i class="fa fa-arrow-circle-o-down"></i>
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+		    
+                </ul>
+                <p class="copyright text-muted">
+                
+                  Copyright &copy; Ranjit Jhala 2016-17.
+                
+                  Site generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="http://localhost:8000/static/js/jquery.min.js"></script>
+<script src="http://localhost:8000/static/js/spaceg.stylesheets.min.js"></script>
+<script src="http://localhost:8000/static/js/bootstrap.min.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="http://localhost:8000/static/js/scripts.js"></script>
+
+    </body>
+</html>

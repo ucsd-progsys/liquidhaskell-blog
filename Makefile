@@ -2,9 +2,9 @@ site:
 	stack build
 	stack exec -- blog rebuild
 
-upload: blog
-	cp -r _site/* $(GHPAGE)
-	cd $(GHPAGE) && git add . && git commit -a -m "update page" && git push origin gh-pages
+upload: site 
+	cp -r _site/* docs/ 
+	git add docs && git commit -a -m "update page" && git push origin master 
 
 clean:
 	rm -rf *.hi *.o .*.swp .*.swo website _site/ _cache/

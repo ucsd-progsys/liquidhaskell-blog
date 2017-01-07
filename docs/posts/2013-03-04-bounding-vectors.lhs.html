@@ -1,0 +1,821 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ <!--
+      loads the http over https ssl -
+      welcome to my website!
+
+	this theme is based off the Ice & Fire theme created by Lucas Gatsas
+      https://www.twitter.com/LucasGatsas
+      www.lucasgatsas.ch - switzerland.
+  -->
+
+
+<!-- Microsoft Internet Explorer documentMode compatMode setting IE Modus -->
+<script type="text/javascript">
+var IE = null;
+if (window.navigator.appName == "Microsoft Internet Explorer") {
+  if (document.documentMode) {
+
+    IE = document.documentMode;
+    } else {
+
+        IE = 5;
+          if (document.compatMode) {
+      if (document.compatMode == "CSS1Compat")
+      IE = 11;
+      }
+    }
+  }
+</script>
+
+    <meta charset="utf-8">
+    <!-- X-UA -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <link rel="author" title="Ranjit Jhala" href="http://ranjitjhala.github.io" />
+
+    <meta name="google" content="notranslate" />
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- index ROBOTS follow -->
+    <meta name="robots" content="index, follow" />
+    <!-- Site Desciption -->
+    <meta name="description" content="LiquidHaskell Blog">
+    <!-- Site Desciption -->
+    <meta name="keywords" content="haskell, refinement types, liquid types, formal methods, type systems">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="http://localhost:8000/static/img/ico.png" type="image/x-icon" />
+    <!-- Blog Title -->
+    <title>LiquidHaskell</title>
+
+    <!--     <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+-->
+    <!-- Property Metas -->
+    <meta property="og:image" content="http://localhost:8000/static/img/ix.png" />
+    <meta property="og:title" content="LiquidHaskell Blog" />
+    <meta property="og:site_name" content="LiquidHaskell Blog" />
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseUrl | prepend: site.url }}">
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="http://localhost:8000/static/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="http://localhost:8000/static/css/spaceg.stylesheets.css"> -->
+    <link rel="stylesheet" href="http://localhost:8000/static/css/ronacher.css" type="text/css">
+
+    <link rel="stylesheet" href="http://localhost:8000/static/css/syntax.css">
+    <link rel="stylesheet" href="http://localhost:8000/static/css/liquid-light.css">
+
+    <!-- Fonts
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+    -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+	#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:url("/static/img/preloader.gif"); /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	ul, ol {margin-top: 0;margin-bottom: 10px;}
+	.navbar-inverse {background-color: #FFF;border-color: #FFFFFF;}
+</style>
+<!--link rel="stylesheet" href="http://localhost:8000/static/css/prettify.css"-->
+<style>
+  /* HEADER IMAGE */
+  header.intro-header {background: #6f5499;background: no-repeat center center;background-attachment: scroll;-webkit-background-size: cover;-moz-background-size: cover;background-size: cover;-o-background-size: cover;}
+
+	/* Preloader */#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:; /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	li {list-style: none;}
+            body.modal-open
+            {overflow: hidden;padding-right: 0px;
+        }
+	article li {list-style: inherit;}
+	article .figure {text-align: center}
+    </style>
+    <!-- end Loading front stylesheet here -->
+    </head>
+
+    <body>
+	<div id="preloader">
+	    <div id="status">
+
+	    </div>
+
+	</div>  
+	<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="http://localhost:8000" id="blog-title-left-top">LiquidHaskell</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <!-- <li class="dropdown">
+                    <a href="#portfolioModal2" data-toggle="modal"><i class="fa fa-random" id="icon-top"></i></a>
+                <ul class="dropdown-menu"></ul>
+                </li>-->
+                
+                <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=SimpleRefinements.hs" target="_blank">Demo</a></li>
+                <li><a href="http://localhost:8000/about.html" target="_blank">About</a></li>
+                <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
+                <li><a href="http://localhost:8000/archive.html" target="_blank">Archive</a></li>
+                <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Github</a></li>
+                <!--
+                <li><a href="http://localhost:8000/archive.html">Archive</a></li>
+                <li><a href="https://www.twitter.com/ranjitjhala" id="roundbutton" target="_blank"><i class="fa fa-twitter"></i>RanjitJhala</a></li>
+                -->
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<!-- Portfolio Modals -->
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <img src="http://localhost:8000/static/img/kc.jpg" class="img-responsive img-centered" alt title>
+                            <p class="font-style-inline-small">
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow me</a>. <br>
+                                <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                                <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>
+                            </p>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Menu Modals Add New Sa.21.Feb.2015 03:22:25 -->
+    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <p class="font-style-inline-small">
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow</a>. <br>
+                        <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>  <br>
+                    <li><a href="http://localhost:8000/">Home</a></li>
+                    <li><a href="http://localhost:8000/about.html">About Me</a></li>
+                    <li><a href="http://localhost:8000/archive.html/">Archive</a></li>
+                            </p>
+
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <div id="content">
+            <!-- Post Header -->
+<header class="intro-header" style="background-image: url('http://localhost:8000/static/img/sea.jpg')" alt title>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Bounding Vectors</h1>
+                    
+                    <span class="meta">
+		    
+			Posted by Ranjit Jhala
+		    
+			March  4, 2013
+		    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+			<p>Today, lets look at a classic use-case for refinement types, namely, the static verification of <strong>vector access bounds</strong>. Along the way, we’ll see some examples that illustrate how LiquidHaskell reasons about <em>recursion</em>, <em>higher-order functions</em>, <em>data types</em>, and <em>polymorphism</em>.</p>
+<!-- more -->
+<pre><span class="hs-linenum">22: </span><span class="hs-keyword">module</span> <span class="hs-conid">VectorBounds</span> <span class="hs-layout">(</span>
+<span class="hs-linenum">23: </span>    <span class="hs-varid">safeLookup</span> 
+<span class="hs-linenum">24: </span>  <span class="hs-layout">,</span> <span class="hs-varid">unsafeLookup</span><span class="hs-layout">,</span> <span class="hs-varid">unsafeLookup'</span>
+<span class="hs-linenum">25: </span>  <span class="hs-layout">,</span> <span class="hs-varid">absoluteSum</span><span class="hs-layout">,</span> <span class="hs-varid">absoluteSum'</span>
+<span class="hs-linenum">26: </span>  <span class="hs-layout">,</span> <span class="hs-varid">dotProduct</span>
+<span class="hs-linenum">27: </span>  <span class="hs-layout">,</span> <span class="hs-varid">sparseProduct</span><span class="hs-layout">,</span> <span class="hs-varid">sparseProduct'</span>
+<span class="hs-linenum">28: </span>  <span class="hs-layout">)</span> <span class="hs-keyword">where</span>
+<span class="hs-linenum">29: </span>
+<span class="hs-linenum">30: </span><span class="hs-keyword">import</span> <span class="hs-conid">Prelude</span>      <span class="hs-varid">hiding</span> <span class="hs-layout">(</span><span class="hs-varid">length</span><span class="hs-layout">)</span>
+<span class="hs-linenum">31: </span><span class="hs-keyword">import</span> <span class="hs-conid">Data</span><span class="hs-varop">.</span><span class="hs-conid">List</span>    <span class="hs-layout">(</span><span class="hs-varid">foldl'</span><span class="hs-layout">)</span>
+<span class="hs-linenum">32: </span><span class="hs-keyword">import</span> <span class="hs-conid">Data</span><span class="hs-varop">.</span><span class="hs-conid">Vector</span>  <span class="hs-varid">hiding</span> <span class="hs-layout">(</span><span class="hs-varid">foldl'</span><span class="hs-layout">)</span> 
+</pre>
+<h2 id="specifying-bounds-for-vectors">Specifying Bounds for Vectors</h2>
+<p>One <a href="http://www.cs.bu.edu/~hwxi/academic/papers/pldi98.pdf">classical</a> use-case for refinement types is to verify the safety of accesses of arrays and vectors and such, by proving that the indices used in such accesses are <em>within</em> the vector bounds. Lets see how to do this with LiquidHaskell by writing a few short functions that manipulate vectors, in particular, those from the popular <a href="http://hackage.haskell.org/package/vector">vector</a> library.</p>
+<p>First things first. Lets <strong>specify</strong> bounds safety by <em>refining</em> the types for the <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/master/include/Data/Vector.spec">key functions</a> exported by the module <code>Data.Vector</code>.</p>
+Specifications for <code>Data.Vector</code>
+<pre><span class="hs-linenum">50: </span><span class="hs-keyword">module</span> <span class="hs-varid">spec</span> <span class="hs-conid">Data</span><span class="hs-varop">.</span><span class="hs-conid">Vector</span> <span class="hs-keyword">where</span>
+<span class="hs-linenum">51: </span>
+<span class="hs-linenum">52: </span><span class="hs-keyword">import</span> <span class="hs-conid">GHC</span><span class="hs-varop">.</span><span class="hs-conid">Base</span>
+<span class="hs-linenum">53: </span>
+<span class="hs-linenum">54: </span><span class="hs-definition">measure</span> <span class="hs-varid">vlen</span>  <span class="hs-keyglyph">::</span>   <span class="hs-layout">(</span><span class="hs-conid">Vector</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> 
+<span class="hs-linenum">55: </span><span class="hs-definition">assume</span> <span class="hs-varid">length</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">Vector</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-varid">vlen</span> <span class="hs-varid">x</span><span class="hs-layout">)</span><span class="hs-layout">}</span>
+<span class="hs-linenum">56: </span><span class="hs-definition">assume</span> <span class="hs-varop">!</span>      <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">Vector</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-num">0</span> <span class="hs-varop">&lt;=</span> <span class="hs-varid">v</span> <span class="hs-varop">&amp;&amp;</span> <span class="hs-varid">v</span> <span class="hs-varop">&lt;</span> <span class="hs-layout">(</span><span class="hs-varid">vlen</span> <span class="hs-varid">x</span><span class="hs-layout">)</span><span class="hs-layout">}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> 
+</pre>
+<p>In particular, we</p>
+<ul>
+<li><strong>define</strong> a <em>property</em> called <code>vlen</code> which denotes the size of the vector,</li>
+<li><strong>assume</strong> that the <code>length</code> function <em>returns</em> an integer equal to the vector’s size, and</li>
+<li><strong>assume</strong> that the lookup function <code>!</code> <em>requires</em> an index between <code>0</code> and the vector’s size.</li>
+</ul>
+<p>There are several things worth paying close attention to in the above snippet.</p>
+<p><strong>Measures</strong></p>
+<p><a href="../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">Recall</a> that measures define auxiliary (or so-called <strong>ghost</strong>) properties of data values that are useful for specification and verification, but which <em>don’t actually exist at run-time</em>. Thus, they will <em>only appear in specifications</em>, i.e. inside type refinements, but <em>never</em> inside code. Often we will use helper functions like <code>length</code> in this case, which <em>pull</em> or <em>materialize</em> the ghost values from the refinement world into the actual code world.</p>
+<p><strong>Assumes</strong></p>
+<p>We write <code>assume</code> because in this scenario we are not <em>verifying</em> the implementation of <code>Data.Vector</code>, we are simply <em>using</em> the properties of the library to verify client code. If we wanted to verify the library itself, we would ascribe the above types to the relevant functions in the Haskell source for <code>Data.Vector</code>.</p>
+<p><strong>Dependent Refinements</strong></p>
+<p>Notice that in the function type (e.g. for <code>length</code>) we have <em>named</em> the <em>input</em> parameter <code>x</code> so that we can refer to it in the <em>output</em> refinement.</p>
+In this case, the type
+<pre><span class="hs-linenum">91: </span><span class="hs-definition">assume</span> <span class="hs-varid">length</span>   <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">Vector</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">v</span> <span class="hs-conop">:</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-varid">vlen</span> <span class="hs-varid">x</span><span class="hs-layout">)</span><span class="hs-layout">}</span>
+</pre>
+<p>states that the <code>Int</code> output is exactly equal to the size of the input <code>Vector</code> named <code>x</code>.</p>
+<p>In other words, the output refinement <strong>depends on</strong> the input value, which crucially allows us to write properties that <em>relate</em> different program values.</p>
+<p><strong>Verifying a Simple Wrapper</strong></p>
+<p>Lets try write some simple functions to sanity check the above specifications. First, consider an <em>unsafe</em> vector lookup function:</p>
+<pre><span class="hs-linenum">105: </span><a class="annot" href="#"><span class="annottext">vec:(Data.Vector.Vector a)
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([vec])),(0 &lt;= VV)} -&gt; a</span><span class="hs-definition">unsafeLookup</span></a> <a class="annot" href="#"><span class="annottext">(Data.Vector.Vector a)</span><span class="hs-varid">vec</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &lt; vlen([vec])),(0 &lt;= VV)}</span><span class="hs-varid">index</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector a) | (VV = vec),(vlen([VV]) &gt;= 0)}</span><span class="hs-varid">vec</span></a> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector a)
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)} -&gt; a</span><span class="hs-varop">!</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = index),(VV &lt; vlen([vec])),(0 &lt;= VV)}</span><span class="hs-varid">index</span></a>
+</pre>
+<p>If we run this through LiquidHaskell, it will spit back a type error for the expression <code>x ! i</code> because (happily!) it cannot prove that <code>index</code> is between <code>0</code> and the <code>vlen vec</code>. Of course, we can specify the bounds requirement in the input type</p>
+<pre><span class="hs-linenum">114: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">unsafeLookup</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">vec</span><span class="hs-conop">:</span><span class="hs-conid">Vector</span> <span class="hs-varid">a</span> 
+<span class="hs-linenum">115: </span>                 <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| (0 &lt;= v &amp;&amp; v &lt; (vlen vec))}</span> 
+<span class="hs-linenum">116: </span>                 <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> 
+<span class="hs-linenum">117: </span>  <span class="hs-keyword">@-}</span>
+</pre>
+<p>then LiquidHaskell is happy to verify the lookup. Of course, now the burden of ensuring the index is valid is pushed to clients of <code>unsafeLookup</code>.</p>
+<p>Instead, we might write a <em>safe</em> lookup function that performs the <em>bounds check</em> before looking up the vector:</p>
+<pre><span class="hs-linenum">127: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">safeLookup</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Vector</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Maybe</span> <span class="hs-varid">a</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">128: </span><a class="annot" href="#"><span class="annottext">(Data.Vector.Vector a) -&gt; (GHC.Types.Int) -&gt; (Data.Maybe.Maybe a)</span><span class="hs-definition">safeLookup</span></a> <a class="annot" href="#"><span class="annottext">(Data.Vector.Vector a)</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">i</span></a> 
+<span class="hs-linenum">129: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x &lt;= y))}</span><span class="hs-varop">&lt;=</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Bool)
+-&gt; y:(GHC.Types.Bool)
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; &amp;&amp; [(? Prop([x]));
+                                                    (? Prop([y]))])}</span><span class="hs-varop">&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x &lt; y))}</span><span class="hs-varop">&lt;</span></a> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector a)
+-&gt; {VV : (GHC.Types.Int) | (VV = vlen([x])),(VV &gt;= 0)}</span><span class="hs-varid">length</span></a> <a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector a) | (VV = x),(vlen([VV]) &gt;= 0)}</span><span class="hs-varid">x</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x:a
+-&gt; {VV : (Data.Maybe.Maybe a) | ((? isJust([VV])) &lt;=&gt; true),
+                                (fromJust([VV]) = x)}</span><span class="hs-conid">Just</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector a) | (VV = x),(vlen([VV]) &gt;= 0)}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector a)
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)} -&gt; a</span><span class="hs-varop">!</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i)}</span><span class="hs-varid">i</span></a><span class="hs-layout">)</span>
+<span class="hs-linenum">130: </span>  <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span>              <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (Data.Maybe.Maybe {VV : a | false}) | ((? isJust([VV])) &lt;=&gt; false)}</span><span class="hs-conid">Nothing</span></a> 
+</pre>
+<p><strong>Predicate Aliases</strong></p>
+<p>The type for <code>unsafeLookup</code> above is rather verbose as we have to spell out the upper and lower bounds and conjoin them. Just as we enjoy abstractions when programming, we will find it handy to have abstractions in the specification mechanism. To this end, LiquidHaskell supports <em>predicate aliases</em>, which are best illustrated by example</p>
+<pre><span class="hs-linenum">142: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">predicate</span> <span class="hs-conid">Btwn</span> <span class="hs-conid">Lo</span> <span class="hs-conid">I</span> <span class="hs-conid">Hi</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-conid">Lo</span> <span class="hs-varop">&lt;=</span> <span class="hs-conid">I</span> <span class="hs-varop">&amp;&amp;</span> <span class="hs-conid">I</span> <span class="hs-varop">&lt;</span> <span class="hs-conid">Hi</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">143: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">predicate</span> <span class="hs-conid">InBounds</span> <span class="hs-conid">I</span> <span class="hs-conid">A</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-conid">Btwn</span> <span class="hs-num">0</span> <span class="hs-conid">I</span> <span class="hs-layout">(</span><span class="hs-varid">vlen</span> <span class="hs-conid">A</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
+</pre>
+<p>Now, we can simplify the type for the unsafe lookup function to</p>
+<pre><span class="hs-linenum">149: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">unsafeLookup'</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">Vector</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Int</span> <span class="hs-keyword">| (InBounds v x)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">150: </span><span class="hs-definition">unsafeLookup'</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Vector</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
+<span class="hs-linenum">151: </span><a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector a)
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)} -&gt; a</span><span class="hs-definition">unsafeLookup'</span></a> <a class="annot" href="#"><span class="annottext">(Data.Vector.Vector a)</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)}</span><span class="hs-varid">i</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector a) | (VV = x),(vlen([VV]) &gt;= 0)}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector a)
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)} -&gt; a</span><span class="hs-varop">!</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),(VV &lt; vlen([x])),(0 &lt;= VV)}</span><span class="hs-varid">i</span></a>
+</pre>
+<h2 id="our-first-recursive-function">Our First Recursive Function</h2>
+<p>OK, with the tedious preliminaries out of the way, lets write some code!</p>
+<p>To start: a vanilla recursive function that adds up the absolute values of the elements of an integer vector.</p>
+<pre><span class="hs-linenum">164: </span><span class="hs-definition">absoluteSum</span>       <span class="hs-keyglyph">::</span> <span class="hs-conid">Vector</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> 
+<span class="hs-linenum">165: </span><a class="annot" href="#"><span class="annottext">(Data.Vector.Vector (GHC.Types.Int))
+-&gt; {VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-definition">absoluteSum</span></a> <a class="annot" href="#"><span class="annottext">(Data.Vector.Vector (GHC.Types.Int))</span><span class="hs-varid">vec</span></a>   <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x:(GHC.Prim.Int#) -&gt; {VV : (GHC.Types.Int) | (VV = (x  :  int))}</span><span class="hs-keyword">if</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                          (0 &lt;= VV),
+                          (VV &lt;= n),
+                          (VV &lt;= vlen([vec]))}
+-&gt; y:{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                             (0 &lt;= VV),
+                             (VV &lt;= n),
+                             (VV &lt;= vlen([vec]))}
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x &lt; y))}</span><span class="hs-varop">&lt;</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = n),(VV = vlen([vec])),(VV &gt;= 0)}</span><span class="hs-varid">n</span></a> <span class="hs-keyword">then</span> <a class="annot" href="#"><span class="annottext">x6:{VV : (GHC.Types.Int) | (VV = 0),
+                           (VV &lt; n),
+                           (VV &lt; vlen([vec])),
+                           (0 &lt;= VV)}
+-&gt; x4:{VV : (GHC.Types.Int) | (VV = 0),
+                              (VV = x6),
+                              (VV &lt; n),
+                              (VV &lt; vlen([vec])),
+                              (0 &lt;= VV),
+                              (x6 &lt;= VV)}
+-&gt; {VV : (GHC.Types.Int) | (VV &gt;= 0),
+                           (VV &gt;= x6),
+                           (VV &gt;= x4),
+                           (0 &lt;= VV),
+                           (x6 &lt;= VV),
+                           (x4 &lt;= VV)}</span><span class="hs-varid">go</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a> <span class="hs-keyword">else</span> <a class="annot" href="#"><span class="annottext">x:(GHC.Prim.Int#) -&gt; {VV : (GHC.Types.Int) | (VV = (x  :  int))}</span><span class="hs-num">0</span></a>
+<span class="hs-linenum">166: </span>  <span class="hs-keyword">where</span>
+<span class="hs-linenum">167: </span>    <a class="annot" href="#"><span class="annottext">x6:{VV : (GHC.Types.Int) | (VV = 0),
+                           (VV &lt; n),
+                           (VV &lt; vlen([vec])),
+                           (0 &lt;= VV)}
+-&gt; x4:{VV : (GHC.Types.Int) | (VV = 0),
+                              (VV = x6),
+                              (VV &lt; n),
+                              (VV &lt; vlen([vec])),
+                              (0 &lt;= VV),
+                              (x6 &lt;= VV)}
+-&gt; {VV : (GHC.Types.Int) | (VV &gt;= 0),
+                           (VV &gt;= x6),
+                           (VV &gt;= x4),
+                           (0 &lt;= VV),
+                           (x6 &lt;= VV),
+                           (x4 &lt;= VV)}</span><span class="hs-varid">go</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt;= 0),(0 &lt;= VV)}</span><span class="hs-varid">acc</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                        (0 &lt;= VV),
+                        (VV &lt;= n),
+                        (VV &lt;= vlen([vec]))}</span><span class="hs-varid">i</span></a> 
+<span class="hs-linenum">168: </span>      <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),
+                        (VV &gt;= 0),
+                        (0 &lt;= VV),
+                        (VV &lt;= n),
+                        (VV &lt;= vlen([vec]))}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                          (VV &gt;= i),
+                          (0 &lt;= VV),
+                          (VV &lt;= n),
+                          (VV &lt;= vlen([vec])),
+                          (i &lt;= VV)}
+-&gt; y:{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                             (VV &gt;= i),
+                             (0 &lt;= VV),
+                             (VV &lt;= n),
+                             (VV &lt;= vlen([vec])),
+                             (i &lt;= VV)}
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x != y))}</span><span class="hs-varop">/=</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = n),(VV = vlen([vec])),(VV &gt;= 0)}</span><span class="hs-varid">n</span></a>    <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x6:{VV : (GHC.Types.Int) | (VV = 0),
+                           (VV &lt; n),
+                           (VV &lt; vlen([vec])),
+                           (0 &lt;= VV)}
+-&gt; x4:{VV : (GHC.Types.Int) | (VV = 0),
+                              (VV = x6),
+                              (VV &lt; n),
+                              (VV &lt; vlen([vec])),
+                              (0 &lt;= VV),
+                              (x6 &lt;= VV)}
+-&gt; {VV : (GHC.Types.Int) | (VV &gt;= 0),
+                           (VV &gt;= x6),
+                           (VV &gt;= x4),
+                           (0 &lt;= VV),
+                           (x6 &lt;= VV),
+                           (x4 &lt;= VV)}</span><span class="hs-varid">go</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = acc),(VV &gt;= 0),(0 &lt;= VV)}</span><span class="hs-varid">acc</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV = (x + y))}</span><span class="hs-varop">+</span></a> <a class="annot" href="#"><span class="annottext">n:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV &gt;= 0),(VV &gt;= n)}</span><span class="hs-varid">abz</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector (GHC.Types.Int)) | (VV = vec),
+                                             (vlen([VV]) &gt;= 0)}</span><span class="hs-varid">vec</span></a> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector (GHC.Types.Int))
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)}
+-&gt; (GHC.Types.Int)</span><span class="hs-varop">!</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),
+                        (VV &gt;= 0),
+                        (0 &lt;= VV),
+                        (VV &lt;= n),
+                        (VV &lt;= vlen([vec]))}</span><span class="hs-varid">i</span></a><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),
+                        (VV &gt;= 0),
+                        (0 &lt;= VV),
+                        (VV &lt;= n),
+                        (VV &lt;= vlen([vec]))}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV = (x + y))}</span><span class="hs-varop">+</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (1  :  int))}</span><span class="hs-num">1</span></a><span class="hs-layout">)</span>
+<span class="hs-linenum">169: </span>      <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = acc),(VV &gt;= 0),(0 &lt;= VV)}</span><span class="hs-varid">acc</span></a> 
+<span class="hs-linenum">170: </span>    <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = vlen([vec])),(VV &gt;= 0)}</span><span class="hs-varid">n</span></a>             <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector (GHC.Types.Int))
+-&gt; {VV : (GHC.Types.Int) | (VV = vlen([x])),(VV &gt;= 0)}</span><span class="hs-varid">length</span></a> <a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector (GHC.Types.Int)) | (VV = vec),
+                                             (vlen([VV]) &gt;= 0)}</span><span class="hs-varid">vec</span></a>
+</pre>
+<p>where the function <code>abz</code> is the absolute value function from <a href="../blog/2013/01/01/refinement-types-101.lhs/">before</a>.</p>
+<pre><span class="hs-linenum">176: </span><a class="annot" href="#"><span class="annottext">(GHC.Num.Num a)
+-&gt; (GHC.Classes.Ord a) -&gt; n:a -&gt; {VV : a | (VV &gt;= 0),(VV &gt;= n)}</span><span class="hs-definition">abz</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">n</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Integer.Type.Integer) | (VV = 0)}</span><span class="hs-keyword">if</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">x:a
+-&gt; y:a -&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x &lt;= y))}</span><span class="hs-varop">&lt;=</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = n)}</span><span class="hs-varid">n</span></a> <span class="hs-keyword">then</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = n)}</span><span class="hs-varid">n</span></a> <span class="hs-keyword">else</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">a</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">x:a -&gt; y:a -&gt; {VV : a | (VV = (x - y))}</span><span class="hs-comment">-</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = n)}</span><span class="hs-varid">n</span></a><span class="hs-layout">)</span> 
+</pre>
+<h2 id="digression-introducing-errors">Digression: Introducing Errors</h2>
+<p>If you are following along in the demo page – I heartily recommend that you try the following modifications, one at a time, and see what happens.</p>
+<p><strong>What happens if:</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>You <em>remove</em> the check <code>0 &lt; n</code> (see <code>absoluteSumNT</code> in the demo code)</p></li>
+<li><p>You <em>replace</em> the guard with <code>i &lt;= n</code></p></li>
+</ol>
+<p>In the <em>former</em> case, LiquidHaskell will <em>verify</em> safety, but in the <em>latter</em> case, it will grumble that your program is <em>unsafe</em>.</p>
+<p>Do you understand why? (Thanks to <a href="http://www.reddit.com/user/smog_alado">smog_alado</a> for pointing this out :))</p>
+<h2 id="refinement-type-inference">Refinement Type Inference</h2>
+<p>LiquidHaskell happily verifies <code>absoluteSum</code> – or, to be precise, the safety of the vector accesses <code>vec ! i</code>. The verification works out because LiquidHaskell is able to automatically infer a suitable type for <code>go</code>. Shuffle your mouse over the identifier above to see the inferred type. Observe that the type states that the first parameter <code>acc</code> (and the output) is <code>0 &lt;= V</code>. That is, the returned value is non-negative.</p>
+<p>More importantly, the type states that the second parameter <code>i</code> is <code>0 &lt;= V</code> and <code>V &lt;= n</code> and <code>V &lt;= (vlen vec)</code>. That is, the parameter <code>i</code> is between <code>0</code> and the vector length (inclusive). LiquidHaskell uses these and the test that <code>i /= n</code> to establish that <code>i</code> is in fact between <code>0</code> and <code>(vlen vec)</code> thereby verifing safety.</p>
+<p>In fact, if we want to use the function externally (i.e. in another module) we can go ahead and strengthen its type to specify that the output is non-negative.</p>
+<pre><span class="hs-linenum">221: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">absoluteSum</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Vector</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| 0 &lt;= v}</span>  <span class="hs-keyword">@-}</span> 
+</pre>
+<p><strong>What happens if:</strong> You <em>replace</em> the output type for <code>absoluteSum</code> with <code>{v: Int | 0 &lt; v }</code> ?</p>
+<h2 id="bottling-recursion-with-a-higher-order-loop">Bottling Recursion With a Higher-Order <code>loop</code></h2>
+<p>Next, lets refactor the above low-level recursive function into a generic higher-order <code>loop</code>.</p>
+<pre><span class="hs-linenum">233: </span><span class="hs-definition">loop</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> 
+<span class="hs-linenum">234: </span><a class="annot" href="#"><span class="annottext">lo:{VV : (GHC.Types.Int) | (0 &lt;= VV)}
+-&gt; hi:{VV : (GHC.Types.Int) | (lo &lt;= VV)}
+-&gt; a
+-&gt; ({VV : (GHC.Types.Int) | (VV &lt; hi),(lo &lt;= VV)} -&gt; a -&gt; a)
+-&gt; a</span><span class="hs-definition">loop</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">lo</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (lo &lt;= VV)}</span><span class="hs-varid">hi</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">base</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &lt; hi),(lo &lt;= VV)} -&gt; a -&gt; a</span><span class="hs-varid">f</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = base)}
+-&gt; {VV : (GHC.Types.Int) | (VV = lo),
+                           (VV &gt;= 0),
+                           (0 &lt;= VV),
+                           (VV &lt;= hi),
+                           (lo &lt;= VV)}
+-&gt; a</span><span class="hs-varid">go</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = base)}</span><span class="hs-varid">base</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = lo),(0 &lt;= VV)}</span><span class="hs-varid">lo</span></a>
+<span class="hs-linenum">235: </span>  <span class="hs-keyword">where</span>
+<span class="hs-linenum">236: </span>    <a class="annot" href="#"><span class="annottext">{VV : a | (VV = base)}
+-&gt; {VV : (GHC.Types.Int) | (VV = lo),
+                           (VV &gt;= 0),
+                           (0 &lt;= VV),
+                           (VV &lt;= hi),
+                           (lo &lt;= VV)}
+-&gt; a</span><span class="hs-varid">go</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">acc</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                        (VV &gt;= lo),
+                        (VV &gt;= lo),
+                        (0 &lt;= VV),
+                        (VV &lt;= hi),
+                        (VV &lt;= hi),
+                        (lo &lt;= VV),
+                        (lo &lt;= VV)}</span><span class="hs-varid">i</span></a>     
+<span class="hs-linenum">237: </span>      <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),
+                        (VV &gt;= 0),
+                        (VV &gt;= lo),
+                        (VV &gt;= lo),
+                        (0 &lt;= VV),
+                        (VV &lt;= hi),
+                        (VV &lt;= hi),
+                        (lo &lt;= VV),
+                        (lo &lt;= VV)}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                          (VV &gt;= i),
+                          (VV &gt;= lo),
+                          (VV &gt;= lo),
+                          (0 &lt;= VV),
+                          (VV &lt;= hi),
+                          (VV &lt;= hi),
+                          (i &lt;= VV),
+                          (lo &lt;= VV),
+                          (lo &lt;= VV)}
+-&gt; y:{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                             (VV &gt;= i),
+                             (VV &gt;= lo),
+                             (VV &gt;= lo),
+                             (0 &lt;= VV),
+                             (VV &lt;= hi),
+                             (VV &lt;= hi),
+                             (i &lt;= VV),
+                             (lo &lt;= VV),
+                             (lo &lt;= VV)}
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x != y))}</span><span class="hs-varop">/=</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = hi),
+                        (VV = hi),
+                        (VV &gt;= 0),
+                        (VV &gt;= lo),
+                        (VV &gt;= lo),
+                        (0 &lt;= VV),
+                        (hi &lt;= VV),
+                        (lo &lt;= VV),
+                        (lo &lt;= VV)}</span><span class="hs-varid">hi</span></a>   <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = base)}
+-&gt; {VV : (GHC.Types.Int) | (VV = lo),
+                           (VV &gt;= 0),
+                           (0 &lt;= VV),
+                           (VV &lt;= hi),
+                           (lo &lt;= VV)}
+-&gt; a</span><span class="hs-varid">go</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                        (VV &gt;= lo),
+                        (VV &gt;= lo),
+                        (VV &lt; hi),
+                        (VV &lt; hi),
+                        (0 &lt;= VV),
+                        (lo &lt;= VV),
+                        (lo &lt;= VV)}
+-&gt; a -&gt; a</span><span class="hs-varid">f</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),
+                        (VV &gt;= 0),
+                        (VV &gt;= lo),
+                        (VV &gt;= lo),
+                        (0 &lt;= VV),
+                        (VV &lt;= hi),
+                        (VV &lt;= hi),
+                        (lo &lt;= VV),
+                        (lo &lt;= VV)}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = acc)}</span><span class="hs-varid">acc</span></a><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),
+                        (VV &gt;= 0),
+                        (VV &gt;= lo),
+                        (VV &gt;= lo),
+                        (0 &lt;= VV),
+                        (VV &lt;= hi),
+                        (VV &lt;= hi),
+                        (lo &lt;= VV),
+                        (lo &lt;= VV)}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV = (x + y))}</span><span class="hs-varop">+</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (1  :  int))}</span><span class="hs-num">1</span></a><span class="hs-layout">)</span>
+<span class="hs-linenum">238: </span>      <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = acc)}</span><span class="hs-varid">acc</span></a>
+</pre>
+<p><strong>Using <code>loop</code> to compute <code>absoluteSum</code></strong></p>
+<p>We can now use <code>loop</code> to implement <code>absoluteSum</code> like so:</p>
+<pre><span class="hs-linenum">246: </span><a class="annot" href="#"><span class="annottext">(GHC.Num.Num a)
+-&gt; {VV : (Data.Vector.Vector {VV : a | false}) | false}
+-&gt; {VV : a | false}</span><span class="hs-definition">absoluteSum'</span></a> <a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector {VV : a | false}) | false}</span><span class="hs-varid">vec</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Integer.Type.Integer) | (VV = 0)}</span><span class="hs-keyword">if</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | false}
+-&gt; y:{VV : (GHC.Types.Int) | false}
+-&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x &lt; y))}</span><span class="hs-varop">&lt;</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = n),(VV = vlen([vec])),(VV &gt;= 0)}</span><span class="hs-varid">n</span></a> <span class="hs-keyword">then</span> <a class="annot" href="#"><span class="annottext">lo:{VV : (GHC.Types.Int) | (0 &lt;= VV)}
+-&gt; hi:{VV : (GHC.Types.Int) | (lo &lt;= VV)}
+-&gt; {VV : a | false}
+-&gt; ({VV : (GHC.Types.Int) | (VV &lt; hi),(lo &lt;= VV)}
+    -&gt; {VV : a | false} -&gt; {VV : a | false})
+-&gt; {VV : a | false}</span><span class="hs-varid">loop</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = n),(VV = vlen([vec])),(VV &gt;= 0)}</span><span class="hs-varid">n</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | false}
+-&gt; {VV : a | false} -&gt; {VV : a | false}</span><span class="hs-varid">body</span></a> <span class="hs-keyword">else</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Integer.Type.Integer) | (VV = 0)}</span><span class="hs-num">0</span></a>
+<span class="hs-linenum">247: </span>  <span class="hs-keyword">where</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | false}
+-&gt; {VV : a | false} -&gt; {VV : a | false}</span><span class="hs-varid">body</span></a>     <span class="hs-keyglyph">=</span> <span class="hs-keyglyph">\</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | false}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | false}</span><span class="hs-varid">acc</span></a> <span class="hs-keyglyph">-&gt;</span> <a class="annot" href="#"><span class="annottext">{VV : a | false}</span><span class="hs-varid">acc</span></a> <a class="annot" href="#"><span class="annottext">x:a -&gt; y:a -&gt; {VV : a | (VV = (x + y))}</span><span class="hs-varop">+</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector {VV : a | false}) | false}</span><span class="hs-varid">vec</span></a> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector {VV : a | false})
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)}
+-&gt; {VV : a | false}</span><span class="hs-varop">!</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | false}</span><span class="hs-varid">i</span></a><span class="hs-layout">)</span>
+<span class="hs-linenum">248: </span>        <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = vlen([vec])),(VV &gt;= 0)}</span><span class="hs-varid">n</span></a>        <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector {VV : a | false})
+-&gt; {VV : (GHC.Types.Int) | (VV = vlen([x])),(VV &gt;= 0)}</span><span class="hs-varid">length</span></a> <a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector {VV : a | false}) | false}</span><span class="hs-varid">vec</span></a>
+</pre>
+<p>LiquidHaskell verifies <code>absoluteSum'</code> without any trouble.</p>
+<p>It is very instructive to see the type that LiquidHaskell <em>infers</em> for <code>loop</code> – it looks something like</p>
+<pre><span class="hs-linenum">257: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">loop</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">lo</span><span class="hs-conop">:</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| (0 &lt;= v) }</span>  
+<span class="hs-linenum">258: </span>         <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">hi</span><span class="hs-conop">:</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| (lo &lt;= v) }</span> 
+<span class="hs-linenum">259: </span>         <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> 
+<span class="hs-linenum">260: </span>         <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-varid">i</span><span class="hs-conop">:</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| (Btwn lo v hi)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span><span class="hs-layout">)</span>
+<span class="hs-linenum">261: </span>         <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> 
+<span class="hs-linenum">262: </span>  <span class="hs-keyword">@-}</span>
+</pre>
+<p>In english, the above type states that</p>
+<ul>
+<li><code>lo</code> the loop <em>lower</em> bound is a non-negative integer</li>
+<li><code>hi</code> the loop <em>upper</em> bound is a greater than <code>lo</code>,</li>
+<li><code>f</code> the loop <em>body</em> is only called with integers between <code>lo</code> and <code>hi</code>.</li>
+</ul>
+<p>Inference is a rather convenient option – it can be tedious to have to keep typing things like the above! Of course, if we wanted to make <code>loop</code> a public or exported function, we could use the inferred type to generate an explicit signature too.</p>
+At the call
+<pre><span class="hs-linenum">277: </span><span class="hs-definition">loop</span> <span class="hs-num">0</span> <span class="hs-varid">n</span> <span class="hs-num">0</span> <span class="hs-varid">body</span> 
+</pre>
+<p>the parameters <code>lo</code> and <code>hi</code> are instantiated with <code>0</code> and <code>n</code> respectively (which, by the way is where the inference engine deduces non-negativity from) and thus LiquidHaskell concludes that <code>body</code> is only called with values of <code>i</code> that are <em>between</em> <code>0</code> and <code>(vlen vec)</code>, which shows the safety of the call <code>vec ! i</code>.</p>
+<p><strong>Using <code>loop</code> to compute <code>dotProduct</code></strong></p>
+<p>Here’s another use of <code>loop</code> – this time to compute the <code>dotProduct</code> of two vectors.</p>
+<pre><span class="hs-linenum">292: </span><span class="hs-definition">dotProduct</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">Vector</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Vector</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">293: </span><a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector (GHC.Types.Int))
+-&gt; {VV : (Data.Vector.Vector (GHC.Types.Int)) | (vlen([VV]) = vlen([x]))}
+-&gt; (GHC.Types.Int)</span><span class="hs-definition">dotProduct</span></a> <a class="annot" href="#"><span class="annottext">(Data.Vector.Vector (GHC.Types.Int))</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector (GHC.Types.Int)) | (vlen([VV]) = vlen([x]))}</span><span class="hs-varid">y</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">lo:{VV : (GHC.Types.Int) | (0 &lt;= VV)}
+-&gt; hi:{VV : (GHC.Types.Int) | (lo &lt;= VV)}
+-&gt; (GHC.Types.Int)
+-&gt; ({VV : (GHC.Types.Int) | (VV &lt; hi),(lo &lt;= VV)}
+    -&gt; (GHC.Types.Int) -&gt; (GHC.Types.Int))
+-&gt; (GHC.Types.Int)</span><span class="hs-varid">loop</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector (GHC.Types.Int))
+-&gt; {VV : (GHC.Types.Int) | (VV = vlen([x])),(VV &gt;= 0)}</span><span class="hs-varid">length</span></a> <a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector (GHC.Types.Int)) | (VV = x),
+                                             (vlen([VV]) &gt;= 0)}</span><span class="hs-varid">x</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (0  :  int))}</span><span class="hs-num">0</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                        (VV &lt; vlen([x])),
+                        (VV &lt; vlen([y])),
+                        (0 &lt;= VV)}
+-&gt; (GHC.Types.Int) -&gt; (GHC.Types.Int)</span><span class="hs-keyglyph">\</span></a><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt;= 0),
+                        (VV &lt; vlen([x])),
+                        (VV &lt; vlen([y])),
+                        (0 &lt;= VV)}</span><span class="hs-varid">i</span></a> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV = (x + y))}</span><span class="hs-varop">+</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector (GHC.Types.Int)) | (VV = x),
+                                             (vlen([VV]) &gt;= 0)}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector (GHC.Types.Int))
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)}
+-&gt; (GHC.Types.Int)</span><span class="hs-varop">!</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),
+                        (VV &gt;= 0),
+                        (VV &lt; vlen([x])),
+                        (VV &lt; vlen([y])),
+                        (0 &lt;= VV)}</span><span class="hs-varid">i</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
+-&gt; y:(GHC.Types.Int)
+-&gt; {VV : (GHC.Types.Int) | (&amp;&amp; [(x &gt;= 0); (y &gt;= 0)] =&gt; (VV &gt;= 0))}</span><span class="hs-varop">*</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector (GHC.Types.Int)) | (VV = y),
+                                             (vlen([VV]) = vlen([x])),
+                                             (vlen([VV]) &gt;= 0)}</span><span class="hs-varid">y</span></a> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector (GHC.Types.Int))
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)}
+-&gt; (GHC.Types.Int)</span><span class="hs-varop">!</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),
+                        (VV &gt;= 0),
+                        (VV &lt; vlen([x])),
+                        (VV &lt; vlen([y])),
+                        (0 &lt;= VV)}</span><span class="hs-varid">i</span></a><span class="hs-layout">)</span><span class="hs-layout">)</span><span class="hs-layout">)</span> 
+</pre>
+<p>The gimlet-eyed reader will realize that the above is quite unsafe – what if <code>x</code> is a 10-dimensional vector while <code>y</code> has only 3-dimensions?</p>
+A nasty
+<pre><span class="hs-linenum">300: </span><span class="hs-varop">***</span> <span class="hs-conid">Exception</span><span class="hs-conop">:</span> <span class="hs-varop">./</span><span class="hs-conid">Data</span><span class="hs-varop">/</span><span class="hs-conid">Vector</span><span class="hs-varop">/</span><span class="hs-conid">Generic</span><span class="hs-varop">.</span><span class="hs-varid">hs</span><span class="hs-conop">:</span><span class="hs-num">244</span> <span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-varop">!</span><span class="hs-layout">)</span><span class="hs-layout">)</span><span class="hs-conop">:</span> <span class="hs-varid">index</span> <span class="hs-varid">out</span> <span class="hs-keyword">of</span> <span class="hs-varid">bounds</span> <span class="hs-varop">...</span>
+</pre>
+<p><em>Yech</em>.</p>
+<p>This is precisely the sort of unwelcome surprise we want to do away with at compile-time. Refinements to the rescue! We can specify that the vectors have the same dimensions quite easily</p>
+<pre><span class="hs-linenum">310: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">dotProduct</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">Vector</span> <span class="hs-conid">Int</span><span class="hs-layout">)</span> 
+<span class="hs-linenum">311: </span>               <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-keyword">{v:</span> <span class="hs-layout">(</span><span class="hs-conid">Vector</span> <span class="hs-conid">Int</span><span class="hs-layout">)</span> <span class="hs-keyword">| (vlen v) = (vlen x)}</span> 
+<span class="hs-linenum">312: </span>               <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> 
+<span class="hs-linenum">313: </span>  <span class="hs-keyword">@-}</span>
+</pre>
+<p>after which LiquidHaskell will gladly verify that the implementation of <code>dotProduct</code> is indeed safe!</p>
+<h2 id="refining-data-types">Refining Data Types</h2>
+<p>Next, suppose we want to write a <em>sparse dot product</em>, that is, the dot product of a vector and a <strong>sparse vector</strong> represented by a list of index-value tuples.</p>
+<p><strong>Representing Sparse Vectors</strong></p>
+<p>We can represent the sparse vector with a <strong>refinement type alias</strong></p>
+<pre><span class="hs-linenum">331: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">SparseVector</span> <span class="hs-varid">a</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">=</span> <span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-conid">Btwn</span> <span class="hs-num">0</span> <span class="hs-varid">v</span> <span class="hs-conid">N</span><span class="hs-layout">)</span><span class="hs-layout">}</span><span class="hs-layout">,</span> <span class="hs-varid">a</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">@-}</span>
+</pre>
+<p>As with usual types, the alias <code>SparseVector</code> on the left is just a shorthand for the (longer) type on the right, it does not actually define a new type. Thus, the above alias is simply a refinement of Haskell’s <code>[(Int, a)]</code> type, with a size parameter <code>N</code> that facilitates easy specification reuse. In this way, refinements let us express invariants of containers like lists in a straightforward manner.</p>
+<p><strong>Aside:</strong> If you are familiar with the <em>index-style</em> length encoding e.g. as found in <a href="http://www.cs.bu.edu/~hwxi/DML/DML.html">DML</a> or <a href="http://code.haskell.org/Agda/examples/Vec.agda">Agda</a>, then note that despite appearances, our <code>SparseVector</code> definition is <em>not</em> indexed. Instead, we deliberately choose to encode properties with logical refinement predicates, to facilitate SMT based checking and inference.</p>
+<p><strong>Verifying Uses of Sparse Vectors</strong></p>
+<p>Next, we can write a recursive procedure that computes the sparse product</p>
+<pre><span class="hs-linenum">353: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">sparseProduct</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Num</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">Vector</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> 
+<span class="hs-linenum">354: </span>                             <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">SparseVector</span> <span class="hs-varid">a</span> <span class="hs-layout">(</span><span class="hs-varid">vlen</span> <span class="hs-varid">x</span><span class="hs-layout">)</span> 
+<span class="hs-linenum">355: </span>                             <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> 
+<span class="hs-linenum">356: </span>  <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">357: </span><a class="annot" href="#"><span class="annottext">(GHC.Num.Num a)
+-&gt; x:(Data.Vector.Vector a)
+-&gt; [({VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)} , a)]
+-&gt; a</span><span class="hs-definition">sparseProduct</span></a> <a class="annot" href="#"><span class="annottext">(Data.Vector.Vector a)</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">[({VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)} , a)]</span><span class="hs-varid">y</span></a>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = 0)}
+-&gt; {VV : [({VV : (GHC.Types.Int) | (VV &gt;= 0),
+                                   (VV &lt; vlen([x])),
+                                   (0 &lt;= VV)} , a)] | (VV = y),
+                                                      (len([VV]) = len([y])),
+                                                      (len([VV]) &gt;= 0)}
+-&gt; a</span><span class="hs-varid">go</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">{VV : [({VV : (GHC.Types.Int) | (VV &lt; vlen([x])),
+                                (0 &lt;= VV)} , a)] | (VV = y),(len([VV]) &gt;= 0)}</span><span class="hs-varid">y</span></a>
+<span class="hs-linenum">358: </span>  <span class="hs-keyword">where</span> 
+<span class="hs-linenum">359: </span>    <a class="annot" href="#"><span class="annottext">{VV : a | (VV = 0)}
+-&gt; {VV : [({VV : (GHC.Types.Int) | (VV &gt;= 0),
+                                   (VV &lt; vlen([x])),
+                                   (0 &lt;= VV)} , a)] | (VV = y),
+                                                      (len([VV]) = len([y])),
+                                                      (len([VV]) &gt;= 0)}
+-&gt; a</span><span class="hs-varid">go</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">sum</span></a> <span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-varid">i</span><span class="hs-layout">,</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-conop">:</span> <span class="hs-varid">y'</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = 0)}
+-&gt; {VV : [({VV : (GHC.Types.Int) | (VV &gt;= 0),
+                                   (VV &lt; vlen([x])),
+                                   (0 &lt;= VV)} , a)] | (VV = y),
+                                                      (len([VV]) = len([y])),
+                                                      (len([VV]) &gt;= 0)}
+-&gt; a</span><span class="hs-varid">go</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : a | (VV = sum)}</span><span class="hs-varid">sum</span></a> <a class="annot" href="#"><span class="annottext">x:a -&gt; y:a -&gt; {VV : a | (VV = (x + y))}</span><span class="hs-varop">+</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-layout">(</span></a><a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector a) | (VV = x),
+                               (VV = x),
+                               (vlen([VV]) = vlen([x])),
+                               (vlen([VV]) &gt;= 0)}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector a)
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)} -&gt; a</span><span class="hs-varop">!</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),
+                        (VV &gt;= 0),
+                        (VV &lt; vlen([x])),
+                        (VV &lt; vlen([x])),
+                        (0 &lt;= VV)}</span><span class="hs-varid">i</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">x:a -&gt; y:a -&gt; {VV : a | (&amp;&amp; [(x &gt;= 0); (y &gt;= 0)] =&gt; (VV &gt;= 0))}</span><span class="hs-varop">*</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = v)}</span><span class="hs-varid">v</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{VV : [({VV : (GHC.Types.Int) | (VV &gt;= 0),
+                                (VV &lt; vlen([x])),
+                                (VV &lt; vlen([x])),
+                                (0 &lt;= VV)} , a)] | (VV = y'),(len([VV]) &gt;= 0)}</span><span class="hs-varid">y'</span></a> 
+<span class="hs-linenum">360: </span>    <span class="hs-varid">go</span> <span class="hs-varid">sum</span> <span class="hs-conid">[]</span>            <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = sum)}</span><span class="hs-varid">sum</span></a>
+</pre>
+<p>LiquidHaskell verifies the above by using the specification for <code>y</code> to conclude that for each tuple <code>(i, v)</code> in the list, the value of <code>i</code> is within the bounds of the vector <code>x</code>, thereby proving the safety of the access <code>x ! i</code>.</p>
+<h2 id="refinements-and-polymorphism">Refinements and Polymorphism</h2>
+<p>The sharp reader will have undoubtedly noticed that the sparse product can be more cleanly expressed as a <a href="http://hackage.haskell.org/packages/archive/base/latest/doc/html/src/Data-List.html">fold</a>.</p>
+Indeed! Let us recall the type of the <code>foldl</code> operation
+<pre><span class="hs-linenum">375: </span><span class="hs-definition">foldl'</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">b</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">b</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
+</pre>
+<p>Thus, we can simply fold over the sparse vector, accumulating the <code>sum</code> as we go along</p>
+<pre><span class="hs-linenum">382: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">sparseProduct'</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Num</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">Vector</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> 
+<span class="hs-linenum">383: </span>                             <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">SparseVector</span> <span class="hs-varid">a</span> <span class="hs-layout">(</span><span class="hs-varid">vlen</span> <span class="hs-varid">x</span><span class="hs-layout">)</span> 
+<span class="hs-linenum">384: </span>                             <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> 
+<span class="hs-linenum">385: </span>  <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">386: </span><a class="annot" href="#"><span class="annottext">(GHC.Num.Num a)
+-&gt; x:(Data.Vector.Vector a)
+-&gt; [({VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)} , a)]
+-&gt; a</span><span class="hs-definition">sparseProduct'</span></a> <a class="annot" href="#"><span class="annottext">(Data.Vector.Vector a)</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">[({VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)} , a)]</span><span class="hs-varid">y</span></a>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(a
+ -&gt; ({VV : (GHC.Types.Int) | (VV &gt;= 0),
+                             (VV &lt; vlen([x])),
+                             (0 &lt;= VV)} , a)
+ -&gt; a)
+-&gt; a
+-&gt; [({VV : (GHC.Types.Int) | (VV &gt;= 0),
+                             (VV &lt; vlen([x])),
+                             (0 &lt;= VV)} , a)]
+-&gt; a</span><span class="hs-varid">foldl'</span></a> <a class="annot" href="#"><span class="annottext">a
+-&gt; ({VV : (GHC.Types.Int) | (VV &gt;= 0),
+                            (VV &lt; vlen([x])),
+                            (0 &lt;= VV)} , a)
+-&gt; a</span><span class="hs-varid">body</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-num">0</span></a> <a class="annot" href="#"><span class="annottext">{VV : [({VV : (GHC.Types.Int) | (VV &lt; vlen([x])),
+                                (0 &lt;= VV)} , a)] | (VV = y),(len([VV]) &gt;= 0)}</span><span class="hs-varid">y</span></a>   
+<span class="hs-linenum">387: </span>  <span class="hs-keyword">where</span> 
+<span class="hs-linenum">388: </span>    <a class="annot" href="#"><span class="annottext">a
+-&gt; ({VV : (GHC.Types.Int) | (VV &gt;= 0),
+                            (VV &lt; vlen([x])),
+                            (0 &lt;= VV)} , a)
+-&gt; a</span><span class="hs-varid">body</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">sum</span></a> <span class="hs-layout">(</span><span class="hs-varid">i</span><span class="hs-layout">,</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = sum)}</span><span class="hs-varid">sum</span></a> <a class="annot" href="#"><span class="annottext">x:a -&gt; y:a -&gt; {VV : a | (VV = (x + y))}</span><span class="hs-varop">+</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-layout">(</span></a><a class="annot" href="#"><span class="annottext">{VV : (Data.Vector.Vector a) | (VV = x),(vlen([VV]) &gt;= 0)}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x:(Data.Vector.Vector a)
+-&gt; {VV : (GHC.Types.Int) | (VV &lt; vlen([x])),(0 &lt;= VV)} -&gt; a</span><span class="hs-varop">!</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = i),
+                        (VV &gt;= 0),
+                        (VV &lt; vlen([x])),
+                        (0 &lt;= VV)}</span><span class="hs-varid">i</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">x:a -&gt; y:a -&gt; {VV : a | (&amp;&amp; [(x &gt;= 0); (y &gt;= 0)] =&gt; (VV &gt;= 0))}</span><span class="hs-varop">*</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = v)}</span><span class="hs-varid">v</span></a>
+</pre>
+<p>LiquidHaskell digests this too, without much difficulty.</p>
+<p>The main trick is in how the polymorphism of <code>foldl'</code> is instantiated.</p>
+<ol style="list-style-type: decimal">
+<li><p>The GHC type inference engine deduces that at this site, the type variable <code>b</code> from the signature of <code>foldl'</code> is instantiated to the Haskell type <code>(Int, a)</code>.</p></li>
+<li><p>Correspondingly, LiquidHaskell infers that in fact <code>b</code> can be instantiated to the <em>refined</em> type <code>({v: Int | (Btwn 0 v (vlen x))}, a)</code>.</p></li>
+</ol>
+<p>Walk the mouse over to <code>i</code> to see this inferred type. (You can also hover over <code>foldl'</code>above to see the rather more verbose fully instantiated type.)</p>
+<p>Thus, the inference mechanism saves us a fair bit of typing and allows us to reuse existing polymorphic functions over containers and such without ceremony.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>That’s all for now folks! Hopefully the above gives you a reasonable idea of how one can use refinements to verify size related properties, and more generally, to specify and verify properties of recursive, and polymorphic functions operating over datatypes. Next time, we’ll look at how we can teach LiquidHaskell to think about properties of recursive structures like lists and trees.</p>
+                <hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+<hr>
+
+        </div>
+        <div id="footer">
+        </div>
+      <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="http://localhost:8000/feed.xml" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/ranjitjhala" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/ucsd-progsys" target="_blank">
+                            <span class="fa-stack fa-lg">
+
+                              <i class="fa fa-arrow-circle-o-down"></i>
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+		    
+                </ul>
+                <p class="copyright text-muted">
+                
+                  Copyright &copy; Ranjit Jhala 2016-17.
+                
+                  Site generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="http://localhost:8000/static/js/jquery.min.js"></script>
+<script src="http://localhost:8000/static/js/spaceg.stylesheets.min.js"></script>
+<script src="http://localhost:8000/static/js/bootstrap.min.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="http://localhost:8000/static/js/scripts.js"></script>
+
+    </body>
+</html>
