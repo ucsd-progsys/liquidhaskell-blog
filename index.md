@@ -1,10 +1,10 @@
 ---
-title: LiquidHaskell
+title: .
 headerImg: sea.jpg
 ---
 
 
-![LiquidHaskell](/static/img/logo.png)
+![](/static/img/logo.png)
 
 * [Demo](http://goto.ucsd.edu/~rjhala/liquid/haskell/demo)
 * [Code](https://github.com/ucsd-progsys/liquidhaskell)
