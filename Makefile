@@ -1,6 +1,6 @@
 site:
 	stack build
-	stack exec -- homepage rebuild
+	stack exec -- blog rebuild
 
 upload: blog
 	cp -r _site/* $(GHPAGE)
