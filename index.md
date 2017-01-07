@@ -3,7 +3,8 @@ title: LiquidHaskell
 headerImg: sea.jpg
 ---
 
-TODO: A fancy "splash" page.
+
+![LiquidHaskell](/static/img/logo.png)
 
 * [Demo](http://goto.ucsd.edu/~rjhala/liquid/haskell/demo)
 * [Code](https://github.com/ucsd-progsys/liquidhaskell)
