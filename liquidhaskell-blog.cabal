@@ -1,0 +1,21 @@
+name:                liquidhaskell-blog 
+version:             0.1.0.0
+synopsis:            LiquidHaskell blog 
+homepage:            https://github.com/ucsd-progsys/liquidhaskell-blog 
+license:             MIT
+license-file:        LICENSE
+author:              Ranjit Jhala
+maintainer:          jhala@cs.ucsd.edu
+copyright:           Ranjit Jhala
+category:            Web
+build-type:          Simple
+extra-source-files:  README.md
+cabal-version:       >=1.10
+
+executable blog 
+  main-is:             blog.hs
+  default-language:    Haskell2010
+  ghc-options:         -threaded
+  build-depends:       base,
+                       hakyll,
+                       pandoc
