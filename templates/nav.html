@@ -14,12 +14,21 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="$demoUrl$" target="_blank">Demo</a></li>
+                <!-- <li class="dropdown">
+                    <a href="#portfolioModal2" data-toggle="modal"><i class="fa fa-random" id="icon-top"></i></a>
+                <ul class="dropdown-menu"></ul>
+                </li>-->
+                $if(instagram_username)$
+	            <li><a href="https://instagram.com/$instagram_username$/" target="_blank"><i class="fa fa-instagram" id="icon-top"></i></a></li>
+                $endif$
+                <li><a href="$demoUrl$$demo$" target="_blank">Demo</a></li>
+                <li><a href="$baseUrl$/about.html" target="_blank">About</a></li>
                 <li><a href="$tutorialUrl$" target="_blank">Tutorial</a></li>
                 <li><a href="$baseUrl$/archive.html" target="_blank">Archive</a></li>
+                <li><a href="$codeUrl$" target="_blank"><i class="fa fa-twitter"></i>Github</a></li>
                 <!--
-                <li><a href="$githubUrl" id="roundbutton" target="_blank"><i class="fa fa-github"></i>Code</a></li>
-                <li><a href="https://www.twitter.com/$twitter_username$" id="roundbutton" target="_blank"><i class="fa fa-twitter"></i>$twitter_username$</a></li>
+                <li><a href="$baseUrl$/archive.html">Archive</a></li>
+                <li><a href="https://www.twitter.com/$twitter_username$" id="roundbutton" target="_blank"><i class="fa fa-twitter"></i>RanjitJhala</a></li>
                 -->
             </ul>
         </div>
@@ -76,7 +85,7 @@
                         <a href="https://www.github.com/$github_username$" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
                         <a href="https://www.twitter.com/$twitter_username$" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
                         <a href="https://plus.google.com/$google_userid$" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>  <br>
-                    <li><a href="$basUurl$/">Home</a></li>
+                    <li><a href="$baseUrl$/">Home</a></li>
                     <li><a href="$baseUrl$/about.html">About Me</a></li>
                     <li><a href="$baseUrl$/archive.html/">Archive</a></li>
                             </p>
