@@ -4,6 +4,12 @@ LiquidHaskell is a static verifier for Haskell, based on **Liquid Types**
 
 See [about](about.md) for more details.
 
+## Build 
+
+To add a new post:
+
+1. Add the .markdown file in `posts/`
+2. Run `make upload`
 
 ## TODO
 
