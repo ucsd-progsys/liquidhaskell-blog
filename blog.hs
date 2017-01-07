@@ -51,7 +51,8 @@ postCtx =
 
 siteCtx :: Context String
 siteCtx =
-    constField "baseUrl"            "http://localhost:8000"     `mappend`
+    -- constField "baseUrl"            "http://localhost:8000"     `mappend`
+    constField "baseUrl"            "https://ucsd-progsys.github.io/liquidhaskell-blog"     `mappend`
     constField "demoUrl"            "http://goto.ucsd.edu:8090/index.html#?demo=" `mappend`
     constField "tutorialUrl"        "http://ucsd-progsys.github.io/lh-workshop"  `mappend`
     constField "codeUrl"            "http://www.github.com/ucsd-progsys/liquidhaskell"  `mappend`
