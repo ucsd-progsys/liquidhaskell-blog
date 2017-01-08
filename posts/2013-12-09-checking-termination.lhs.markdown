@@ -19,15 +19,12 @@ themselves to prove termination!
 
 <div class="row-fluid">
    <div class="span12 pagination-centered">
-       <img src="http://img.dailymail.co.uk/i/pix/2007/06_01/TombstoneSWNS_468x526.jpg"
-       alt="Falling Down" width="300">
-       <br>
-       <br>
+   <p style="text-align:center">
+       <img class="center-block" src="/static/img/falling.jpg" alt="Falling Down" width="300">
        <br>
        How do you prove this fellow will <b>stop falling?</b>
        <br>
-       <br>
-       <br>
+   </p>
    </div>
 </div>
 
