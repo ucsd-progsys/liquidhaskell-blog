@@ -13,10 +13,6 @@ To add a new post:
 
 ## TODO
 
-+ Posts
-+ Index
-+ Archive
-+ Error
 - Disqus
 - [Teasers](https://jaspervdj.be/hakyll/tutorials/using-teasers-in-hakyll.html)
 - [Tags](https://javran.github.io/posts/2014-03-01-add-tags-to-your-hakyll-blog.html)
