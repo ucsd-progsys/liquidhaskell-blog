@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ <!--
+      loads the http over https ssl -
+      welcome to my website!
+
+	this theme is based off the Ice & Fire theme created by Lucas Gatsas
+      https://www.twitter.com/LucasGatsas
+      www.lucasgatsas.ch - switzerland.
+  -->
+
+
+<!-- Microsoft Internet Explorer documentMode compatMode setting IE Modus -->
+<script type="text/javascript">
+var IE = null;
+if (window.navigator.appName == "Microsoft Internet Explorer") {
+  if (document.documentMode) {
+
+    IE = document.documentMode;
+    } else {
+
+        IE = 5;
+          if (document.compatMode) {
+      if (document.compatMode == "CSS1Compat")
+      IE = 11;
+      }
+    }
+  }
+</script>
+
+    <meta charset="utf-8">
+    <!-- X-UA -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <link rel="author" title="Ranjit Jhala" href="http://ranjitjhala.github.io" />
+
+    <meta name="google" content="notranslate" />
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- index ROBOTS follow -->
+    <meta name="robots" content="index, follow" />
+    <!-- Site Desciption -->
+    <meta name="description" content="LiquidHaskell Blog">
+    <!-- Site Desciption -->
+    <meta name="keywords" content="haskell, refinement types, liquid types, formal methods, type systems">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ico.png" type="image/x-icon" />
+    <!-- Blog Title -->
+    <title>LiquidHaskell</title>
+
+    <!--     <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+-->
+    <!-- Property Metas -->
+    <meta property="og:image" content="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ix.png" />
+    <meta property="og:title" content="LiquidHaskell Blog" />
+    <meta property="og:site_name" content="LiquidHaskell Blog" />
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseUrl | prepend: site.url }}">
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/spaceg.stylesheets.css"> -->
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/ronacher.css" type="text/css">
+
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/syntax.css">
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/liquid-light.css">
+
+    <!-- Fonts
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+    -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+	#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:url("/static/img/preloader.gif"); /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	ul, ol {margin-top: 0;margin-bottom: 10px;}
+	.navbar-inverse {background-color: #FFF;border-color: #FFFFFF;}
+</style>
+<!--link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/prettify.css"-->
+<style>
+  /* HEADER IMAGE */
+  header.intro-header {background: #6f5499;background: no-repeat center center;background-attachment: scroll;-webkit-background-size: cover;-moz-background-size: cover;background-size: cover;-o-background-size: cover;}
+
+	/* Preloader */#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:; /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	li {list-style: none;}
+            body.modal-open
+            {overflow: hidden;padding-right: 0px;
+        }
+	article li {list-style: inherit;}
+	article .figure {text-align: center}
+    </style>
+    <!-- end Loading front stylesheet here -->
+    </head>
+
+    <body>
+	<div id="preloader">
+	    <div id="status">
+
+	    </div>
+
+	</div>  
+	<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://ucsd-progsys.github.io/liquidhaskell-blog" id="blog-title-left-top">LiquidHaskell</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <!-- <li class="dropdown">
+                    <a href="#portfolioModal2" data-toggle="modal"><i class="fa fa-random" id="icon-top"></i></a>
+                <ul class="dropdown-menu"></ul>
+                </li>-->
+                
+                <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=TellingLies.hs" target="_blank">Demo</a></li>
+                <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html" target="_blank">About</a></li>
+                <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
+                <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/archive/index.html" target="_blank">Archive</a></li>
+                <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Github</a></li>
+                <!--
+                <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/archive.html">Archive</a></li>
+                <li><a href="https://www.twitter.com/ranjitjhala" id="roundbutton" target="_blank"><i class="fa fa-twitter"></i>RanjitJhala</a></li>
+                -->
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<!-- Portfolio Modals -->
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ico.png" class="img-responsive img-centered" alt title>
+                            <p class="font-style-inline-small">
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow me</a>. <br>
+                                <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                                <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>
+                            </p>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Menu Modals Add New Sa.21.Feb.2015 03:22:25 -->
+    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <p class="font-style-inline-small">
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow</a>. <br>
+                        <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>  <br>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/">Home</a></li>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html">About Me</a></li>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/archive/index.html">Archive</a></li>
+                            </p>
+
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <div id="content">
+            <!-- Post Header -->
+<header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt title>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Getting To the Bottom</h1>
+                    
+                    <span class="meta">
+		    
+			Posted by Ranjit Jhala and Niki Vazou
+		    
+			Dec  2, 2013
+		    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+			<p><a href="../../../../blog/2013/11/23/telling_lies.lhs/">Previously</a>, we caught LiquidHaskell telling a lie. Today, lets try to get to the bottom of this mendacity, in order to understand how we can ensure that it always tells the truth.</p>
+<!-- more -->
+<pre><span class="hs-linenum">20: </span><span class="hs-keyword">module</span> <span class="hs-conid">GettingToTheBottom</span> <span class="hs-keyword">where</span>
+</pre>
+<h2 id="the-truth-lies-at-the-bottom">The Truth Lies At the Bottom</h2>
+<p>To figure out how we might prevent falsehoods, lets try to understand whats really going on. We need to go back to the beginning.</p>
+Recall that the refinement type:
+<pre><span class="hs-linenum">30: </span><span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-num">0</span> <span class="hs-varop">&lt;=</span> <span class="hs-varid">v</span><span class="hs-layout">}</span>
+</pre>
+<p>is supposed to denote the set of <code>Int</code> values that are greater than <code>0</code>.</p>
+Consider a function:
+<pre><span class="hs-linenum">36: </span><span class="hs-definition">fib</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">{</span><span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-num">0</span> <span class="hs-varop">&lt;=</span> <span class="hs-varid">n</span><span class="hs-layout">}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-num">0</span> <span class="hs-varop">&lt;=</span> <span class="hs-varid">v</span><span class="hs-layout">}</span>
+<span class="hs-linenum">37: </span><span class="hs-definition">fib</span> <span class="hs-varid">n</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">e</span>
+</pre>
+<p>Intuitively, the type signature states that when checking the body <code>e</code> we can <strong>assume</strong> that <code>0 &lt;= n</code>.</p>
+<p>This is indeed the case with <strong>strict</strong> evaluation, as we are guaranteed that <code>n</code> will be evaluated before <code>e</code>. Thus, either:</p>
+<ol style="list-style-type: decimal">
+<li><code>n</code> diverges and so we don’t care about <code>e</code> as we won’t evaluate it, or,</li>
+<li><code>n</code> is a non-negative value.</li>
+</ol>
+<p>Thus, either way, <code>e</code> is only evaluated in a context where <code>0 &lt;= n</code>.</p>
+<p>But this is <em>not</em> the case with <strong>lazy</strong> evaluation, as we may well start evaluating <code>e</code> without evaluating <code>n</code>. Indeed, we may <em>finish</em> evaluating <code>e</code> without evaluating <code>n</code>.</p>
+<p>Of course, <em>if</em> <code>n</code> is evaluated, it will yield a non-negative value, but if it is not (or does not) evaluate to a value, we <strong>cannot assume</strong> that the rest of the computation is dead (as with eager evaluation).</p>
+That is, with lazy evaluation, the refinement type <code>{n:Int | 0 &lt;= n}</code> <em>actually</em> means:
+<pre><span class="hs-linenum">60: </span><span class="hs-layout">(</span><span class="hs-varid">n</span> <span class="hs-keyglyph">=</span> <span class="hs-keyword">_</span><span class="hs-keyglyph">|</span><span class="hs-keyword">_</span><span class="hs-layout">)</span> <span class="hs-varop">||</span> <span class="hs-layout">(</span><span class="hs-num">0</span> <span class="hs-varop">&lt;=</span> <span class="hs-varid">n</span><span class="hs-layout">)</span>
+</pre>
+<h2 id="keeping-liquidhaskell-honest">Keeping LiquidHaskell Honest</h2>
+<p>One approach to forcing LiquidHaskell to telling the truth is to force it to <em>always</em> split cases and reason about <code>_|_</code>.</p>
+Lets revisit <code>explode</code>
+<pre><span class="hs-linenum">70: </span><span class="hs-definition">explode</span> <span class="hs-keyglyph">=</span> <span class="hs-keyword">let</span> <span class="hs-varid">z</span> <span class="hs-keyglyph">=</span> <span class="hs-num">0</span>
+<span class="hs-linenum">71: </span>          <span class="hs-keyword">in</span>  <span class="hs-layout">(</span><span class="hs-keyglyph">\</span><span class="hs-varid">x</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-num">2013</span> <span class="hs-varop">`divide`</span> <span class="hs-varid">z</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><span class="hs-varid">foo</span> <span class="hs-varid">z</span><span class="hs-layout">)</span>
+</pre>
+The case splitting prevents the cheerful but bogus prognosis that <code>explode</code> above was safe, because the SMT solver cannot prove that at the call to <code>divide</code>
+<pre><span class="hs-linenum">75: </span>    <span class="hs-varid">z</span> <span class="hs-varop">==</span> <span class="hs-num">0</span> <span class="hs-varop">&amp;&amp;</span> <span class="hs-layout">(</span><span class="hs-varid">x</span> <span class="hs-keyglyph">=</span> <span class="hs-keyword">_</span><span class="hs-keyglyph">|</span><span class="hs-keyword">_</span> <span class="hs-varop">||</span> <span class="hs-layout">(</span><span class="hs-varid">x</span> <span class="hs-varop">&gt;=</span> <span class="hs-num">0</span> <span class="hs-varop">&amp;&amp;</span> <span class="hs-varid">x</span> <span class="hs-varop">&lt;</span> <span class="hs-varid">z</span><span class="hs-layout">)</span><span class="hs-layout">)</span>  <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">z</span> <span class="hs-varop">/=</span> <span class="hs-num">0</span>
+</pre>
+<p>But alas, this cure is worse than the disease. It would end up lobotomizing LiquidHaskell making it unable to prove even trivial things like:</p>
+_
+<pre><span class="hs-linenum">82: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">trivial</span>    <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{pf:</span> <span class="hs-conid">()</span> <span class="hs-keyword">| x &lt; y}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">83: </span><span class="hs-definition">trivial</span> <span class="hs-varid">x</span> <span class="hs-varid">y</span> <span class="hs-varid">pf</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">liquidAssert</span> <span class="hs-layout">(</span><span class="hs-varid">x</span> <span class="hs-varop">&lt;</span> <span class="hs-varid">y</span><span class="hs-layout">)</span> <span class="hs-num">10</span>
+</pre>
+as the corresponding SMT query
+<pre><span class="hs-linenum">87: </span>    <span class="hs-layout">(</span><span class="hs-varid">pf</span> <span class="hs-keyglyph">=</span> <span class="hs-keyword">_</span><span class="hs-keyglyph">|</span><span class="hs-keyword">_</span> <span class="hs-varop">||</span> <span class="hs-varid">x</span> <span class="hs-varop">&lt;</span> <span class="hs-varid">y</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-layout">(</span><span class="hs-varid">x</span> <span class="hs-varop">&lt;</span> <span class="hs-varid">y</span><span class="hs-layout">)</span>
+</pre>
+<p>is, thanks to the pesky <code>_|_</code>, not valid.</p>
+<h2 id="terminating-the-bottom">Terminating The Bottom</h2>
+<p>Thus, to make LiquidHaskell tell the truth while also not just pessimistically rejecting perfectly good programs, we need a way to get rid of the <code>_|_</code>. That is, we require a means of teaching LiquidHaskell to determine when a value is <em>definitely</em> not bottom.</p>
+<p>In other words, we need to teach LiquidHaskell how to prove that a computation definitely terminates.</p>
+                <hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+            </div>
+        </div>
+    </div>
+</article>
+
+<script type="text/javascript">
+      var disqus_shortname = 'liquidhaskell';
+      
+        // `page.comments` can be only be set to true on pages/posts, so we embed the comments here.
+        // var disqus_developer = 1;
+        var disqus_identifier = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2013/12/02/getting-to-the-bottom.lhs';
+        var disqus_url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2013/12/02/getting-to-the-bottom.lhs'; 
+        var disqus_script     = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+<hr>
+
+        </div>
+        <div id="footer">
+        </div>
+      <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="https://ucsd-progsys.github.io/liquidhaskell-blog/feed.xml" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/ranjitjhala" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/ucsd-progsys" target="_blank">
+                            <span class="fa-stack fa-lg">
+
+                              <i class="fa fa-arrow-circle-o-down"></i>
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+		    
+                </ul>
+                <p class="copyright text-muted">
+                
+                  Copyright &copy; Ranjit Jhala and Niki Vazou 2016-17.
+                
+                  Generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>,
+                  template by <a href="http://lucumr.pocoo.org">Armin Ronacher</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<!-- jQuery -->
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/jquery.min.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/spaceg.stylesheets.min.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/bootstrap.min.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/scripts.js"></script>
+
+    </body>
+</html>

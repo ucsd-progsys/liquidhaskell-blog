@@ -1,0 +1,34 @@
+
+<!-- Post Header -->
+<header class="intro-header" style="background-image: url('/static/img/white.jpg')" alt="" title="">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+		<div class="post-heading">
+                    $if(title)$
+                      <p>  </p>
+                    $endif$
+		</div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+              $body$
+
+<h2>Recent Posts</h2>
+
+$partial("templates/post-list.html")$
+
+<p>... or you can find more in the <a href="/archive">archives</a>.</p>
+
+            </div>
+        </div>
+    </div>
+</article>
+<hr>

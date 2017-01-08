@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Refinement Reflection on ADTs: Lists are Monoids
+title: Refinement Reflection on ADTs
 date: 2016-10-06
 comments: true
 author: Niki Vazou
@@ -9,9 +9,12 @@ categories: reflection, induction, measures, monoids
 demo: MonoidList.hs
 ---
 
+Lists are Monoids
+-----------------
+
 [Previously][refinement-reflection] we saw how Refinement Reflection
-can be used to write Haskell functions that prove theorems about 
-other Haskell functions. Today, we will see how Refinement Reflection 
+can be used to write Haskell functions that prove theorems about
+other Haskell functions. Today, we will see how Refinement Reflection
 works on **recursive data types**.
 As an example, we will prove that **lists are monoids** (under nil and append).
 
@@ -21,21 +24,16 @@ the laws by writing plain Haskell functions that are checked by LiquidHaskell.
 <!-- more -->
 
 <br>
-<br>
-<br>
 
 <div class="row-fluid">
   <div class="span12 pagination-centered">
-  <img src="http://www.aaronartprints.org/images/Paintings/4597.jpg"
-       alt="Recursion" width="300">
-       <br>
-       <br>
+  <p style="text-align:center">
+  <img class="center-block" src="http://www.aaronartprints.org/images/Paintings/4597.jpg" alt="Recursion" width="300">
        <br>
        Recursive Paper and Pencil Proofs.
        "Drawing Hands" by Escher.
        <br>
-       <br>
-       <br>
+  </p>
   </div>
 </div>
 
@@ -162,9 +160,9 @@ Lets define these two operators for our `List`.
                                      &amp;&amp; VV == &lt;&gt; xs ys}</span><span class='hs-varid'>xs</span></a> <span class='hs-varop'>&lt;&gt;</span> <span class='hs-varid'>ys</span><span class='hs-layout'>)</span>
 </pre>
 
-LiquidHaskell automatically checked that the recursive `(<>)` 
+LiquidHaskell automatically checked that the recursive `(<>)`
 is terminating, by checking that the `length` of its first
-argument is decreasing. Since both the above operators are 
+argument is decreasing. Since both the above operators are
 provably terminating, LH lets us reflect them into logic.
 
 As with our [previous][refinement-reflection]
@@ -187,7 +185,7 @@ types for `empty` and `(<>)` will be
 
 In effect, the derived checker and selector functions are used
 to translate Haskell to logic. The above is just to *explain*
-how LH reasons about the operators; the programmer never (directly) 
+how LH reasons about the operators; the programmer never (directly)
 reads or writes the operators `isN` or `select_C_1` etc.
 
 Proving the Monoid Laws
@@ -254,7 +252,7 @@ hypothesis is appropriately applied by checking that the recursive proof is
 total and terminating.  In the `rightId` case, for termination, Liquid Haskell
 checked that `length xs < length (C x xs)`.
 
-It turns out that we can prove lots of properties about lists using structural 
+It turns out that we can prove lots of properties about lists using structural
 induction, encoded in Haskell as
 
 * case splitting,
@@ -328,7 +326,7 @@ To see a last example, lets prove the associativity of `(<>)`.
 <span class=hs-linenum>247: </span>  <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
 </pre>
 
-The above proof of associativity reifies the paper and pencil 
+The above proof of associativity reifies the paper and pencil
 proof by structural induction.
 
 With that, we can safely conclude that our user defined list

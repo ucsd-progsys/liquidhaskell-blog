@@ -2,6 +2,14 @@
   color: #007020
 }
 
+.hs-linenum {
+  color: white;
+}
+
+.hs-error {
+  background-color: #f4abbb;
+}
+
 .hs-keyword {
   color: #007020;
   // font-weight: bold;

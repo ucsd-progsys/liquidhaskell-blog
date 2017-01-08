@@ -6,6 +6,7 @@ author: Eric Seidel
 published: true
 comments: true
 categories: basic measures
+demo: SimpleRefinements.hs
 ---
 
 Yesterday someone asked on [Reddit][] how one might define GHC's [OrdList][] 

@@ -4,6 +4,7 @@ comments: false
 sharing: true
 footer: true
 headerImg: sea.jpg
+demo: SimpleRefinements.hs
 ---
 
 LiquidHaskell is a static verifier for Haskell, based on **Liquid Types**
