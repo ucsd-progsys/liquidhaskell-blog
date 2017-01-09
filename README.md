@@ -20,15 +20,20 @@ To add a new post:
 ## SPLASH
 
 1. [Verify functions are Total](tests/todo/splash-total.hs)
+   + splash-head.gif 
+   + splash-unstutter.gif 
 
 2. [Keep Pointers within Bounds](tests/todo/splash-vector.hs) 
-   - add key-value sets to it 
+   + vectorsum.gif 
+   + splash-dotproduct.gif
 
-3. Ensure Termination 
-   - 
+3. [Ensure Termination](tests/todo/splash-total.hs)
+   + splash-fib.gif
+   + merge.gif 
 
-4. Check User Defined Invariants 
-   - InsertSort
+4. [Check User Defined Invariants](tests/todo/splash-total.hs)
+   + ups.gif 
+   + insertsort.gif 
  
 5. Prove Laws by Writing Code
-   - MapFusion
+   + splash-append.png 
