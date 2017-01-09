@@ -24,16 +24,17 @@ To add a new post:
    + splash-unstutter.gif 
 
 2. [Keep Pointers within Bounds](tests/todo/splash-vector.hs) 
-   + vectorsum.gif 
+   + splash-vectorsum.gif 
    + splash-dotproduct.gif
+   + splash-unsafetake.gif
 
 3. [Ensure Termination](tests/todo/splash-total.hs)
    + splash-fib.gif
-   + merge.gif 
+   + splash-merge.gif 
 
 4. [Check User Defined Invariants](tests/todo/splash-total.hs)
-   + ups.gif 
-   + insertsort.gif 
+   + splash-ups.gif 
+   + splash-insertsort.gif 
  
 5. Prove Laws by Writing Code
    + splash-append.png 
