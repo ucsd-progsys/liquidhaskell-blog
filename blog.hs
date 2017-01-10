@@ -13,10 +13,20 @@ import Data.Typeable
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
+  copyStatic
+  -- makePosts
+  -- makeAbout
+  -- makeBlog
+  makeIndex
+  makeTemplates
+
+copyStatic =
   match "static/*/*" $ do
     route idRoute
     compile copyFileCompiler
 
+
+makePosts =
   match "posts/*" $ do
     route $ setExtension "html" `composeRoutes`
             dateFolders         `composeRoutes`
@@ -27,6 +37,7 @@ main = hakyll $ do
         >>= loadAndApplyTemplate "templates/default.html" postCtx
         >>= relativizeUrls
 
+makeAbout =
   match "about.md" $ do
     route   $ setExtension "html"
     compile $ pandocCompiler
@@ -34,33 +45,29 @@ main = hakyll $ do
             >>= loadAndApplyTemplate "templates/default.html" siteCtx
             >>= relativizeUrls
 
-  create ["blog.html"] $ do
-    route idRoute
+makeBlog =
+  match "blog.md" $ do
+    route $ setExtension "html"
     compile $ do
       posts <- recentFirst =<< loadAll "posts/*"
       let blogCtx = listField "posts" postCtx (return posts)  `mappend`
                     constField "title" "Blog"                 `mappend`
-                    constField "demo"  "SimpleRefinements.hs" `mappend`
-                    dropIndexHtml "url"                       `mappend`
-                    siteCtx
-
-      makeItem ""
+                    pageCtx
+      pandocCompiler
         >>= loadAndApplyTemplate "templates/blog.html"    blogCtx
         >>= loadAndApplyTemplate "templates/default.html" blogCtx
         >>= relativizeUrls
 
-  create ["index.html"] $ do
-    route   idRoute
-    compile $ do
-      let indexCtx = constField "demo"  "SimpleRefinements.hs" `mappend`
-                     dropIndexHtml "url"                       `mappend`
-                     siteCtx
-
-      makeItem ""
-        >>= loadAndApplyTemplate "templates/index.html"   indexCtx
-        >>= loadAndApplyTemplate "templates/default.html" indexCtx
+makeIndex =
+  match "index.md" $ do
+    route $ setExtension "html"
+    compile $
+      pandocCompiler -- makeItem ""
+        >>= loadAndApplyTemplate "templates/index.html"   pageCtx
+        >>= loadAndApplyTemplate "templates/default.html" pageCtx
         >>= relativizeUrls
 
+makeTemplates =
   match "templates/*" $ compile templateCompiler
 
 appendIndex :: Routes
@@ -98,7 +105,11 @@ postCtx =
   dropIndexHtml "url"          `mappend`
   siteCtx
 
-
+pageCtx :: Context String
+pageCtx =
+  constField "demo"  "SimpleRefinements.hs" `mappend`
+  dropIndexHtml "url"                       `mappend`
+  siteCtx
 -- http://goto.ucsd.edu:8090/index.html#?demo=ANF.hs
 
 siteCtx :: Context String
