@@ -138,7 +138,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                 <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
                 <li><a href="http://ucsd-progsys.github.io/lh-tutorial" target="_blank">Book</a></li>
                 <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html" target="_blank">About</a></li>
-                <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Github</a></li>
+                <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
                 <!--
                 <li><a href="https://www.twitter.com/ranjitjhala" id="roundbutton" target="_blank"><i class="fa fa-twitter"></i>RanjitJhala</a></li>
                 -->
@@ -203,7 +203,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                     <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=SimpleRefinements.hs" target="_blank">Demo</a></li>
                     <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
                     <li><a href="http://ucsd-progsys.github.io/lh-tutorial" target="_blank">Book</a></li>
-                    <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Github</a></li>
+                    <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
                             </p>
 
                             <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
@@ -218,7 +218,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div id="content">
             
 <!-- Post Header -->
-<header class="intro-header" style="background-image: url('/static/img/white.jpg')" alt title>
+<header class="intro-header" style="background-image: url('/static/img/logo.png')" alt title>
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
@@ -240,18 +240,28 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <div class="container">
   <div class="row">
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-      
+      <div class="figure">
+<img src="./static/img/logo.png" />
+
+</div>
+
+    LiquidHaskell (LH) is a static verifier for Haskell that enriches
+    Haskell's types with <i>refinement predicates</i> that let you
+    enforce critical correctness properties at <i>compile time</i>.
+
+    <br>
+    <h2>Guarantee Functions are Total</h2>
+    <br>
 
     <div class="row">
-      <div class="col-md-3">
-         A-Sidebar content this is a really really really long piece
-         of text that I wrote because I am very lazy and tired, and
-         need to go home.
+      <div class="col-md-4">
+        LH warns you that <code>head</code> is not total as it
+        is missing the case for <code>[]</code> and checks that
+        it is total on <code>NonEmpty</code> lists. [more]
       </div>
+
       <div class="col-md-8">
-         A-Sidebar content this is a really really really long piece
-         of text that I wrote because I am very lazy and tired, and
-         need to go home.
+        <img class="center-block" src="./static/img/splash-head.gif">
       </div>
     </div>
 
@@ -259,22 +269,149 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
     <div class="row">
       <div class="col-md-8">
-         B-Sidebar content this is a really really really long piece
-         of text that I wrote because I am very lazy and tired, and
-         need to go home.
+        <img class="center-block" src="./static/img/splash-unstutter.gif">
+      </div>
+      <div class="col-md-4">
+        The input contract propagates to uses of <code>head</code>
+        which are verified by ensuring the arguments are
+        <code>NonEmpty</code>.
+      </div>
+    </div>
+
+    <br>
+    <h2>Keep Pointers Within Bounds</h2>
+    <br>
+
+    <br>
+
+    <div class="row">
+      <div class="col-md-4">
+        LH lets you avoid off-by-one errors that can lead to crashes
+        or buffer overflows. [more]
       </div>
 
+      <div class="col-md-8">
+        <img class="center-block" src="./static/img/splash-vectorsum.gif">
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-md-9">
+        <img class="center-block" src="./static/img/splash-dotProduct.gif">
+      </div>
 
       <div class="col-md-3">
-         B-body content this is a really really really long piece
-         of text that I wrote because I am very lazy and tired, and
-         need to go home.
+        Dependent contracts let you specify, e.g. that
+        <code>dotProduct</code> requires equal-sized vectors.
       </div>
     </div>
 
-            </div>
+    <!--
+      <div class="row">
+        <div class="col-md-4">
+          This is some text that explains how <code>unsafeTake</code> works.
         </div>
+
+        <div class="col-md-8">
+          <img class="center-block" src="/static/img/splash-unsafeTake.gif">
+        </div>
+      </div>
+    -->
+
+    <br>
+      <h2>Avoid Infinite Loops</h2>
+    <br>
+
+    <div class="row">
+      <div class="col-md-5">
+        LH checks that functions <i>terminate</i> and so
+        warns about the infinite recursion due to the missing
+        case in <code>fib</code>. [more]
+      </div>
+
+      <div class="col-md-7">
+        <img class="center-block" src="./static/img/splash-fib.gif">
+      </div>
     </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-md-9">
+        <img class="center-block" src="./static/img/splash-merge.gif">
+      </div>
+      <div class="col-md-3">
+        <i>Metrics</i> let you check that recursive functions
+        over complex data types terminate.
+      </div>
+    </div>
+
+    <br>
+      <h2>Enforce Correctness Properties</h2>
+    <br>
+
+    <div class="row">
+      <div class="col-md-5">
+        Write correctness requirements, for example a list is <i>ordered</i>,
+        as refinements. LH makes illegal values be <i>unrepresentable</i>.
+        [more]
+      </div>
+
+      <div class="col-md-7">
+        <img class="center-block" src="./static/img/splash-ups.gif">
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-md-9">
+        <img class="center-block" src="./static/img/splash-insertsort.gif">
+      </div>
+
+      <div class="col-md-3">
+        LH automatically points out logic bugs, and proves
+        that functions return correct outputs
+        <i>for all inputs</i>.
+      </div>
+    </div>
+
+    <br>
+      <h2>Prove Laws by Writing Code</h2>
+    <br>
+
+    <div class="row">
+      <div class="col-md-3">
+        Specify <i>laws</i>, e.g. that the append
+        function <code>++</code> is associative,
+        as Haskell functions.
+      </div>
+
+      <div class="col-md-9">
+        <img class="center-block" src="./static/img/splash-assocthm.gif">
+      </div>
+    </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-md-9">
+        <img class="center-block" src="./static/img/splash-assocpf.gif">
+      </div>
+
+      <div class="col-md-3">
+        Verify laws via <i>equational proofs</i> that are plain Haskell
+        functions. Induction is simply recursion, and case-splitting is
+        just pattern-matching. [more]
+      </div>
+    </div>
+
+
+    </div>
+  </div>
+</div>
 </article>
 <hr>
 
