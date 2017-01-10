@@ -9,32 +9,12 @@ See [about](about.md) for more details.
 To add a new post:
 
 1. Add the .markdown file in `posts/`
+
 2. Run `make upload`
 
 ## TODO
 
 - Disqus
-- [Teasers](https://jaspervdj.be/hakyll/tutorials/using-teasers-in-hakyll.html)
 - [Tags](https://javran.github.io/posts/2014-03-01-add-tags-to-your-hakyll-blog.html)
-
-## SPLASH
-
-1. [Verify functions are Total](tests/todo/splash-total.hs)
-   + splash-head.gif 
-   + splash-unstutter.gif 
-
-2. [Keep Pointers within Bounds](tests/todo/splash-vector.hs) 
-   + splash-vectorsum.gif 
-   + splash-dotproduct.gif
-   + splash-unsafetake.gif
-
-3. [Ensure Termination](tests/todo/splash-total.hs)
-   + splash-fib.gif
-   + splash-merge.gif 
-
-4. [Check User Defined Invariants](tests/todo/splash-total.hs)
-   + splash-ups.gif 
-   + splash-insertsort.gif 
- 
-5. Prove Laws by Writing Code
-   + splash-append.png 
+- [Teasers](https://jaspervdj.be/hakyll/tutorials/using-teasers-in-hakyll.html)
+- point goto-demo page to new URL.

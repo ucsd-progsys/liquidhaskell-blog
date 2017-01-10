@@ -1,18 +1,18 @@
-<script type="text/javascript">
-      var disqus_shortname = '$disqus_short_name$';
-      $if(comments)$
-        // `page.comments` can be only be set to true on pages/posts, so we embed the comments here.
-        // var disqus_developer = 1;
-        var disqus_identifier = '$baseUrl$$url$';
-        var disqus_url        = '$baseUrl$$url$'; 
-        var disqus_script     = 'embed.js';
-      $else$ 
-        // As `page.comments` is empty, we must be on the index page.
-        var disqus_script = 'count.js';
-      $endif$
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
+<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    var disqus_config = function () {
+        this.page.url        = '$baseUrl$$url$';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = '$url$';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+        var d = document, s = d.createElement('script');
+        s.src = '//$disqus_short_name$.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
 </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
