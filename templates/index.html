@@ -24,12 +24,19 @@
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       $body$
 
+    LiquidHaskell is a static verifier for Haskell that enriches
+    Haskell's types with <i>refinement predicates</i> that let you
+    enforce critical correctness properties at <i>compile time</i>.
+
     <br>
     <h2>Guarantee Functions are Total</h2>
     <br>
 
     <div class="row">
       <div class="col-md-4">
+        LiquidHaskell lets you check that all your functions
+        are <i>total</i>. You can represent the <code>[]</code>
+
         This is some text that explains how <code>head</code> works.
       </div>
 
@@ -94,7 +101,7 @@
     -->
 
     <br>
-      <h2>Ensure Termination to Avoid Infinite Loops</h2>
+      <h2>Avoid Infinite Loops</h2>
     <br>
 
     <div class="row">
@@ -103,7 +110,7 @@
       </div>
 
       <div class="col-md-6">
-        <img class="center-block" src="/static/img/splash-fib.gif" width=300px>
+        <img class="center-block" src="/static/img/splash-fib.gif" width=350px>
       </div>
     </div>
 
@@ -135,12 +142,12 @@
     <br>
 
     <div class="row">
-      <div class="col-md-4">
-        This is some text that explains how <code>insertSort</code> works.
+      <div class="col-md-9">
+        <img class="center-block" src="/static/img/splash-insertsort.gif">
       </div>
 
-      <div class="col-md-8">
-        <img class="center-block" src="/static/img/splash-insertsort.gif">
+      <div class="col-md-3">
+        This is some text that explains how <code>insertSort</code> works.
       </div>
     </div>
 
@@ -150,13 +157,28 @@
 
     <div class="row">
       <div class="col-md-4">
-        This is some text that explains how <code>append</code> works.
+        This is some text that explains how <code>++</code> works, and
+        how to write the associativity property.
       </div>
 
       <div class="col-md-8">
-        <img class="center-block" src="/static/img/splash-append.gif">
+        <img class="center-block" src="/static/img/splash-assocthm.gif">
       </div>
     </div>
+
+    <br>
+
+    <div class="row">
+      <div class="col-md-8">
+        <img class="center-block" src="/static/img/splash-assocpf.gif">
+      </div>
+
+      <div class="col-md-4">
+        And finally, how to write the proof via case-splitting
+        (pattern-matching) and induction (recursion).
+      </div>
+    </div>
+
 
     </div>
   </div>
