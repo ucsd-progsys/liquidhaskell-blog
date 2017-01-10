@@ -24,7 +24,7 @@
     <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
       $body$
 
-    LiquidHaskell is a static verifier for Haskell that enriches
+    LiquidHaskell (LH) is a static verifier for Haskell that enriches
     Haskell's types with <i>refinement predicates</i> that let you
     enforce critical correctness properties at <i>compile time</i>.
 
@@ -34,10 +34,9 @@
 
     <div class="row">
       <div class="col-md-4">
-        LiquidHaskell lets you check that all your functions
-        are <i>total</i>. You can represent the <code>[]</code>
-
-        This is some text that explains how <code>head</code> works.
+        LH warns you that <code>head</code> is not total as it
+        is missing the case for <code>[]</code> and checks that
+        it is total on <code>NonEmpty</code> lists.
       </div>
 
       <div class="col-md-8">
@@ -51,10 +50,10 @@
       <div class="col-md-8">
         <img class="center-block" src="/static/img/splash-unstutter.gif">
       </div>
-
       <div class="col-md-4">
-        Here is some text that shows how the signature for <code>head</code>
-        is used to check a <i>client</i> function <code>unstutter</code>.
+        The totality requirement is propagated to uses of
+        <code>head</code>. These can be verified by ensuring
+        the arguments are <code>NonEmpty</code>.
       </div>
     </div>
 
@@ -66,7 +65,8 @@
 
     <div class="row">
       <div class="col-md-4">
-        This is some text that explains how <code>vectorSum</code> works.
+        LH lets you avoid off-by-one errors that can lead to crashes
+        or buffer overflows.
       </div>
 
       <div class="col-md-8">
@@ -82,7 +82,9 @@
       </div>
 
       <div class="col-md-3">
-        This is some text that explains how <code>dotProduct</code> works.
+        <i>Dependent refinements</i> let you write contracts on
+        multiple inputs, e.g. that <code>dotProduct</code> is only
+        defined for equal-sized vectors.
       </div>
     </div>
 
