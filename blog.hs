@@ -8,6 +8,7 @@ import           System.FilePath ( (</>), (<.>)
                                  , splitExtension, splitFileName
                                  , takeDirectory )
 
+import Data.Typeable
 
 --------------------------------------------------------------------------------
 main :: IO ()
@@ -16,81 +17,66 @@ main = hakyll $ do
     route idRoute
     compile copyFileCompiler
 
-  match (fromList [{- "index.md", -} "about.md"]) $ do
-    route   $ setExtension "html"
-    compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/page.html"    siteCtx
-            >>= loadAndApplyTemplate "templates/default.html" siteCtx
-            >>= relativizeUrls
-
-
-  -- create ["archive.html"] $ do
-    -- route idRoute
-    -- compile $ do
-      -- posts <- recentFirst =<< loadAll "posts/*"
-      -- let archiveCtx = listField "posts" postCtx (return posts) `mappend`
-                       -- constField "title" "Archives"            `mappend`
-                       -- siteCtx
-
-      -- makeItem ""
-            -- >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
-            -- >>= loadAndApplyTemplate "templates/default.html" archiveCtx
-            -- >>= relativizeUrls
-
-
   match "posts/*" $ do
     route $ setExtension "html" `composeRoutes`
             dateFolders         `composeRoutes`
             dropPostsPrefix     `composeRoutes`
-            -- prependCategory     `composeRoutes`
             appendIndex
     compile $ pandocCompiler
         >>= loadAndApplyTemplate "templates/post.html"    postCtx
         >>= loadAndApplyTemplate "templates/default.html" postCtx
         >>= relativizeUrls
 
-  create ["archive.html"] $ do
-    route appendIndex
-    compile $ do
-      posts <- recentFirst =<< loadAll "posts/*"
-      let archiveCtx = listField "posts" postCtx (return posts) `mappend`
-                       constField "title" "Archives"            `mappend`
-                       constField "demo"  "SimpleRefinements.hs"      `mappend`
-                       dropIndexHtml "url"                      `mappend`
-                       siteCtx
-
-      makeItem ""
-        >>= loadAndApplyTemplate "templates/archive.html" archiveCtx
-        >>= loadAndApplyTemplate "templates/default.html" archiveCtx
-        >>= relativizeUrls
-
-  match (fromList [{- "index.md", -} "about.md"]) $ do
+  match "about.md" $ do
     route   $ setExtension "html"
     compile $ pandocCompiler
             >>= loadAndApplyTemplate "templates/page.html"    siteCtx
             >>= loadAndApplyTemplate "templates/default.html" siteCtx
             >>= relativizeUrls
 
-  match "index.md" $ do
-    route   $ setExtension "html"
+  create ["blog.html"] $ do
+    route idRoute
     compile $ do
-      posts <- fmap (take 5) . recentFirst =<< loadAll "posts/*"
-      let indexCtx = listField "posts" postCtx (return posts) `mappend`
-                     -- constField "title" "Home"                `mappend`
-                     constField "demo"  "SimpleRefinements.hs"      `mappend`
-                     dropIndexHtml "url"                      `mappend`
+      posts <- recentFirst =<< loadAll "posts/*"
+      let archiveCtx = listField "posts" postCtx (return posts)  `mappend`
+                       constField "title" "Blog"                 `mappend`
+                       constField "demo"  "SimpleRefinements.hs" `mappend`
+                       dropIndexHtml "url"                       `mappend`
+                       siteCtx
+
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/blog.html" archiveCtx
+        >>= loadAndApplyTemplate "templates/default.html" archiveCtx
+        >>= relativizeUrls
+
+  create ["index.html"] $ do
+    route   idRoute
+    compile $ do
+      let indexCtx = constField "demo"  "SimpleRefinements.hs" `mappend`
+                     dropIndexHtml "url"                       `mappend`
                      siteCtx
 
-      -- getResourceBody
-      pandocCompiler
-        >>= applyAsTemplate indexCtx
+      makeItem ""
         >>= loadAndApplyTemplate "templates/index.html"   indexCtx
         >>= loadAndApplyTemplate "templates/default.html" indexCtx
         >>= relativizeUrls
 
+  create ["blog.html"] $ do
+    route   idRoute
+    compile $ do
+      posts <- fmap (take 5) . recentFirst =<< loadAll "posts/*"
+      let indexCtx = listField "posts" postCtx (return posts)  `mappend`
+                     constField "demo"  "SimpleRefinements.hs" `mappend`
+                     constField "title"  "Recent Posts"        `mappend`
+                     dropIndexHtml "url"                       `mappend`
+                     siteCtx
+
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/blog.html"   indexCtx
+        >>= loadAndApplyTemplate "templates/default.html" indexCtx
+        >>= relativizeUrls
+
   match "templates/*" $ compile templateCompiler
-
-
 
 appendIndex :: Routes
 appendIndex = customRoute $ (\(p, e) -> p </> "index" <.> e) . splitExtension . toFilePath
@@ -136,6 +122,7 @@ siteCtx =
     constField "baseUrl"            "https://ucsd-progsys.github.io/liquidhaskell-blog"     `mappend`
     constField "demoUrl"            "http://goto.ucsd.edu:8090/index.html#?demo=" `mappend`
     constField "tutorialUrl"        "http://ucsd-progsys.github.io/lh-workshop"  `mappend`
+    constField "bookUrl"            "http://ucsd-progsys.github.io/lh-tutorial"  `mappend`
     constField "codeUrl"            "http://www.github.com/ucsd-progsys/liquidhaskell"  `mappend`
     constField "site_name"          "LiquidHaskell"             `mappend`
     constField "site_description"   "LiquidHaskell Blog"        `mappend`
