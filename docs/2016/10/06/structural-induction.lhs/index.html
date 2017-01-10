@@ -242,7 +242,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-			<h2 id="lists-are-monoids">Lists are Monoids</h2>
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/reflection.html">reflection</a>, <a href="../../../../tags/induction.html">induction</a>, <a href="../../../../tags/measures.html">measures</a>
+              
+            </div>
+
+            <br>
+			            <h2 id="lists-are-monoids">Lists are Monoids</h2>
 <p><a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/blog/blog/2016/09/18/refinement-reflection.lhs/">Previously</a> we saw how Refinement Reflection can be used to write Haskell functions that prove theorems about other Haskell functions. Today, we will see how Refinement Reflection works on <strong>recursive data types</strong>. As an example, we will prove that <strong>lists are monoids</strong> (under nil and append).</p>
 <p>Lets see how to express <strong>the monoid laws</strong> as liquid types, and then prove the laws by writing plain Haskell functions that are checked by LiquidHaskell.</p>
 <!-- more -->

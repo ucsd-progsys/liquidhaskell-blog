@@ -242,7 +242,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-			<p>We’ve seen all sorts of interesting invariants that can be expressed with refinement predicates. For example, whether a divisor is <a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">non-zero</a>, the <a href="../../../../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">dimension</a> of lists, ensuring the safety of <a href="../../../../blog/2013/03/04/bounding-vectors.lhs/">vector indices</a> and reasoning about the <a href="../../../../blog/2013/03/26/talking/about/sets.lhs/">set</a> of values in containers and verifying their <a href="../../../../blog/2013/05/16/unique-zipper.lhs/">uniqueness</a>. In each of these cases, we were working with <em>specific</em> refinement predicates that described whatever property was of interest.</p>
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/abstract-refinements.html">abstract-refinements</a>
+              
+            </div>
+
+            <br>
+			            <p>We’ve seen all sorts of interesting invariants that can be expressed with refinement predicates. For example, whether a divisor is <a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">non-zero</a>, the <a href="../../../../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">dimension</a> of lists, ensuring the safety of <a href="../../../../blog/2013/03/04/bounding-vectors.lhs/">vector indices</a> and reasoning about the <a href="../../../../blog/2013/03/26/talking/about/sets.lhs/">set</a> of values in containers and verifying their <a href="../../../../blog/2013/05/16/unique-zipper.lhs/">uniqueness</a>. In each of these cases, we were working with <em>specific</em> refinement predicates that described whatever property was of interest.</p>
 <p>Today, (drumroll please), I want to unveil a brand new feature of LiquidHaskell, which allows us to <em>abstract</em> over specific properties or invariants, which significantly increases the expressiveness of the system, whilst still allowing our friend the SMT solver to carry out verification and inference automatically.</p>
 <!-- more -->
 <pre><span class="hs-linenum">30: </span>

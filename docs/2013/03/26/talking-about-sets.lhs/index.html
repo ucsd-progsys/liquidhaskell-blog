@@ -242,7 +242,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-			<p>In the posts so far, we’ve seen how LiquidHaskell allows you to use SMT solvers to specify and verify <em>numeric</em> invariants – denominators that are non-zero, integer indices that are within the range of an array, vectors that have the right number of dimensions and so on.</p>
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/basic.html">basic</a>, <a href="../../../../tags/measures.html">measures</a>, <a href="../../../../tags/sets.html">sets</a>
+              
+            </div>
+
+            <br>
+			            <p>In the posts so far, we’ve seen how LiquidHaskell allows you to use SMT solvers to specify and verify <em>numeric</em> invariants – denominators that are non-zero, integer indices that are within the range of an array, vectors that have the right number of dimensions and so on.</p>
 <p>However, SMT solvers are not limited to numbers, and in fact, support rather expressive logics. In the next couple of posts, let’s see how LiquidHaskell uses SMT to talk about <strong>sets of values</strong>, for example, the contents of a list, and to specify and verify properties about those sets.</p>
 <!-- more -->
 <pre><span class="hs-linenum">27: </span><span class="hs-keyword">module</span> <span class="hs-conid">TalkingAboutSets</span> <span class="hs-keyword">where</span>

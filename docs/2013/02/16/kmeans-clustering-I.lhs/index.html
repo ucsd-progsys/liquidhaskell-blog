@@ -242,7 +242,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-			<p><a href="../../../../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">Last time</a> we introduced a new specification mechanism called a <em>measure</em> and demonstrated how to use it to encode the <em>length</em> of a list. We saw how measures could be used to verify that functions like <code>head</code> and <code>tail</code> were only called with non-empty lists (whose length was strictly positive). As several folks pointed out, once LiquidHaskell can reason about lengths, it can do a lot more than just analyze non-emptiness.</p>
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/basic.html">basic</a>, <a href="../../../../tags/measures.html">measures</a>
+              
+            </div>
+
+            <br>
+			            <p><a href="../../../../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">Last time</a> we introduced a new specification mechanism called a <em>measure</em> and demonstrated how to use it to encode the <em>length</em> of a list. We saw how measures could be used to verify that functions like <code>head</code> and <code>tail</code> were only called with non-empty lists (whose length was strictly positive). As several folks pointed out, once LiquidHaskell can reason about lengths, it can do a lot more than just analyze non-emptiness.</p>
 <p>Indeed!</p>
 <p>Over the next <em>two</em> posts, lets see how one might implement a Kmeans algorithm that clusters <code>n</code>-dimensional points groups, and how LiquidHaskell can help us write and enforce various dimensionality invariants along the way.</p>
 <!-- more -->

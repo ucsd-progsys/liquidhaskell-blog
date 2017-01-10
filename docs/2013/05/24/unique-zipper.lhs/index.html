@@ -242,7 +242,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-			<p><strong>The story so far:</strong> <a href="blog/2013/03/26/talking-about-sets.lhs/">Previously</a> we saw how we can use LiquidHaskell to talk about set of values and specifically the <em>set of values</em> in a list.</p>
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/basic.html">basic</a>, <a href="../../../../tags/measures.html">measures</a>, <a href="../../../../tags/sets.html">sets</a>, <a href="../../../../tags/uniqueness.html">uniqueness</a>
+              
+            </div>
+
+            <br>
+			            <p><strong>The story so far:</strong> <a href="blog/2013/03/26/talking-about-sets.lhs/">Previously</a> we saw how we can use LiquidHaskell to talk about set of values and specifically the <em>set of values</em> in a list.</p>
 <p>Often, we want to enforce the invariant that a particular data structure contains <em>no duplicates</em>. For example, we may have a structure that holds a collection of file handles, or other resources, where the presence of duplicates could lead to unpleasant leaks.</p>
 <p>In this post, we will see how to use LiquidHaskell to talk about the set of duplicate values in data structures, and hence, let us specify and verify uniqueness, that is, the absence of duplicates.</p>
 <!-- more -->

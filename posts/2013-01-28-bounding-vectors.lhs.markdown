@@ -3,7 +3,7 @@ layout: post
 title: Bounding Vectors
 date: 2013-01-30 16:12
 author: Ranjit Jhala
-published: false 
+published: true 
 comments: true
 tags: basic
 demo: vectorbounds.hs

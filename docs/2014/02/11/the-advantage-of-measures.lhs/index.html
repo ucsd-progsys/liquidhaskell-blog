@@ -242,7 +242,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-			<p>Yesterday someone asked on <a href="http://www.reddit.com/r/haskell/comments/1xiurm/how_to_define_append_for_ordlist_defined_as_gadt/">Reddit</a> how one might define GHC’s <a href="http://www.haskell.org/platform/doc/2013.2.0.0/ghc-api/OrdList.html">OrdList</a> in a way that statically enforces its three key invariants. The accepted solution required rewriting <code>OrdList</code> as a <code>GADT</code> indexed by a proof of <em>emptiness</em> (which is essentially created by a run-time check), and used the new Closed Type Families extension in GHC 7.8 to define a type-level join of the Emptiness index.</p>
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/basic.html">basic</a>, <a href="../../../../tags/measures.html">measures</a>
+              
+            </div>
+
+            <br>
+			            <p>Yesterday someone asked on <a href="http://www.reddit.com/r/haskell/comments/1xiurm/how_to_define_append_for_ordlist_defined_as_gadt/">Reddit</a> how one might define GHC’s <a href="http://www.haskell.org/platform/doc/2013.2.0.0/ghc-api/OrdList.html">OrdList</a> in a way that statically enforces its three key invariants. The accepted solution required rewriting <code>OrdList</code> as a <code>GADT</code> indexed by a proof of <em>emptiness</em> (which is essentially created by a run-time check), and used the new Closed Type Families extension in GHC 7.8 to define a type-level join of the Emptiness index.</p>
 <p>Today, let’s see a somewhat more direct way of tackling this problem in LiquidHaskell, in which we need not change a single line of code (well.. maybe one), and need not perform any dynamic checks.</p>
 <!-- more -->
 <div class="hidden">

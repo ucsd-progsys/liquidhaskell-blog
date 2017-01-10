@@ -242,7 +242,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-			<p><a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">Previously</a> we <a href="../../../../blog/2013/01/27/refinements101-reax.lhs/">saw</a> some examples of how refinements could be used to encode invariants about basic <code>Int</code> values. Today, let’s see how refinements allow us specify and verify <em>structural invariants</em> about recursive data types like lists. In particular, we will learn about at a new mechanism called a <code>measure</code>, use measures to describe the <strong>length</strong> of a list, and use the resulting refinement types to obtain compile-time assurances that canonical list manipulating operations like <code>head</code>, <code>tail</code>, <code>foldl1</code> and (incomplete) pattern matches will not <em>blow up</em> at run-time.</p>
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/measures.html">measures</a>
+              
+            </div>
+
+            <br>
+			            <p><a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">Previously</a> we <a href="../../../../blog/2013/01/27/refinements101-reax.lhs/">saw</a> some examples of how refinements could be used to encode invariants about basic <code>Int</code> values. Today, let’s see how refinements allow us specify and verify <em>structural invariants</em> about recursive data types like lists. In particular, we will learn about at a new mechanism called a <code>measure</code>, use measures to describe the <strong>length</strong> of a list, and use the resulting refinement types to obtain compile-time assurances that canonical list manipulating operations like <code>head</code>, <code>tail</code>, <code>foldl1</code> and (incomplete) pattern matches will not <em>blow up</em> at run-time.</p>
 <!-- more -->
 <pre><span class="hs-linenum">26: </span><span class="hs-keyword">module</span> <span class="hs-conid">ListLengths</span> <span class="hs-keyword">where</span>
 <span class="hs-linenum">27: </span>

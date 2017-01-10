@@ -242,7 +242,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-			<p>I have been preparing an undergraduate course on Compilers in which we build a compiler that crunches an ML-like language to X86 assembly. One of my favorite steps in the compilation is the <a href="https://users.soe.ucsc.edu/~cormac/papers/pldi93.pdf">conversion to A-Normal Form (ANF)</a> where, informally speaking, each call or primitive operation’s arguments are <strong>immediate</strong> values, i.e. constants or variable lookups whose values can be loaded with a single machine instruction. For example, the expression</p>
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/measures.html">measures</a>
+              
+            </div>
+
+            <br>
+			            <p>I have been preparing an undergraduate course on Compilers in which we build a compiler that crunches an ML-like language to X86 assembly. One of my favorite steps in the compilation is the <a href="https://users.soe.ucsc.edu/~cormac/papers/pldi93.pdf">conversion to A-Normal Form (ANF)</a> where, informally speaking, each call or primitive operation’s arguments are <strong>immediate</strong> values, i.e. constants or variable lookups whose values can be loaded with a single machine instruction. For example, the expression</p>
 <pre><span class="hs-linenum">25: </span><span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-num">2</span> <span class="hs-varop">+</span> <span class="hs-num">3</span><span class="hs-layout">)</span> <span class="hs-varop">*</span> <span class="hs-layout">(</span><span class="hs-num">12</span> <span class="hs-comment">-</span> <span class="hs-num">4</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-varop">*</span> <span class="hs-layout">(</span><span class="hs-num">7</span> <span class="hs-varop">+</span> <span class="hs-num">8</span><span class="hs-layout">)</span>
 </pre>
 <p>has the A-Normal Form:</p>

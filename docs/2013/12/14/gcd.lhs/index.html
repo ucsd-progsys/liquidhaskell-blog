@@ -242,7 +242,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
-			<p>We’ve seen how, in the presence of <a href="../../../../blog/2013/11/23/telling_lies.lhs/">lazy evaluation</a>, refinements <a href="../../../../blog/2013/12/02/getting-to-the-bottom.lhs/">require termination</a>. <a href="../../../../blog/2013/12/09/checking-termination.lhs/">Next</a>, we saw how LiquidHaskell can be used to prove termination.</p>
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/termination.html">termination</a>
+              
+            </div>
+
+            <br>
+			            <p>We’ve seen how, in the presence of <a href="../../../../blog/2013/11/23/telling_lies.lhs/">lazy evaluation</a>, refinements <a href="../../../../blog/2013/12/02/getting-to-the-bottom.lhs/">require termination</a>. <a href="../../../../blog/2013/12/09/checking-termination.lhs/">Next</a>, we saw how LiquidHaskell can be used to prove termination.</p>
 <p>Today, lets see how <strong>termination requires refinements</strong>.</p>
 <p>That is, a crucial feature of LiquidHaskell’s termination prover is that it is not syntactically driven, i.e. is not limited to say, structural recursion. Instead, it uses the wealth of information captured by refinements that are at our disposal, in order to prove termination.</p>
 <p>This turns out to be crucial in practice. As a quick toy example – motivated by a question by <a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/blog/blog/2013/12/09/checking-termination.lhs/#comment-1159606500">Elias</a> – lets see how, unlike purely syntax-directed (structural) approaches, LiquidHaskell proves that recursive functions, such as Euclid’s GCD algorithm, terminates.</p>
