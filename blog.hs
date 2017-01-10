@@ -38,15 +38,15 @@ main = hakyll $ do
     route idRoute
     compile $ do
       posts <- recentFirst =<< loadAll "posts/*"
-      let archiveCtx = listField "posts" postCtx (return posts)  `mappend`
-                       constField "title" "Blog"                 `mappend`
-                       constField "demo"  "SimpleRefinements.hs" `mappend`
-                       dropIndexHtml "url"                       `mappend`
-                       siteCtx
+      let blogCtx = listField "posts" postCtx (return posts)  `mappend`
+                    constField "title" "Blog"                 `mappend`
+                    constField "demo"  "SimpleRefinements.hs" `mappend`
+                    dropIndexHtml "url"                       `mappend`
+                    siteCtx
 
       makeItem ""
-        >>= loadAndApplyTemplate "templates/blog.html" archiveCtx
-        >>= loadAndApplyTemplate "templates/default.html" archiveCtx
+        >>= loadAndApplyTemplate "templates/blog.html"    blogCtx
+        >>= loadAndApplyTemplate "templates/default.html" blogCtx
         >>= relativizeUrls
 
   create ["index.html"] $ do
@@ -58,21 +58,6 @@ main = hakyll $ do
 
       makeItem ""
         >>= loadAndApplyTemplate "templates/index.html"   indexCtx
-        >>= loadAndApplyTemplate "templates/default.html" indexCtx
-        >>= relativizeUrls
-
-  create ["blog.html"] $ do
-    route   idRoute
-    compile $ do
-      posts <- fmap (take 5) . recentFirst =<< loadAll "posts/*"
-      let indexCtx = listField "posts" postCtx (return posts)  `mappend`
-                     constField "demo"  "SimpleRefinements.hs" `mappend`
-                     constField "title"  "Recent Posts"        `mappend`
-                     dropIndexHtml "url"                       `mappend`
-                     siteCtx
-
-      makeItem ""
-        >>= loadAndApplyTemplate "templates/blog.html"   indexCtx
         >>= loadAndApplyTemplate "templates/default.html" indexCtx
         >>= relativizeUrls
 
