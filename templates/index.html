@@ -36,7 +36,7 @@
       <div class="col-md-4">
         LH warns you that <code>head</code> is not total as it
         is missing the case for <code>[]</code> and checks that
-        it is total on <code>NonEmpty</code> lists.
+        it is total on <code>NonEmpty</code> lists. [more]
       </div>
 
       <div class="col-md-8">
@@ -51,14 +51,14 @@
         <img class="center-block" src="/static/img/splash-unstutter.gif">
       </div>
       <div class="col-md-4">
-        The totality requirement is propagated to uses of
-        <code>head</code>. These can be verified by ensuring
-        the arguments are <code>NonEmpty</code>.
+        The input contract propagates to uses of <code>head</code>
+        which are verified by ensuring the arguments are
+        <code>NonEmpty</code>.
       </div>
     </div>
 
     <br>
-    <h2>Keep Indexes and Pointers Within Bounds</h2>
+    <h2>Keep Pointers Within Bounds</h2>
     <br>
 
     <br>
@@ -66,7 +66,7 @@
     <div class="row">
       <div class="col-md-4">
         LH lets you avoid off-by-one errors that can lead to crashes
-        or buffer overflows.
+        or buffer overflows. [more]
       </div>
 
       <div class="col-md-8">
@@ -82,13 +82,10 @@
       </div>
 
       <div class="col-md-3">
-        <i>Dependent refinements</i> let you write contracts on
-        multiple inputs, e.g. that <code>dotProduct</code> is only
-        defined for equal-sized vectors.
+        Dependent contracts let you specify, e.g. that
+        <code>dotProduct</code> requires equal-sized vectors.
       </div>
     </div>
-
-    <br>
 
     <!--
       <div class="row">
@@ -107,36 +104,41 @@
     <br>
 
     <div class="row">
-      <div class="col-md-6">
-        This is some text that explains how <code>fib</code> works.
+      <div class="col-md-5">
+        LH checks that functions <i>terminate</i> and so
+        warns about the infinite recursion due to the missing
+        case in <code>fib</code>. [more]
       </div>
 
-      <div class="col-md-6">
-        <img class="center-block" src="/static/img/splash-fib.gif" width=350px>
+      <div class="col-md-7">
+        <img class="center-block" src="/static/img/splash-fib.gif">
       </div>
     </div>
 
     <br>
 
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-9">
         <img class="center-block" src="/static/img/splash-merge.gif">
       </div>
-      <div class="col-md-4">
-        This is some text that explains how <code>merge</code> works.
+      <div class="col-md-3">
+        <i>Metrics</i> let you check that recursive functions
+        over complex data types terminate.
       </div>
     </div>
 
     <br>
-      <h2>Enforce User-Defined Correctness Properties</h2>
+      <h2>Enforce Correctness Properties</h2>
     <br>
 
     <div class="row">
-      <div class="col-md-4">
-        This is some text that explains how <code>ups</code> works.
+      <div class="col-md-5">
+        Write correctness requirements, for example a list is <i>ordered</i>,
+        as refinements. LH makes illegal values be <i>unrepresentable</i>.
+        [more]
       </div>
 
-      <div class="col-md-8">
+      <div class="col-md-7">
         <img class="center-block" src="/static/img/splash-ups.gif">
       </div>
     </div>
@@ -149,7 +151,9 @@
       </div>
 
       <div class="col-md-3">
-        This is some text that explains how <code>insertSort</code> works.
+        LH automatically points out logic bugs, and proves
+        that functions return correct outputs
+        <i>for all inputs</i>.
       </div>
     </div>
 
@@ -158,12 +162,13 @@
     <br>
 
     <div class="row">
-      <div class="col-md-4">
-        This is some text that explains how <code>++</code> works, and
-        how to write the associativity property.
+      <div class="col-md-3">
+        Specify <i>laws</i>, e.g. that the append
+        function <code>++</code> is associative,
+        as Haskell functions.
       </div>
 
-      <div class="col-md-8">
+      <div class="col-md-9">
         <img class="center-block" src="/static/img/splash-assocthm.gif">
       </div>
     </div>
@@ -171,13 +176,14 @@
     <br>
 
     <div class="row">
-      <div class="col-md-8">
+      <div class="col-md-9">
         <img class="center-block" src="/static/img/splash-assocpf.gif">
       </div>
 
-      <div class="col-md-4">
-        And finally, how to write the proof via case-splitting
-        (pattern-matching) and induction (recursion).
+      <div class="col-md-3">
+        Verify laws via <i>equational proofs</i> that are plain Haskell
+        functions. Induction is simply recursion, and case-splitting is
+        just pattern-matching. [more]
       </div>
     </div>
 
