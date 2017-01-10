@@ -14,9 +14,9 @@ import Data.Typeable
 main :: IO ()
 main = hakyll $ do
   copyStatic
-  -- makePosts
-  -- makeAbout
-  -- makeBlog
+  makePosts
+  makeAbout
+  makeBlog
   makeIndex
   makeTemplates
 

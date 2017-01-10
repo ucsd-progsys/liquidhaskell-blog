@@ -138,7 +138,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                 <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
                 <li><a href="http://ucsd-progsys.github.io/lh-tutorial" target="_blank">Book</a></li>
                 <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html" target="_blank">About</a></li>
-                <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Github</a></li>
+                <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
                 <!--
                 <li><a href="https://www.twitter.com/ranjitjhala" id="roundbutton" target="_blank"><i class="fa fa-twitter"></i>RanjitJhala</a></li>
                 -->
@@ -203,7 +203,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                     <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=RefinementReflection.hs" target="_blank">Demo</a></li>
                     <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
                     <li><a href="http://ucsd-progsys.github.io/lh-tutorial" target="_blank">Book</a></li>
-                    <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Github</a></li>
+                    <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
                             </p>
 
                             <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
@@ -504,21 +504,24 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
     </div>
 </article>
 
-<script type="text/javascript">
-      var disqus_shortname = 'liquidhaskell';
-      
-        // `page.comments` can be only be set to true on pages/posts, so we embed the comments here.
-        // var disqus_developer = 1;
-        var disqus_identifier = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2016/09/18/refinement-reflection.lhs';
-        var disqus_url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2016/09/18/refinement-reflection.lhs'; 
-        var disqus_script     = 'embed.js';
-      
-    (function () {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    }());
+<div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    var disqus_config = function () {
+        this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2016/09/18/refinement-reflection.lhs';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = '/2016/09/18/refinement-reflection.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+        var d = document, s = d.createElement('script');
+        s.src = '//liquidhaskell.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
 </script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
 
 
 <hr>
