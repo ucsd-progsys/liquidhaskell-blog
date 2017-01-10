@@ -5,7 +5,7 @@ date: 2014-02-11
 author: Eric Seidel
 published: true
 comments: true
-categories: basic measures
+tags: basic, measures
 demo: SimpleRefinements.hs
 ---
 

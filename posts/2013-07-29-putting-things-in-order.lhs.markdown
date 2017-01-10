@@ -3,7 +3,7 @@ layout: post
 title: Putting Things In Order
 date: 2013-07-29 16:12
 comments: true
-categories: abstract-refinements
+tags: abstract-refinements
 author: Niki Vazou and Ranjit Jhala
 published: true 
 demo: Order.hs

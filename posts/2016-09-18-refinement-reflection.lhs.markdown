@@ -5,7 +5,7 @@ date: 2016-09-18
 comments: true
 author: Niki Vazou
 published: true
-categories: reflection
+tags: reflection
 demo: RefinementReflection.hs
 ---
 

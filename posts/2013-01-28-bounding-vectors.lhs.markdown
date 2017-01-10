@@ -5,7 +5,7 @@ date: 2013-01-30 16:12
 author: Ranjit Jhala
 published: false 
 comments: true
-categories: basic
+tags: basic
 demo: vectorbounds.hs
 ---
 

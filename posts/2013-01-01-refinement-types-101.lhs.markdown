@@ -5,7 +5,7 @@ date: 2013-01-01 16:12
 author: Ranjit Jhala
 published: true
 comments: true
-categories: basic
+tags: basic
 demo: refinements101.hs
 ---
 
