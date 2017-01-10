@@ -26,16 +26,34 @@ copyStatic =
     compile copyFileCompiler
 
 
-makePosts =
+makePosts = do
+  -- build up tags
+  tags <- buildTags "posts/*" (fromCapture "tags/*.html")
+  makeTags tags
   match "posts/*" $ do
     route $ setExtension "html" `composeRoutes`
             dateFolders         `composeRoutes`
             dropPostsPrefix     `composeRoutes`
             appendIndex
     compile $ pandocCompiler
-        >>= loadAndApplyTemplate "templates/post.html"    postCtx
-        >>= loadAndApplyTemplate "templates/default.html" postCtx
+        >>= loadAndApplyTemplate "templates/post.html"    (postCtxWithTags tags)
+        >>= loadAndApplyTemplate "templates/default.html" (postCtxWithTags tags)
         >>= relativizeUrls
+
+makeTags tags =
+  tagsRules tags $ \tag pattern -> do
+    let title = "Posts tagged \"" ++ tag ++ "\""
+    route idRoute
+    compile $ do
+        posts <- recentFirst =<< loadAll pattern
+        let ctx = constField "title" title
+                  `mappend` listField "posts" postCtx (return posts)
+                  `mappend` pageCtx
+
+        makeItem ""
+            >>= loadAndApplyTemplate "templates/tags.html" ctx
+            >>= loadAndApplyTemplate "templates/default.html" ctx
+            >>= relativizeUrls
 
 makeAbout =
   match "about.md" $ do
@@ -99,6 +117,11 @@ dropPostsPrefix = gsubRoute "posts/" $ const ""
 --    in  (category </>) . toFilePath
 
 --------------------------------------------------------------------------------
+postCtxWithTags :: Tags -> Context String
+postCtxWithTags tags =
+  tagsField "tags" tags `mappend`
+  postCtx
+
 postCtx :: Context String
 postCtx =
   dateField "date" "%b %e, %Y" `mappend`
