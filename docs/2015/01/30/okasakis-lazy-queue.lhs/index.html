@@ -278,7 +278,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <h2 id="queues">Queues</h2>
 <p>A <a href="http://en.wikipedia.org/wiki/Queue_%28abstract_data_type%29">queue</a> is a structure into which we can <code>insert</code> and <code>remove</code> data such that the order in which the data is removed is the same as the order in which it was inserted.</p>
 <div class="figure">
-<img src="../../../../images/queue.png" alt="A Queue" />
+<img src="../../../../static/img/queue.png" alt="A Queue" />
 <p class="caption">A Queue</p>
 </div>
 <p>To implement a queue <em>efficiently</em> one needs to have rapid access to both the “head” as well as the “tail” because we <code>remove</code> elements from former and <code>insert</code> elements into the latter. This is quite straightforward with explicit pointers and mutation – one uses an old school linked list and maintains pointers to the head and the tail. But can we implement the structure efficiently without having stoop so low?</p>
@@ -289,7 +289,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <li>To <code>remove</code> elements, we just <em>un-cons</em> them from the <code>front</code> list.</li>
 </ul>
 <div class="figure">
-<img src="../../../../images/queue-lists.png" alt="A Queue is Two Lists" />
+<img src="../../../../static/img/queue-lists.png" alt="A Queue is Two Lists" />
 <p class="caption">A Queue is Two Lists</p>
 </div>
 <p>The catch is that we need to shunt elements from the back to the front every so often, e.g. when</p>
@@ -299,7 +299,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </ol>
 <p>We can transfer the elements from the <code>back</code> to the <code>front</code>.</p>
 <div class="figure">
-<img src="../../../../images/queue-rotate.png" alt="Transferring Elements from Back to Front" />
+<img src="../../../../static/img/queue-rotate.png" alt="Transferring Elements from Back to Front" />
 <p class="caption">Transferring Elements from Back to Front</p>
 </div>
 <p>Okasaki observed that every element is only moved <em>once</em> from the front to the back; hence, the time for <code>insert</code> and <code>lookup</code> could be <code>O(1)</code> when <em>amortized</em> over all the operations. Awesome, right?!</p>

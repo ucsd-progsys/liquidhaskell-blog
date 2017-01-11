@@ -10,13 +10,20 @@ import           System.FilePath ( (</>), (<.>)
 
 import Data.Typeable
 
+tagItems :: Tags -> [Item String]
+tagItems tags = [ Item "tag" s | (s,_) <- tagsMap tags]
+  where
+    f         = tagsMakeId tags
+
+tagCtx :: Context String
+tagCtx = field "tag" (return . itemBody)
+
 --------------------------------------------------------------------------------
 main :: IO ()
 main = hakyll $ do
   copyStatic
-  makePosts
+  makePosts >>= makeBlog
   makeAbout
-  makeBlog
   makeIndex
   makeTemplates
 
@@ -24,7 +31,6 @@ copyStatic =
   match "static/*/*" $ do
     route idRoute
     compile copyFileCompiler
-
 
 makePosts = do
   -- build up tags
@@ -39,6 +45,7 @@ makePosts = do
         >>= loadAndApplyTemplate "templates/post.html"    (postCtxWithTags tags)
         >>= loadAndApplyTemplate "templates/default.html" (postCtxWithTags tags)
         >>= relativizeUrls
+  return tags
 
 makeTags tags =
   tagsRules tags $ \tag pattern -> do
@@ -63,12 +70,14 @@ makeAbout =
             >>= loadAndApplyTemplate "templates/default.html" siteCtx
             >>= relativizeUrls
 
-makeBlog =
+makeBlog tags =
   match "blog.md" $ do
+    let tags' = tagItems tags
     route $ setExtension "html"
     compile $ do
       posts <- recentFirst =<< loadAll "posts/*"
       let blogCtx = listField "posts" postCtx (return posts)  `mappend`
+                    listField "tags"  tagCtx  (return tags')  `mappend`
                     constField "title" "Blog"                 `mappend`
                     pageCtx
       pandocCompiler
