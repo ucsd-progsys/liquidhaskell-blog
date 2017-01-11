@@ -76,7 +76,7 @@ makeBlog tags =
     let tags' = tagItems tags
     route $ setExtension "html"
     compile $ do
-      posts <- recentFirst =<< loadAll "posts/*"
+      posts <- (fmap (take 5) . recentFirst) =<< loadAll "posts/*"
       let blogCtx = listField "posts" postCtx (return posts)  `mappend`
                     listField "tags"  tagCtx  (return tags')  `mappend`
                     pageCtx

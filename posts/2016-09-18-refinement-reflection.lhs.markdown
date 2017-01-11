@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Refinement Reflection: Haskell as a theorem prover
+title: Haskell as a Theorem Prover
 date: 2016-09-18
 comments: true
 author: Niki Vazou
