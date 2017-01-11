@@ -245,8 +245,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
 </div>
 
-      LiquidHaskell (LH) <i>refines</i> Haskell's types with 
-      logical predicates that let you enforce critical 
+      LiquidHaskell (LH) <i>refines</i> Haskell's types with
+      logical predicates that let you enforce critical
       properties at <i>compile time</i>.
 
     <br>
@@ -257,7 +257,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
       <div class="col-md-4">
         LH warns you that <code>head</code> is not total as it
         is missing the case for <code>[]</code> and checks that
-        it is total on <code>NonEmpty</code> lists. [more]
+        it is total on <code>NonEmpty</code> lists.
+        <a href="./2013/01/31/safely-catching-a-list-by-its-tail.lhs/">(more...)</a>
       </div>
 
       <div class="col-md-8">
@@ -287,7 +288,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
     <div class="row">
       <div class="col-md-4">
         LH lets you avoid off-by-one errors that can lead to crashes
-        or buffer overflows. [more]
+        or buffer overflows. <a href="./2013/03/04/bounding-vectors.lhs/">(more...)</a>
       </div>
 
       <div class="col-md-8">
@@ -328,7 +329,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
       <div class="col-md-5">
         LH checks that functions <i>terminate</i> and so
         warns about the infinite recursion due to the missing
-        case in <code>fib</code>. [more]
+        case in <code>fib</code>. <a href="./tags/termination.html">(more...)</a>
       </div>
 
       <div class="col-md-7">
@@ -356,7 +357,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
       <div class="col-md-5">
         Write correctness requirements, for example a list is <i>ordered</i>,
         as refinements. LH makes illegal values be <i>unrepresentable</i>.
-        [more]
+        <a href="./2013/07/29/putting-things-in-order.lhs/">(more...)</a>
       </div>
 
       <div class="col-md-7">
@@ -404,10 +405,9 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
       <div class="col-md-3">
         Verify laws via <i>equational proofs</i> that are plain Haskell
         functions. Induction is simply recursion, and case-splitting is
-        just pattern-matching. [more]
+        just pattern-matching. <a href="./tags/reflection.html">(more...)</a>
       </div>
     </div>
-
 
     </div>
   </div>
