@@ -14,8 +14,6 @@ To add a new post:
 
 ## TODO
 
-+ Disqus (?)
-
-- [Tags](https://javran.github.io/posts/2014-03-01-add-tags-to-your-hakyll-blog.html)
-
++ DONE?: Disqus (?)
++ DONE: [Tags](https://javran.github.io/posts/2014-03-01-add-tags-to-your-hakyll-blog.html)
 - [Teasers](https://jaspervdj.be/hakyll/tutorials/using-teasers-in-hakyll.html)

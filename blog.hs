@@ -164,7 +164,7 @@ siteCtx =
     constField "baseUrl"            "https://ucsd-progsys.github.io/liquidhaskell-blog"     `mappend`
     constField "demoUrl"            "http://goto.ucsd.edu:8090/index.html#?demo=" `mappend`
     constField "tutorialUrl"        "http://ucsd-progsys.github.io/lh-workshop"  `mappend`
-    constField "bookUrl"            "http://ucsd-progsys.github.io/lh-tutorial"  `mappend`
+    constField "bookUrl"            "http://ucsd-progsys.github.io/liquidhaskell-tutorial"  `mappend`
     constField "codeUrl"            "http://www.github.com/ucsd-progsys/liquidhaskell"  `mappend`
     constField "site_name"          "LiquidHaskell"             `mappend`
     constField "site_description"   "LiquidHaskell Blog"        `mappend`

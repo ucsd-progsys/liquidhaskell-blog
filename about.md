@@ -78,6 +78,10 @@ Liquid Types have been developed in the UCSD Programming Systems group by
 - [Ranjit Jhala](http://cseweb.ucsd.edu/~rjhala)
 - [Ming Kawaguchi](http://cseweb.ucsd.edu/~mwookawa)
 - [Patrick Rondon](http://cseweb.ucsd.edu/~prondon)
+- [Eric Seidel](http://cseweb.ucsd.edu/~eseidel)
+- [Michael Smith](https://spinda.net)
+- [Anish Tondwalkar](https://github.com/atondwal)
+- [Chris Tetreault](https://github.com/christetreault)
 - [Niki Vazou](http://cseweb.ucsd.edu/~nvazou)
 
 Thanks
