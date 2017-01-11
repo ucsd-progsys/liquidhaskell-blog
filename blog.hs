@@ -24,6 +24,7 @@ main = hakyll $ do
   copyStatic
   makePosts >>= makeBlog
   makeAbout
+  makeArchive
   makeIndex
   makeTemplates
 
@@ -78,11 +79,22 @@ makeBlog tags =
       posts <- recentFirst =<< loadAll "posts/*"
       let blogCtx = listField "posts" postCtx (return posts)  `mappend`
                     listField "tags"  tagCtx  (return tags')  `mappend`
-                    constField "title" "Blog"                 `mappend`
                     pageCtx
       pandocCompiler
         >>= loadAndApplyTemplate "templates/blog.html"    blogCtx
         >>= loadAndApplyTemplate "templates/default.html" blogCtx
+        >>= relativizeUrls
+
+makeArchive =
+  match "archive.md" $ do
+    route $ setExtension "html"
+    compile $ do
+      posts <- recentFirst =<< loadAll "posts/*"
+      let ctx = listField "posts" postCtx (return posts)  `mappend`
+                pageCtx
+      pandocCompiler
+        >>= loadAndApplyTemplate "templates/archive.html" ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
         >>= relativizeUrls
 
 makeIndex =
@@ -96,6 +108,8 @@ makeIndex =
 
 makeTemplates =
   match "templates/*" $ compile templateCompiler
+
+
 
 appendIndex :: Routes
 appendIndex = customRoute $ (\(p, e) -> p </> "index" <.> e) . splitExtension . toFilePath
