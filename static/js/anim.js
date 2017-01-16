@@ -1,8 +1,8 @@
 function swizzle(name){
     $(function() {
         var divName  = "#" + name;
-        var animName = "liquidhaskell-blog/static/img/" + name + ".gif";
-        var statName = "liquidhaskell-blog/static/img/" + name + ".png";
+        var animName = "/static/img/" + name + ".gif";
+        var statName = "/static/img/" + name + ".png";
         $(divName).hover(
             function() {
                 $(this).attr("src", animName);
