@@ -1,3 +1,14 @@
+var swizzleDivs = $( ".anim" ).hover(
+  function() {
+    $(this).attr("src", $(this).attr("png").replace(".png", ".gif"))
+  },
+  function() {
+    $(this).attr("src", $(this).attr("png"))
+  }
+);
+
+/* OLD
+
 function swizzle(name){
     $(function() {
         var divName  = "#" + name;
@@ -24,3 +35,4 @@ var z6 = swizzle("splash-ups");
 var z7 = swizzle("splash-insertsort");
 var z8 = swizzle("splash-assocthm");
 var z9 = swizzle("splash-assocpf");
+*/
