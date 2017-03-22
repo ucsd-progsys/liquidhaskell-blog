@@ -104,14 +104,13 @@ False
 -----------------------------
 
 The news isn't all bad: the glass half full
-view is that when for "reasonable" values
+view is that for "reasonable" values
 like 10, 100, 10000 and 1000000, the
 machine's arithmetic _is_ the same as
 logical arithmetic. Lets see how to impart
-this wisdom to LH. We do this in two steps.
-
-A.  Define the *biggest* `Int` value,
-B.  Use the above to type the machine arithmetic operations.
+this wisdom to LH. We do this in two steps:
+define the *biggest* `Int` value, and then,
+use this value to type the arithmetic operations.
 
 **A. The Biggest Int**
 
@@ -152,33 +151,33 @@ the range `[-maxInt, maxInt]`.
 
 Next, we can assign the machine arithmetic operations
 types that properly capture the possibility of arithmetic
-overflows. Here are _two_ possible specifications, a strict
-and a lazy one.
+overflows. Here are _two_ possible specifications.
 
-**Strict: Thou Shalt Not Overflow** The first specification
-is a _strict_ one that prohibits any overflow.
+**Strict: Thou Shalt Not Overflow** A _strict_ specification
+simply prohibits any overflow:
 
 \begin{code}
-{-@ plusStrict :: x:Int -> y:{Int | Bounded (x + y)} -> {v:Int | v == x + y} @-}
+{-@ plusStrict :: x:Int -> y:{Int|Bounded(x+y)} -> {v:Int|v = x+y} @-}
 plusStrict x y = x Prelude.+ y
 \end{code}
 
-The inputs `x` and `y` *must* be such that the result is `Bounded`,
+The inputs `x` and `y` _must_ be such that the result is `Bounded`,
 and in that case, the output value is indeed their logical sum.
 
-**Lazy: Overflow at Thine Own Risk** Instead, we could use a
-_lazy_ specification that allows overflows but gives no
+**Lazy: Overflow at Thine Own Risk** Instead, a _lazy_
+specification could permit overflows but gives no
 guarantees about the output when they occur.
 
 \begin{code}
-{-@ plusLazy :: x:Int -> y:Int -> {v:Int | Bounded (x + y) => v == x + y } @-}
+{-@ plusLazy :: x:Int -> y:Int -> {v:Int|Bounded(x+y) => v = x+y} @-}
 plusLazy x y = x Prelude.+ y
 \end{code}
 
-The lazy specification says that while `plusL`
+The lazy specification says that while `plusLazy`
 can be called with any values you like, the
-result is the logical sum \emph{only when}
-there is no overflow.
+result is the logical sum
+*only if there is no overflow*.
+
 
 To understand the difference between the two
 specifications, lets revisit the `monoPlus`
@@ -238,8 +237,8 @@ Finally, we can tell LH that the above above instance obeys the
 
 \begin{code}
 {-@ instance BoundedNum Int where
-      + :: x:Int -> y:{Int | Bounded (x + y)} -> {v:Int | v == x + y };
-      - :: x:Int -> y:{Int | Bounded (x - y)} -> {v:Int | v == x - y }
+      + :: x:Int -> y:{Int | Bounded (x+y)} -> {v:Int | v == x+y };
+      - :: x:Int -> y:{Int | Bounded (x-y)} -> {v:Int | v == x-y }
   @-}
 \end{code}
 
@@ -270,25 +269,51 @@ overflow bug!
 
 Lets see how we might spot and fix such bugs using `BoundedNum`.
 
-**A. Off by One** Lets begin by just using the default `Num Int`
-which ignores overflow. As Gabriel explains, LH flags a bunch
-of errors if we start the search with `loop x v 0 n` as the
-resulting search can access `v` at any index between `0` and `n`
-inclusive, which may lead to an out of bounds at `n`. We can
-fix the off-by-one by correcting the upper bound to `n-1`, at
-which point LH reports the code free of errors.
+<div class="row">
+<div class="col-md-4">
+**A. Off by One** Lets begin by just using
+the default `Num Int` which ignores overflow.
+As Gabriel explains, LH flags a bunch of errors
+if we start the search with `loop x v 0 n` as
+the resulting search can access `v` at any
+index between `0` and `n` inclusive, which
+may lead to an out of bounds at `n`.
+We can fix the off-by-one by correcting the
+upper bound to `n-1`, at which point LH
+reports the code free of errors.
+</div>
 
-(R) splash-binarySearch-A.gif
+<div class="col-md-8">
+<img id="splash-binarySearch-A"
+     class="center-block anim"
+     png="/static/img/splash-binarySearch-A.png"
+     src="/static/img/splash-binarySearch-A.png">
+</div>
+</div>
+
+<br>
 
 
+<div class="row">
+<div class="col-md-8">
+<img id="splash-binarySearch-B"
+     class="center-block anim"
+     png="/static/img/splash-binarySearch-B.png"
+     src="/static/img/splash-binarySearch-B.png">
+</div>
+
+<div class="col-md-4">
 **B. Lots of Overflows** To spot arithmetic overflows, we need
 only hide the default `Prelude` and instead import the `BoundedNum`
 instance described above. Upon doing so, LH flags a whole bunch of
 potential errors -- essentially *all* the arithmetic operations which
 seems rather dire!
+</div>
+</div>
 
-(L) splash-binarySearch-B.gif
 
+<div class="row">
+<div class="col-md-4">
 **C. Vector Sizes are Bounded** Of course, things
 aren't _so_ bad. LH is missing the information that
 the size of any `Vector` must be `Bounded`. Once we
@@ -297,9 +322,27 @@ inform LH about this invariant with the
 as the `lo` and `hi` indices are upper-bounded by
 the `Vector`'s size, all the arithmetic on them is
 also `Bounded` and hence, free of overflows.
+</div>
 
-(R) splash-binarySearch-C.gif
+<div class="col-md-8">
+<img id="splash-binarySearch-C"
+     class="center-block anim"
+     png="/static/img/splash-binarySearch-C.png"
+     src="/static/img/splash-binarySearch-C.png">
+</div>
+</div>
 
+<br>
+
+<div class="row">
+<div class="col-md-8">
+<img id="splash-binarySearch-D"
+     class="center-block anim"
+     png="/static/img/splash-binarySearch-D.png"
+     src="/static/img/splash-binarySearch-D.png">
+</div>
+
+<div class="col-md-4">
 **D. Staying In The Middle**
 Well, *almost* all. The one pesky pink highlight that
 remains is exactly the bug that Bloch made famous. Namely:
@@ -310,8 +353,9 @@ choke, we follow Bloch's suggestion and re-jigger the computation
 to instead compute the midpoint by splitting the difference
 between `hi` and `lo`! the code is now free of arithmetic
 overflows and truly memory safe.
+</div>
+</div>
 
-(L) splash-binarySearch-D.gif
 
 [lh-invariants]: https://github.com/ucsd-progsys/liquidhaskell/blob/develop/README.md#invariants
 [lh-gonzalez]: http://www.haskellforall.com/2015/12/compile-time-memory-safety-using-liquid.html
