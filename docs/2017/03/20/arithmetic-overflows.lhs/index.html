@@ -377,13 +377,13 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p><strong>A. Off by One</strong> Lets begin by just using the default <code>Num Int</code> which ignores overflow. As Gabriel explains, LH flags a bunch of errors if we start the search with <code>loop x v 0 n</code> as the resulting search can access <code>v</code> at any index between <code>0</code> and <code>n</code> inclusive, which may lead to an out of bounds at <code>n</code>. We can fix the off-by-one by correcting the upper bound to <code>n-1</code>, at which point LH reports the code free of errors.</p>
 </div>
 <div class="col-md-8">
-<p><img id="splash-binarySearch-A" class="center-block anim" png="/static/img/splash-binarySearch-A.png" src="../../../../static/img/splash-binarySearch-A.png"></p>
+<p><img id="splash-binarySearch-A" class="center-block anim" png="/liquidhaskell-blog/static/img/splash-binarySearch-A.png" src="../../../../liquidhaskell-blog/static/img/splash-binarySearch-A.png"></p>
 </div>
 </div>
 <p><br></p>
 <div class="row">
 <div class="col-md-8">
-<p><img id="splash-binarySearch-B" class="center-block anim" png="/static/img/splash-binarySearch-B.png" src="../../../../static/img/splash-binarySearch-B.png"></p>
+<p><img id="splash-binarySearch-B" class="center-block anim" png="/liquidhaskell-blog/static/img/splash-binarySearch-B.png" src="../../../../liquidhaskell-blog/static/img/splash-binarySearch-B.png"></p>
 </div>
 <div class="col-md-4">
 <p><strong>B. Lots of Overflows</strong> To spot arithmetic overflows, we need only hide the default <code>Prelude</code> and instead import the <code>BoundedNum</code> instance described above. Upon doing so, LH flags a whole bunch of potential errors – essentially <em>all</em> the arithmetic operations which seems rather dire!</p>
@@ -394,13 +394,13 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p><strong>C. Vector Sizes are Bounded</strong> Of course, things aren’t <em>so</em> bad. LH is missing the information that the size of any <code>Vector</code> must be <code>Bounded</code>. Once we inform LH about this invariant with the <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/README.md#invariants"><code>using</code> directive</a>, it infers that as the <code>lo</code> and <code>hi</code> indices are upper-bounded by the <code>Vector</code>’s size, all the arithmetic on them is also <code>Bounded</code> and hence, free of overflows.</p>
 </div>
 <div class="col-md-8">
-<p><img id="splash-binarySearch-C" class="center-block anim" png="/static/img/splash-binarySearch-C.png" src="../../../../static/img/splash-binarySearch-C.png"></p>
+<p><img id="splash-binarySearch-C" class="center-block anim" png="/liquidhaskell-blog/static/img/splash-binarySearch-C.png" src="../../../../liquidhaskell-blog/static/img/splash-binarySearch-C.png"></p>
 </div>
 </div>
 <p><br></p>
 <div class="row">
 <div class="col-md-8">
-<p><img id="splash-binarySearch-D" class="center-block anim" png="/static/img/splash-binarySearch-D.png" src="../../../../static/img/splash-binarySearch-D.png"></p>
+<p><img id="splash-binarySearch-D" class="center-block anim" png="/liquidhaskell-blog/static/img/splash-binarySearch-D.png" src="../../../../liquidhaskell-blog/static/img/splash-binarySearch-D.png"></p>
 </div>
 <div class="col-md-4">
 <p><strong>D. Staying In The Middle</strong> Well, <em>almost</em> all. The one pesky pink highlight that remains is exactly the bug that Bloch made famous. Namely: the addition used to compute the new midpoint between <code>lo</code> and <code>hi</code> could overflow e.g. if the array was large and both those indices were near the end. To ensure the machine doesn’t choke, we follow Bloch’s suggestion and re-jigger the computation to instead compute the midpoint by splitting the difference between <code>hi</code> and <code>lo</code>! the code is now free of arithmetic overflows and truly memory safe.</p>
