@@ -1,3 +1,9 @@
+var swizzleDiv0 = $( ".anim" ).each(
+  function() {
+    $(this).attr("src", $(this).attr("png"))
+  }
+);
+
 var swizzleDivs = $( ".anim" ).hover(
   function() {
     $(this).attr("src", $(this).attr("png").replace(".png", ".gif"))
