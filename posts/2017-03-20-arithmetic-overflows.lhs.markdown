@@ -282,7 +282,8 @@ using binary-search as an example, and a careful reader
 [pointed out][lh-overflow-reddit] that it had the same
 overflow bug!
 
-Lets see how we might spot and fix such bugs using `BoundedNum`.
+Lets see how we might spot and fix such bugs using `BoundedNum`. 
+(_Hover over the images to animate_.)
 
 <div class="row">
 <div class="col-md-4">

@@ -371,7 +371,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <h2 id="an-application-binary-search">4. An Application: Binary Search</h2>
 <p>The above seems a bit paranoid. Do overflows <em>really</em> matter? And if they do, is it really practical to check for them using the above?</p>
 <p><a href="https://research.googleblog.com/2006/06/extra-extra-read-all-about-it-nearly.html">Joshua Bloch’s</a> famous article describes a tricky overflow bug in an implementation of binary-search that lay hidden in plain sight in classic textbooks and his own implementation in the JDK for nearly a decade. Gabriel Gonzalez wrote a lovely <a href="http://www.haskellforall.com/2015/12/compile-time-memory-safety-using-liquid.html">introduction to LH</a> using binary-search as an example, and a careful reader <a href="https://www.reddit.com/r/haskell/comments/3ysh9k/haskell_for_all_compiletime_memory_safety_using/cyg8g60/">pointed out</a> that it had the same overflow bug!</p>
-<p>Lets see how we might spot and fix such bugs using <code>BoundedNum</code>.</p>
+<p>Lets see how we might spot and fix such bugs using <code>BoundedNum</code>. (<em>Hover over the images to animate</em>.)</p>
 <div class="row">
 <div class="col-md-4">
 <p><strong>A. Off by One</strong> Lets begin by just using the default <code>Num Int</code> which ignores overflow. As Gabriel explains, LH flags a bunch of errors if we start the search with <code>loop x v 0 n</code> as the resulting search can access <code>v</code> at any index between <code>0</code> and <code>n</code> inclusive, which may lead to an out of bounds at <code>n</code>. We can fix the off-by-one by correcting the upper bound to <code>n-1</code>, at which point LH reports the code free of errors.</p>
