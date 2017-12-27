@@ -1,0 +1,819 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+   <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106786912-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments)};
+      gtag('js', new Date());
+      gtag('config', 'UA-106786912-1');
+    </script>
+
+
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ <!--
+      loads the http over https ssl -
+      welcome to my website!
+
+	this theme is based off the Ice & Fire theme created by Lucas Gatsas
+      https://www.twitter.com/LucasGatsas
+      www.lucasgatsas.ch - switzerland.
+  -->
+
+
+<!-- Microsoft Internet Explorer documentMode compatMode setting IE Modus -->
+<script type="text/javascript">
+var IE = null;
+if (window.navigator.appName == "Microsoft Internet Explorer") {
+  if (document.documentMode) {
+
+    IE = document.documentMode;
+    } else {
+
+        IE = 5;
+          if (document.compatMode) {
+      if (document.compatMode == "CSS1Compat")
+      IE = 11;
+      }
+    }
+  }
+</script>
+
+    <meta charset="utf-8">
+    <!-- X-UA -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <link rel="author" title="Ranjit Jhala" href="http://ranjitjhala.github.io" />
+
+    <meta name="google" content="notranslate" />
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- index ROBOTS follow -->
+    <meta name="robots" content="index, follow" />
+    <!-- Site Desciption -->
+    <meta name="description" content="LiquidHaskell Blog">
+    <!-- Site Desciption -->
+    <meta name="keywords" content="haskell, refinement types, liquid types, formal methods, type systems">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ico.png" type="image/x-icon" />
+    <!-- Blog Title -->
+    <title>LiquidHaskell</title>
+
+    <!--     <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+-->
+    <!-- Property Metas -->
+    <meta property="og:image" content="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ix.png" />
+    <meta property="og:title" content="LiquidHaskell Blog" />
+    <meta property="og:site_name" content="LiquidHaskell Blog" />
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseUrl | prepend: site.url }}">
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/spaceg.stylesheets.css"> -->
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/ronacher.css" type="text/css">
+
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/syntax.css">
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/liquid-light.css">
+
+    <!-- Fonts
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+    -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+	#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:url("/static/img/preloader.gif"); /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	ul, ol {margin-top: 0;margin-bottom: 10px;}
+	.navbar-inverse {background-color: #FFF;border-color: #FFFFFF;}
+</style>
+<!--link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/prettify.css"-->
+<style>
+  /* HEADER IMAGE */
+  header.intro-header {background: #6f5499;background: no-repeat center center;background-attachment: scroll;-webkit-background-size: cover;-moz-background-size: cover;background-size: cover;-o-background-size: cover;}
+
+	/* Preloader */#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:; /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	li {list-style: none;}
+            body.modal-open
+            {overflow: hidden;padding-right: 0px;
+        }
+	article li {list-style: inherit;}
+	article .figure {text-align: center}
+    </style>
+    <!-- end Loading front stylesheet here -->
+    </head>
+
+    <body>
+	    
+	<!-- 	
+        <div id="preloader">
+	    <div id="status">
+	    </div>
+	</div>  
+	-->
+	<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://ucsd-progsys.github.io/liquidhaskell-blog" id="blog-title-left-top">LiquidHaskell</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <!-- <li class="dropdown">
+                    <a href="#portfolioModal2" data-toggle="modal"><i class="fa fa-random" id="icon-top"></i></a>
+                <ul class="dropdown-menu"></ul>
+                </li>-->
+                
+                <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/blog.html">Blog</a></li>
+                <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=RangeSet.hs" target="_blank">Demo</a></li>
+                <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
+                <li><a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial" target="_blank">Book</a></li>
+                <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html" target="_blank">About</a></li>
+                <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
+                <!--
+                <li><a href="https://www.twitter.com/ranjitjhala" id="roundbutton" target="_blank"><i class="fa fa-twitter"></i>RanjitJhala</a></li>
+                -->
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<!-- Portfolio Modals -->
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ico.png" class="img-responsive img-centered" alt title>
+                            <p class="font-style-inline-small">
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow me</a>. <br>
+                                <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                                <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>
+                            </p>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Menu Modals Add New Sa.21.Feb.2015 03:22:25 -->
+    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <p class="font-style-inline-small">
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow</a>. <br>
+                        <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>  <br>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/index.html">Home</a></li>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html">About</a></li>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/blog.html">Blog</a></li>
+                    <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=RangeSet.hs" target="_blank">Demo</a></li>
+                    <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
+                    <li><a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial" target="_blank">Book</a></li>
+                    <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
+                            </p>
+
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <div id="content">
+            <!-- Post Header -->
+<header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt title>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Splitting and Splicing Intervals (Part 2)</h1>
+                    
+                    <span class="meta">
+		    
+			Posted by Ranjit Jhala
+		    
+			Dec 24, 2017
+		    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/reflection.html">reflection</a>, <a href="../../../../tags/abstract-refinements.html">abstract-refinements</a>
+              
+            </div>
+
+            <br>
+			            <p>[Previously][splicing-1], we saw how the principle of <em>“making illegal states unrepresentable”</em> allowed LH to easily enforce a <em>key invariant</em> in <a href="https://twitter.com/nomeata?lang=en">Joachim</a> Breitner’s library for representing sets of integers as <a href="https://www.joachim-breitner.de/blog/734-Finding_bugs_in_Haskell_code_by_proving_it">sorted lists of intervals</a>.</p>
+<p>However, with <a href="https://github.com/antalsz/hs-to-coq">hs-to-coq</a>, Breitner was able to do much more: Coq let him specify and verify that his code properly implemented a Set library.</p>
+<p>Today, lets see how LH’s new <em>“type-level computation”</em> abilities let us reason about intervals, while using the SMT solver to greatly simplify the overhead of proof.</p>
+<p>(Click here to <a href="http://goto.ucsd.edu:8090/index.html#?demo=RangeSet.hs">demo</a>)</p>
+<!-- more -->
+<div class="row-fluid">
+<div class="span12 pagination-centered">
+<img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ribbon.png" alt="Ribbons" height="150">
+</div>
+</div>
+<div class="hidden">
+<pre><span class="hs-linenum">40: </span><span class="hs-keyword">{-@</span> <span class="hs-conid">LIQUID</span> <span class="hs-str">"--short-names"</span>    <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">41: </span><span class="hs-keyword">{-@</span> <span class="hs-conid">LIQUID</span> <span class="hs-str">"--exact-data-con"</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">42: </span><span class="hs-keyword">{-@</span> <span class="hs-conid">LIQUID</span> <span class="hs-str">"--no-adt"</span>         <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">43: </span><span class="hs-keyword">{-@</span> <span class="hs-conid">LIQUID</span> <span class="hs-str">"--higherorder"</span>    <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">44: </span><span class="hs-keyword">{-@</span> <span class="hs-conid">LIQUID</span> <span class="hs-str">"--diff"</span>           <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">45: </span><span class="hs-keyword">{-@</span> <span class="hs-conid">LIQUID</span> <span class="hs-str">"--ple"</span>            <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">46: </span>
+<span class="hs-linenum">47: </span><span class="hs-keyword">module</span> <span class="hs-conid">RangeSet</span> <span class="hs-keyword">where</span>
+<span class="hs-linenum">48: </span>
+<span class="hs-linenum">49: </span><span class="hs-keyword">import</span>           <span class="hs-conid">Prelude</span> <span class="hs-varid">hiding</span> <span class="hs-layout">(</span><span class="hs-varid">min</span><span class="hs-layout">,</span> <span class="hs-varid">max</span><span class="hs-layout">)</span>
+<span class="hs-linenum">50: </span><span class="hs-keyword">import</span>           <span class="hs-conid">Language</span><span class="hs-varop">.</span><span class="hs-conid">Haskell</span><span class="hs-varop">.</span><span class="hs-conid">Liquid</span><span class="hs-varop">.</span><span class="hs-conid">NewProofCombinators</span>
+</pre>
+</div>
+<h2 id="intervals">Intervals</h2>
+<p>Recall that the key idea is to represent sets of integers like</p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">{ <span class="dv">7</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">4</span>}</code></pre></div>
+<p>as ordered lists of <em>intervals</em></p>
+<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[ (<span class="dv">1</span>, <span class="dv">5</span>), (<span class="dv">7</span>, <span class="dv">8</span>), (<span class="dv">9</span>, <span class="dv">13</span>) ]</code></pre></div>
+<p>where each pair <code>(i, j)</code> represents the set <code>{i, i+1,..., j-1}</code>.</p>
+<p>To verify that the implementation correctly implements a set data type, we need a way to</p>
+<ol style="list-style-type: decimal">
+<li><em>Specify</em> the set of values being described,</li>
+<li><em>Establish</em> some key properties of these sets.</li>
+</ol>
+<h2 id="range-sets-semantics-of-intervals">Range-Sets: Semantics of Intervals</h2>
+<p>We can describe the set of values corresponding to (i.e. `<code>the semantics of'') an interval</code>i, j<code>by importing the</code>Data.Set` library</p>
+<pre><span class="hs-linenum">86: </span><span class="hs-keyword">import</span> <span class="hs-keyword">qualified</span> <span class="hs-conid">Data</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-keyword">as</span> <span class="hs-conid">S</span>
+</pre>
+<p>and then using the library to write a function <code>rng i j</code> that defines the <strong>range-set</strong> <code>{i..j-1}</code></p>
+<pre><span class="hs-linenum">93: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">reflect</span> <span class="hs-varid">rng</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">94: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">rng</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-conid">Int</span> <span class="hs-varop">/</span> <span class="hs-keyglyph">[</span><span class="hs-varid">j</span> <span class="hs-comment">-</span> <span class="hs-varid">i</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">95: </span><a class="annot" href="#"><span class="annottext">Int -&gt; Int -&gt; (Set Int)</span><span class="hs-definition">rng</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">j</span></a>
+<span class="hs-linenum">96: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i &lt; j}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <span class="hs-varid">j</span>     <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">union</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : (Set Int) | v == Set_sng i}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">singleton</span> <span class="hs-varid">i</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Int -&gt; Int -&gt; (Set Int)</span><span class="hs-varid">rng</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-varop">+</span></a><span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varid">j</span><span class="hs-layout">)</span>
+<span class="hs-linenum">97: </span>  <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-varid">empty</span>
+</pre>
+<h2 id="equational-reasoning">Equational Reasoning</h2>
+<p>To build up a little intuition about the above definition and how LH reasons about Sets, lets write some simple “unit proofs”.</p>
+<p>First, lets check that <code>2</code> is indeed in the set <code>rng 1 3</code>, by writing a type signature</p>
+<pre><span class="hs-linenum">111: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">tesj1</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">()</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{ S.member 2 (rng 1 3) }</span> <span class="hs-keyword">@-}</span>
+</pre>
+<p>Any <em>implementation</em> of the above type is a <em>proof</em> that <code>2</code> is indeed in <code>rng 1 3</code>. Notice that we can <em>reuse</em> the operators from <code>Data.Set</code> (here, <code>S.member</code>) to talk about set operations in the refinement logic.</p>
+<p>We can construct a <em>proof</em> of the above in an <a href="http://themattchan.com/docs/algprog.pdf">equational style</a>:</p>
+<pre><span class="hs-linenum">123: </span><a class="annot" href="#"><span class="annottext">() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 1 3)}</span><span class="hs-definition">tesj1</span></a> <span class="hs-conid">()</span>
+<span class="hs-linenum">124: </span>  <span class="hs-keyglyph">=</span>   <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-num">2</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-num">1</span> <span class="hs-num">3</span><span class="hs-layout">)</span>
+<span class="hs-linenum">125: </span>      <span class="hs-comment">-- by unfolding `rng 1 3`</span>
+<span class="hs-linenum">126: </span>  <span class="hs-varop">===</span> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-num">2</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">union</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">(Set Int)</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">singleton</span> <span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-num">2</span> <span class="hs-num">3</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
+<span class="hs-linenum">127: </span>      <span class="hs-comment">-- by unfolding `rng 2 3`</span>
+<span class="hs-linenum">128: </span>  <span class="hs-varop">===</span> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-num">2</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">union</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">(Set Int)</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">singleton</span> <span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">union</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">(Set Int)</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">singleton</span> <span class="hs-num">2</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-num">3</span> <span class="hs-num">3</span><span class="hs-layout">)</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
+<span class="hs-linenum">129: </span>      <span class="hs-comment">-- by set-theory</span>
+<span class="hs-linenum">130: </span>  <span class="hs-varop">===</span> <span class="hs-conid">True</span>
+<span class="hs-linenum">131: </span>  <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
+</pre>
+<p>the “proof” uses two library operators:</p>
+<ul>
+<li><p>**Implicit Equality“** [<code>e1 === e2</code>][lh-eq] checks that <code>e1</code> is indeed <code>e2</code> after <strong>unfolding functions at most once</strong>, and returns a term that equals both <code>e1</code> and <code>e2</code>, and</p></li>
+<li><p><a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/include/Language/Haskell/Liquid/NewProofCombinators.hs#L65-L69"><code>e *** QED</code></a> allows us to convert any term <code>e</code> into a <code>()</code> to complete a proof.</p></li>
+</ul>
+<p>Thus, the first two steps of the above proof, simply unfold <code>rng</code> and the final step follows from the SMT solver’s “native” decision procedure for sets which can <em>automatically</em> verify equalities over set operations like <code>S.union</code>, <code>S.singleton</code> and <code>S.member</code>.</p>
+<h2 id="reusing-proofs">Reusing Proofs</h2>
+<p>As a second example, lets check that:</p>
+<pre><span class="hs-linenum">155: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">tesj2</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">()</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{ S.member 2 (rng 0 3) }</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">156: </span><a class="annot" href="#"><span class="annottext">() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 0 3)}</span><span class="hs-definition">tesj2</span></a> <span class="hs-conid">()</span>
+<span class="hs-linenum">157: </span>  <span class="hs-keyglyph">=</span>   <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-num">2</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-num">0</span> <span class="hs-num">3</span><span class="hs-layout">)</span>
+<span class="hs-linenum">158: </span>      <span class="hs-comment">-- (1) by unfolding `rng 0 3`</span>
+<span class="hs-linenum">159: </span>  <span class="hs-varop">===</span> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-num">2</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">union</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">(Set Int)</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">singleton</span> <span class="hs-num">0</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-num">1</span> <span class="hs-num">3</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
+<span class="hs-linenum">160: </span>      <span class="hs-comment">-- (2) by set-theory</span>
+<span class="hs-linenum">161: </span>  <span class="hs-varop">===</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Bool</span><span class="hs-num">2</span></a> <a class="annot" href="#"><span class="annottext">x1:Integer -&gt; x2:Integer -&gt; {v : Bool | v &lt;=&gt; x1 == x2}</span><span class="hs-varop">==</span></a> <span class="hs-num">0</span> <a class="annot" href="#"><span class="annottext">{v : x1:Bool -&gt; x2:Bool -&gt; {v : Bool | v &lt;=&gt; x1
+                                             || x2} | v == GHC.Classes.||}</span><span class="hs-varop">||</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-num">2</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-num">1</span> <span class="hs-num">3</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
+<span class="hs-linenum">162: </span>      <span class="hs-comment">-- (3) by using ex1</span>
+<span class="hs-linenum">163: </span>  <span class="hs-varop">==?</span> <span class="hs-conid">True</span> <span class="hs-varop">?</span> <a class="annot" href="#"><span class="annottext">{v : () -&gt; {v : () | Set_mem 2 (RangeSet.rng 1 3)} | v == RangeSet.tesj1}</span><span class="hs-varid">tesj1</span></a> <span class="hs-conid">()</span>
+<span class="hs-linenum">164: </span>
+<span class="hs-linenum">165: </span>  <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
+</pre>
+<p>The first two steps are as before and we <em>could</em> complete the proof by continuing to unfold in the equational style. However, <code>tesj1</code> already establishes that <code>S.member 2 (rng 1 3)</code> and we can <em>reuse</em> this using:</p>
+<ul>
+<li><strong>Explicit Equality</strong> <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/include/Language/Haskell/Liquid/NewProofCombinators.hs#L98-L116"><code>e1 ==? e2 ? pf</code></a> which checks that <code>e1</code> is indeed <code>e2</code> <em>using</em> any extra facts asserted by the term <code>pf</code> (in addition to unfolding functions at most once), and returns a term that equals both <code>e1</code> and <code>e2</code>.</li>
+</ul>
+<h2 id="proof-by-logical-evaluation">Proof by Logical Evaluation</h2>
+<p>Equational proofs like <code>tesj1</code> and <code>tesj2</code> often have long chains of calculations that can be tedious to spell out. Fortunately, we taught LH a new trick called <strong>Proof by Logical Evaluation</strong> (PLE) that shifts the burden of performing those calculations onto the machine (if thats what the user wants.)</p>
+<p>For example, PLE completely automates the above proofs above proofs:</p>
+<pre><span class="hs-linenum">193: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">tesj1_ple</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">()</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{ S.member 2 (rng 1 3) }</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">194: </span><a class="annot" href="#"><span class="annottext">() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 1 3)}</span><span class="hs-definition">tesj1_ple</span></a> <span class="hs-conid">()</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">195: </span>
+<span class="hs-linenum">196: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">tesj2_ple</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">()</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{ S.member 2 (rng 0 3) }</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">197: </span><a class="annot" href="#"><span class="annottext">() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 0 3)}</span><span class="hs-definition">tesj2_ple</span></a> <span class="hs-conid">()</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span>
+</pre>
+<p>While automation is cool, it can be <em>very</em> helpful to first write out all the steps of an equational proof, at least while building up intuition.</p>
+<h2 id="membership-proof-by-induction">Membership: Proof by Induction</h2>
+<p>At this point, we have enough tools to start proving some interesting facts about <em>range-sets</em>. For example, if <code>x</code> is <em>outside</em> the range <code>i..j</code> then it does not belong in <code>rng i j</code>:</p>
+<pre><span class="hs-linenum">214: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">lem_mem</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-keyword">{_| x &lt; i || j &lt;= x}</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">215: </span>                  <span class="hs-keyword">{not (S.member x (rng i j))}</span> <span class="hs-varop">/</span> <span class="hs-keyglyph">[</span><span class="hs-varid">j</span> <span class="hs-comment">-</span> <span class="hs-varid">i</span><span class="hs-keyglyph">]</span>
+<span class="hs-linenum">216: </span>  <span class="hs-keyword">@-}</span>
+</pre>
+<p><strong>Proof by Induction</strong></p>
+<p>We will prove the above <a href="../../../../tags/induction.html">“by induction”</a></p>
+<p>A confession: I always had trouble understanding what exactly <em>by induction</em> really meant. Why was it it ok to “do” induction on one thing but not another?</p>
+<p>With LH, <em>induction is just recursion</em>. That is,</p>
+<ol style="list-style-type: decimal">
+<li><p>We can <em>recursively</em> use the same theorem we are trying to prove, but</p></li>
+<li><p>We must make sure that the recursive function/proof <em>terminates</em>.</p></li>
+</ol>
+<p>The proof makes this clear:</p>
+<pre><span class="hs-linenum">238: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+                                  || x2 &lt;= v} -&gt; {VV : () | not (Set_mem x3 (RangeSet.rng x1 x2))}</span><span class="hs-definition">lem_mem</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">j</span></a> <a class="annot" href="#"><span class="annottext">{v : Int | v &lt; i
+           || j &lt;= v}</span><span class="hs-varid">x</span></a>
+<span class="hs-linenum">239: </span>                <span class="hs-comment">-- BASE CASE</span>
+<span class="hs-linenum">240: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i &gt;= j}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class="hs-varop">&gt;=</span></a> <span class="hs-varid">j</span>  <span class="hs-keyglyph">=</span>   <a class="annot" href="#"><span class="annottext">{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class="hs-varid">not</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-varid">x</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-varid">i</span> <span class="hs-varid">j</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
+<span class="hs-linenum">241: </span>                <span class="hs-comment">-- by unfolding `rng i j`</span>
+<span class="hs-linenum">242: </span>            <span class="hs-varop">===</span> <a class="annot" href="#"><span class="annottext">{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class="hs-varid">not</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-varid">x</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-varid">empty</span><span class="hs-layout">)</span>
+<span class="hs-linenum">243: </span>                <span class="hs-comment">-- by set-theory</span>
+<span class="hs-linenum">244: </span>            <span class="hs-varop">===</span> <span class="hs-conid">True</span>
+<span class="hs-linenum">245: </span>
+<span class="hs-linenum">246: </span>            <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
+<span class="hs-linenum">247: </span>
+<span class="hs-linenum">248: </span>                <span class="hs-comment">-- INDUCTIVE CASE</span>
+<span class="hs-linenum">249: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i &lt; j}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <span class="hs-varid">j</span>   <span class="hs-keyglyph">=</span>   <a class="annot" href="#"><span class="annottext">{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class="hs-varid">not</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-varid">x</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-varid">i</span> <span class="hs-varid">j</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
+<span class="hs-linenum">250: </span>                <span class="hs-comment">-- by unfolding `rng i j`</span>
+<span class="hs-linenum">251: </span>            <span class="hs-varop">===</span> <a class="annot" href="#"><span class="annottext">{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class="hs-varid">not</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-varid">x</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">union</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : (Set Int) | v == Set_sng i}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">singleton</span> <span class="hs-varid">i</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-varop">+</span></a> <span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varid">j</span><span class="hs-layout">)</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
+<span class="hs-linenum">252: </span>                <span class="hs-comment">-- by set-theory</span>
+<span class="hs-linenum">253: </span>            <span class="hs-varop">===</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; x /= i}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 /= x2}</span><span class="hs-varop">/=</span></a> <span class="hs-varid">i</span> <a class="annot" href="#"><span class="annottext">{v : x1:Bool -&gt; x2:Bool -&gt; {v : Bool | v &lt;=&gt; x1
+                                             &amp;&amp; x2} | v == GHC.Classes.&amp;&amp;}</span><span class="hs-varop">&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class="hs-varid">not</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">member</span> <span class="hs-varid">x</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-varop">+</span></a> <span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varid">j</span><span class="hs-layout">)</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
+<span class="hs-linenum">254: </span>                <span class="hs-comment">-- (*) by "induction hypothesis"</span>
+<span class="hs-linenum">255: </span>            <span class="hs-varop">==?</span> <span class="hs-conid">True</span> <span class="hs-varop">?</span> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+                                  || x2 &lt;= v} -&gt; {VV : () | not (Set_mem x3 (RangeSet.rng x1 x2))}</span><span class="hs-varid">lem_mem</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-varop">+</span></a> <span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varid">j</span> <span class="hs-varid">x</span>
+<span class="hs-linenum">256: </span>
+<span class="hs-linenum">257: </span>            <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
+</pre>
+<p>There are two cases.</p>
+<ul>
+<li><p><strong>Base Case</strong> (<code>i &gt;= j</code>) : Here <code>rng i j</code> is empty, so <code>x</code> cannot be in it.</p></li>
+<li><p><strong>Inductive Case</strong> (<code>i &lt; j</code>) : Here we unfold <code>rng i j</code> and then <em>recursively call</em> <code>lem_mem (i+1) j</code> to obtain the fact that <code>x</code> cannot be in <code>i+1..j</code> to complete the proof.</p></li>
+</ul>
+<p>LH automatically checks that the proof:</p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Accounts for all cases</strong>, as otherwise the function is <em>not total</em> i.e. like the <code>head</code> function which is only defined on non-empty lists. (Try deleting a case at the <a href="http://goto.ucsd.edu:8090/index.html#?demo=RangeSet.hs">demo</a> to see what happens.)</p></li>
+<li><p><strong>Terminates</strong>, as otherwise the induction is bogus, or in math-speak, not <em>well-founded</em>. We use the <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/README.md#explicit-termination-metrics">explicit termination metric</a> <code>/ [j - i]</code> as a hint to tell LH that in each recursive call, the size of the interval <code>j - i</code> shrinks and is always non-negative. LH checks that is indeed the case, ensuring that we have a legit proof by induction.</p></li>
+</ol>
+<p><strong>Proof by Evaluation</strong></p>
+<p>Once you get the hang of the above style, you get tired of spelling out all the details. Logical evaluation lets us eliminate all the boring calculational steps, leaving just the important bits: the recursive (inductive) skeleton:</p>
+<pre><span class="hs-linenum">292: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">lem_mem_ple</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-keyword">{_| x &lt; i || j &lt;= x}</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">293: </span>                     <span class="hs-keyword">{not (S.member x (rng i j))}</span> <span class="hs-varop">/</span> <span class="hs-keyglyph">[</span><span class="hs-varid">j</span> <span class="hs-comment">-</span> <span class="hs-varid">i</span><span class="hs-keyglyph">]</span>
+<span class="hs-linenum">294: </span>  <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">295: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+                                  || x2 &lt;= v} -&gt; {VV : () | not (Set_mem x3 (RangeSet.rng x1 x2))}</span><span class="hs-definition">lem_mem_ple</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">j</span></a> <a class="annot" href="#"><span class="annottext">{v : Int | v &lt; i
+           || j &lt;= v}</span><span class="hs-varid">x</span></a>
+<span class="hs-linenum">296: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i &gt;= j}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class="hs-varop">&gt;=</span></a> <span class="hs-varid">j</span> <span class="hs-keyglyph">=</span>  <span class="hs-conid">()</span>
+<span class="hs-linenum">297: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i &lt; j}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <span class="hs-varid">j</span>  <span class="hs-keyglyph">=</span>  <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+                                  || x2 &lt;= v} -&gt; {VV : () | not (Set_mem x3 (RangeSet.rng x1 x2))}</span><span class="hs-varid">lem_mem_ple</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-varop">+</span></a> <span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varid">j</span> <span class="hs-varid">x</span>
+</pre>
+<p>Notice that the above is exactly the original proof sans the intermediate equalities, which LH can synthesize automatically.</p>
+<h2 id="disjointness">Disjointness</h2>
+<p>We say that two sets are <em>disjoint</em> if their <code>intersection</code> is <code>empty</code>:</p>
+<pre><span class="hs-linenum">311: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">inline</span> <span class="hs-varid">disjoint</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">312: </span><span class="hs-definition">disjoint</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span>
+<span class="hs-linenum">313: </span><a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {VV : Bool | VV &lt;=&gt; Set_cap x1 x2 == Set_empty 0}</span><span class="hs-definition">disjoint</span></a> <a class="annot" href="#"><span class="annottext">(Set Int)</span><span class="hs-varid">a</span></a> <a class="annot" href="#"><span class="annottext">(Set Int)</span><span class="hs-varid">b</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cap x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">intersection</span> <span class="hs-varid">a</span> <span class="hs-varid">b</span> <a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; x1 == x2}</span><span class="hs-varop">==</span></a> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-varid">empty</span>
+</pre>
+<p>Lets prove that two intervals are disjoint if the first <em>ends</em> before the second <em>begins</em>:</p>
+<pre><span class="hs-linenum">320: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">lem_disj</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i1</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j1</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">i2</span><span class="hs-conop">:</span><span class="hs-keyword">{_ | j1 &lt;= i2}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j2</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">321: </span>                  <span class="hs-keyword">{disjoint (rng i1 j1) (rng i2 j2)}</span> <span class="hs-varop">/</span> <span class="hs-keyglyph">[</span><span class="hs-varid">j2</span><span class="hs-comment">-</span><span class="hs-varid">i2</span><span class="hs-keyglyph">]</span>
+<span class="hs-linenum">322: </span>  <span class="hs-keyword">@-}</span>
+</pre>
+<p>This proof goes “by induction” on the size of the second interval, i.e. <code>j2 - i2</code>:</p>
+<pre><span class="hs-linenum">329: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class="hs-definition">lem_disj</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i1</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">j1</span></a> <a class="annot" href="#"><span class="annottext">{i2 : Int | j1 &lt;= i2}</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">j2</span></a>
+<span class="hs-linenum">330: </span>
+<span class="hs-linenum">331: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i2 &gt;= j2}</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class="hs-varop">&gt;=</span></a> <span class="hs-varid">j2</span>  <span class="hs-comment">{- Base CASE -}</span>
+<span class="hs-linenum">332: </span>  <span class="hs-keyglyph">=</span>   <a class="annot" href="#"><span class="annottext">{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class="hs-varid">disjoint</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-varid">i2</span> <span class="hs-varid">j2</span><span class="hs-layout">)</span>
+<span class="hs-linenum">333: </span>      <span class="hs-comment">-- by unfolding `rng i2 j2`</span>
+<span class="hs-linenum">334: </span>  <span class="hs-varop">===</span> <a class="annot" href="#"><span class="annottext">{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class="hs-varid">disjoint</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span><span class="hs-layout">)</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-varid">empty</span>
+<span class="hs-linenum">335: </span>      <span class="hs-comment">-- by set-theory</span>
+<span class="hs-linenum">336: </span>  <span class="hs-varop">===</span> <span class="hs-conid">True</span>
+<span class="hs-linenum">337: </span>  <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
+<span class="hs-linenum">338: </span>
+<span class="hs-linenum">339: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i2 &lt; j2}</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <span class="hs-varid">j2</span>  <span class="hs-comment">{- Inductive CASE -}</span>
+<span class="hs-linenum">340: </span>  <span class="hs-keyglyph">=</span>   <a class="annot" href="#"><span class="annottext">{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class="hs-varid">disjoint</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-varid">i2</span> <span class="hs-varid">j2</span><span class="hs-layout">)</span>
+<span class="hs-linenum">341: </span>      <span class="hs-comment">-- by unfolding `rng i2 j2`</span>
+<span class="hs-linenum">342: </span>  <span class="hs-varop">===</span> <a class="annot" href="#"><span class="annottext">{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class="hs-varid">disjoint</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">union</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : (Set Int) | v == Set_sng i2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">singleton</span> <span class="hs-varid">i2</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class="hs-varid">rng</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i2</span></a><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-varop">+</span></a><span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varid">j2</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
+<span class="hs-linenum">343: </span>      <span class="hs-comment">-- by induction and lem_mem</span>
+<span class="hs-linenum">344: </span>  <span class="hs-varop">==?</span> <span class="hs-conid">True</span> <span class="hs-varop">?</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+                                       || x2 &lt;= v} -&gt; {v : () | not (Set_mem x3 (RangeSet.rng x1 x2))} | v == RangeSet.lem_mem}</span><span class="hs-varid">lem_mem</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span> <span class="hs-varid">i2</span> <a class="annot" href="#"><span class="annottext">{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class="hs-varop">&amp;&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class="hs-varid">lem_disj</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i2</span></a><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-varop">+</span></a><span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varid">j2</span><span class="hs-layout">)</span>
+<span class="hs-linenum">345: </span>  <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
+</pre>
+<p>Again, we can get PLE to do the boring calculations:</p>
+<pre><span class="hs-linenum">351: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">lem_disj_ple</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i1</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j1</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">i2</span><span class="hs-conop">:</span><span class="hs-keyword">{_ | j1 &lt;= i2}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j2</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">352: </span>                      <span class="hs-keyword">{disjoint (rng i1 j1) (rng i2 j2)}</span> <span class="hs-varop">/</span> <span class="hs-keyglyph">[</span><span class="hs-varid">j2</span><span class="hs-comment">-</span><span class="hs-varid">i2</span><span class="hs-keyglyph">]</span>
+<span class="hs-linenum">353: </span>  <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">354: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class="hs-definition">lem_disj_ple</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i1</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">j1</span></a> <a class="annot" href="#"><span class="annottext">{i2 : Int | j1 &lt;= i2}</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">j2</span></a>
+<span class="hs-linenum">355: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i2 &gt;= j2}</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class="hs-varop">&gt;=</span></a> <span class="hs-varid">j2</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">356: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i2 &lt; j2}</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a>  <span class="hs-varid">j2</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+                                       || x2 &lt;= v} -&gt; {v : () | not (Set_mem x3 (RangeSet.rng x1 x2))} | v == RangeSet.lem_mem}</span><span class="hs-varid">lem_mem</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span> <span class="hs-varid">i2</span> <a class="annot" href="#"><span class="annottext">{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class="hs-varop">&amp;&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class="hs-varid">lem_disj_ple</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i2</span></a><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-varop">+</span></a><span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varid">j2</span>
+</pre>
+<h2 id="splitting-intervals">Splitting Intervals</h2>
+<p>Finally, we can establish the <strong>splitting property</strong> of an interval <code>i..j</code>, that is, given some <code>x</code> that lies between <code>i</code> and <code>j</code> we can <em>split</em> <code>i..j</code> into <code>i..x</code> and <code>x..j</code>.</p>
+<p>To be precise, we define a predicate that a set <code>s</code> can be <em>split</em> or if we’re being fancy, <em>partitioned</em> into <code>a</code> and <code>b</code> as:</p>
+<pre><span class="hs-linenum">373: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">inline</span> <span class="hs-varid">split</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">374: </span><span class="hs-definition">split</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span>
+<span class="hs-linenum">375: </span><a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; x3:(Set Int) -&gt; {VV : Bool | VV &lt;=&gt; x1 == Set_cup x2 x3
+                                                                    &amp;&amp; Set_cap x2 x3 == Set_empty 0}</span><span class="hs-definition">split</span></a> <a class="annot" href="#"><span class="annottext">(Set Int)</span><span class="hs-varid">s</span></a> <a class="annot" href="#"><span class="annottext">(Set Int)</span><span class="hs-varid">a</span></a> <a class="annot" href="#"><span class="annottext">(Set Int)</span><span class="hs-varid">b</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">Bool</span><span class="hs-varid">s</span></a> <a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; x1 == x2}</span><span class="hs-varop">==</span></a> <a class="annot" href="#"><span class="annottext">x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class="hs-conid">S</span></a><span class="hs-varop">.</span><span class="hs-varid">union</span> <span class="hs-varid">a</span> <span class="hs-varid">b</span> <a class="annot" href="#"><span class="annottext">{v : x1:Bool -&gt; x2:Bool -&gt; {v : Bool | v &lt;=&gt; x1
+                                             &amp;&amp; x2} | v == GHC.Classes.&amp;&amp;}</span><span class="hs-varop">&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class="hs-varid">disjoint</span></a> <span class="hs-varid">a</span> <span class="hs-varid">b</span>
+</pre>
+<p>We can now state and prove the <em>splitting property</em> as:</p>
+<pre><span class="hs-linenum">381: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">lem_split</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-keyword">{_ | i &lt;= x}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j</span><span class="hs-conop">:</span><span class="hs-keyword">{_ | x &lt;= j}</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">382: </span>                   <span class="hs-keyword">{split (rng i j) (rng i x) (rng x j)}</span> <span class="hs-varop">/</span> <span class="hs-keyglyph">[</span><span class="hs-varid">x</span><span class="hs-comment">-</span><span class="hs-varid">i</span><span class="hs-keyglyph">]</span>
+<span class="hs-linenum">383: </span>  <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">384: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{j : Int | x2 &lt;= j} -&gt; {VV : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+                                                                         &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0}</span><span class="hs-definition">lem_split</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">{v : Int | i &lt;= v}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">{j : Int | x &lt;= j}</span><span class="hs-varid">t</span></a>
+<span class="hs-linenum">385: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i == x}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 == x2}</span><span class="hs-varop">==</span></a> <span class="hs-varid">x</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">386: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i &lt; x}</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a>  <span class="hs-varid">x</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{j : Int | x2 &lt;= j} -&gt; {VV : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+                                                                         &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0}</span><span class="hs-varid">lem_split</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-varop">+</span></a> <span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varid">x</span> <span class="hs-varid">t</span> <a class="annot" href="#"><span class="annottext">{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class="hs-varop">&amp;&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+                                       || x2 &lt;= v} -&gt; {v : () | not (Set_mem x3 (RangeSet.rng x1 x2))} | v == RangeSet.lem_mem}</span><span class="hs-varid">lem_mem</span></a> <span class="hs-varid">x</span> <span class="hs-varid">t</span> <span class="hs-varid">i</span>
+</pre>
+<p>(We’re using PLE here quite aggressively, can <em>you</em> work out the equational proof?)</p>
+<h2 id="set-operations">Set Operations</h2>
+<p>The splitting abstraction is a wonderful hammer that lets us break higher-level proofs into the bite sized pieces suitable for the SMT solver’s decision procedures.</p>
+<p><strong>Subset</strong></p>
+<p>An interval <code>i1..j1</code> is <em>enclosed by</em> <code>i2..j2</code> if <code>i2 &lt;= i1 &lt; j1 &lt;= j2</code>. Lets verify that the range-set of an interval is <em>contained within</em> that of an enclosing one.</p>
+<pre><span class="hs-linenum">407: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">lem_sub</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i1</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j1</span><span class="hs-conop">:</span><span class="hs-keyword">{_ | i1 &lt; j1}</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">408: </span>               <span class="hs-varid">i2</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j2</span><span class="hs-conop">:</span><span class="hs-keyword">{_ | i2 &lt; j2 &amp;&amp; i2 &lt;= i1 &amp;&amp; j1 &lt;= j2 }</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">409: </span>                 <span class="hs-keyword">{ S.isSubsetOf (rng i1 j1) (rng i2 j2) }</span>
+<span class="hs-linenum">410: </span>  <span class="hs-keyword">@-}</span>
+</pre>
+<p>Here’s a “proof-by-picture”. We can <em>split</em> the larger interval <code>i2..j2</code> into smaller pieces, <code>i2..i1</code>, <code>i1..j1</code> and <code>j1..j2</code> <em>one of</em> which is the <code>i1..j1</code>, thereby completing the proof:</p>
+into smaller basically we can _
+<div class="row-fluid">
+<div class="span12 pagination-centered">
+<img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/lem_sub.png" alt="Ribbons" height="150">
+</div>
+</div>
+<p>The intuition represented by the picture can distilled into the following proof, that invokes <code>lem_split</code> to carve <code>i2..j2</code> into the relevant sub-intervals:</p>
+<pre><span class="hs-linenum">431: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:{j1 : Int | x1 &lt; j1} -&gt; x3:Int -&gt; x4:{j2 : Int | x3 &lt; j2
+                                                              &amp;&amp; x3 &lt;= x1
+                                                              &amp;&amp; x2 &lt;= j2} -&gt; {VV : () | Set_sub (RangeSet.rng x1 x2) (RangeSet.rng x3 x4)}</span><span class="hs-definition">lem_sub</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i1</span></a> <a class="annot" href="#"><span class="annottext">{j1 : Int | i1 &lt; j1}</span><span class="hs-varid">j1</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">{j2 : Int | i2 &lt; j2
+            &amp;&amp; i2 &lt;= i1
+            &amp;&amp; j1 &lt;= j2}</span><span class="hs-varid">j2</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+                                                                             &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class="hs-varid">lem_split</span></a> <span class="hs-varid">i2</span> <span class="hs-varid">i1</span> <span class="hs-varid">j2</span> <a class="annot" href="#"><span class="annottext">{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class="hs-varop">&amp;&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+                                                                             &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class="hs-varid">lem_split</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span> <span class="hs-varid">j2</span>
+</pre>
+<p><strong>Union</strong></p>
+<p>An interval <code>i1..j1</code> <em>overlaps</em> <code>i2..j2</code> if <code>i1 &lt;= j2 &lt;= i2</code>, that is, if the latter ends somewhere inside the former.</p>
+<p>The same splitting hammer lets us compute the union of two overlapping intervals simply by picking the interval defined by the <em>endpoints</em>.</p>
+<pre><span class="hs-linenum">446: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">lem_union</span> <span class="hs-keyglyph">::</span>
+<span class="hs-linenum">447: </span>      <span class="hs-varid">i1</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j1</span><span class="hs-conop">:</span><span class="hs-keyword">{_ | i1 &lt; j1}</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">448: </span>      <span class="hs-varid">i2</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j2</span><span class="hs-conop">:</span><span class="hs-keyword">{_ | i2 &lt; j2 &amp;&amp; i1 &lt;= j2 &amp;&amp; j2 &lt;= j1 }</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">449: </span>        <span class="hs-keyword">{ rng (min i1 i2) j1 = S.union (rng i1 j1) (rng i2 j2) }</span>
+<span class="hs-linenum">450: </span>  <span class="hs-keyword">@-}</span>
+</pre>
+<div class="row-fluid">
+<div class="span12 pagination-centered">
+<img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/lem_union.png" alt="Ribbons" height="150">
+</div>
+</div>
+<p>The pictorial proof illustrates the two cases:</p>
+<ol style="list-style-type: decimal">
+<li><p><code>i1..j1</code> encloses <code>i2..j2</code>; here the union is just <code>i1..j1</code>,</p></li>
+<li><p><code>i1..j1</code> only overlaps <code>i1..j1</code>; here the union is <code>i2..j1</code> which can be split into <code>i2..i1</code>, <code>i1..j2</code> and <code>j2..j1</code> which are exactly the union of the intervals <code>i1..j1</code> and <code>i2..j2</code>.</p></li>
+</ol>
+<p>Again, we render the picture into a formal proof as:</p>
+<pre><span class="hs-linenum">471: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:{j1 : Int | x1 &lt; j1} -&gt; x3:Int -&gt; x4:{j2 : Int | x3 &lt; j2
+                                                              &amp;&amp; x1 &lt;= j2
+                                                              &amp;&amp; j2 &lt;= x2} -&gt; {VV : () | RangeSet.rng (RangeSet.min x1 x3) x2 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x3 x4)}</span><span class="hs-definition">lem_union</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i1</span></a> <a class="annot" href="#"><span class="annottext">{j1 : Int | i1 &lt; j1}</span><span class="hs-varid">j1</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">{j2 : Int | i2 &lt; j2
+            &amp;&amp; i1 &lt;= j2
+            &amp;&amp; j2 &lt;= j1}</span><span class="hs-varid">j2</span></a>
+<span class="hs-linenum">472: </span>  <span class="hs-comment">-- i1..j1 encloses i2..j2</span>
+<span class="hs-linenum">473: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i1 &lt; i2}</span><span class="hs-varid">i1</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <span class="hs-varid">i2</span>   <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:{v : Int | x1 &lt; v} -&gt; x3:Int -&gt; x4:{v : Int | x3 &lt; v
+                                                                &amp;&amp; x3 &lt;= x1
+                                                                &amp;&amp; x2 &lt;= v} -&gt; {v : () | Set_sub (RangeSet.rng x1 x2) (RangeSet.rng x3 x4)} | v == RangeSet.lem_sub}</span><span class="hs-varid">lem_sub</span></a> <span class="hs-varid">i2</span> <span class="hs-varid">j2</span> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span>
+<span class="hs-linenum">474: </span>  <span class="hs-comment">-- i1..j1 overlaps i2..j2</span>
+<span class="hs-linenum">475: </span>  <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+                                                                             &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class="hs-varid">lem_split</span></a> <span class="hs-varid">i2</span> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span>
+<span class="hs-linenum">476: </span>            <a class="annot" href="#"><span class="annottext">{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class="hs-varop">&amp;&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+                                                                             &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class="hs-varid">lem_split</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j2</span> <span class="hs-varid">j1</span>
+<span class="hs-linenum">477: </span>            <a class="annot" href="#"><span class="annottext">{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class="hs-varop">&amp;&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+                                                                             &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class="hs-varid">lem_split</span></a> <span class="hs-varid">i2</span> <span class="hs-varid">i1</span> <span class="hs-varid">j2</span>
+</pre>
+<p><strong>Intersection</strong></p>
+<p>Finally, we check that the intersection of two overlapping intervals is given by their <em>inner-points</em>.</p>
+<pre><span class="hs-linenum">486: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">lem_intersect</span> <span class="hs-keyglyph">::</span>
+<span class="hs-linenum">487: </span>      <span class="hs-varid">i1</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j1</span><span class="hs-conop">:</span><span class="hs-keyword">{_ | i1 &lt; j1}</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">488: </span>      <span class="hs-varid">i2</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j2</span><span class="hs-conop">:</span><span class="hs-keyword">{_ | i2 &lt; j2 &amp;&amp; i1 &lt;= j2 &amp;&amp; j2 &lt;= j1 }</span> <span class="hs-keyglyph">-&gt;</span>
+<span class="hs-linenum">489: </span>        <span class="hs-keyword">{rng (max i1 i2) j2 = S.intersection (rng i1 j1) (rng i2 j2)}</span>
+<span class="hs-linenum">490: </span>  <span class="hs-keyword">@-}</span>
+</pre>
+<div class="row-fluid">
+<div class="span12 pagination-centered">
+<img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/lem_intersect.png" alt="Ribbons" height="150">
+</div>
+</div>
+<p>We have the same two cases as for <code>lem_union</code></p>
+<ol style="list-style-type: decimal">
+<li><p><code>i1..j1</code> encloses <code>i2..j2</code>; here the intersection is just <code>i2..j2</code>,</p></li>
+<li><code>i1..j1</code> only overlaps <code>i1..j1</code>; here the intersection is the <em>middle segment</em> <code>i1..j2</code>, which we obtain by</li>
+</ol>
+<ol style="list-style-type: lower-alpha">
+<li><em>splitting</em> <code>i1..j1</code> at <code>j2</code>,</li>
+<li><em>splitting</em> <code>i2..j2</code> at <code>i1</code>,</li>
+<li><em>discarding</em> the end segments which do not belong in the intersection.</li>
+</ol>
+<pre><span class="hs-linenum">511: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:{j1 : Int | x1 &lt; j1} -&gt; x3:Int -&gt; x4:{j2 : Int | x3 &lt; j2
+                                                              &amp;&amp; x1 &lt;= j2
+                                                              &amp;&amp; j2 &lt;= x2} -&gt; {VV : () | RangeSet.rng (RangeSet.max x1 x3) x4 == Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4)}</span><span class="hs-definition">lem_intersect</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i1</span></a> <a class="annot" href="#"><span class="annottext">{j1 : Int | i1 &lt; j1}</span><span class="hs-varid">j1</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">{j2 : Int | i2 &lt; j2
+            &amp;&amp; i1 &lt;= j2
+            &amp;&amp; j2 &lt;= j1}</span><span class="hs-varid">j2</span></a>
+<span class="hs-linenum">512: </span>  <span class="hs-comment">-- i1..j1 encloses i2..j2</span>
+<span class="hs-linenum">513: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i1 &lt; i2}</span><span class="hs-varid">i1</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <span class="hs-varid">i2</span>   <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:{v : Int | x1 &lt; v} -&gt; x3:Int -&gt; x4:{v : Int | x3 &lt; v
+                                                                &amp;&amp; x3 &lt;= x1
+                                                                &amp;&amp; x2 &lt;= v} -&gt; {v : () | Set_sub (RangeSet.rng x1 x2) (RangeSet.rng x3 x4)} | v == RangeSet.lem_sub}</span><span class="hs-varid">lem_sub</span></a> <span class="hs-varid">i2</span> <span class="hs-varid">j2</span> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span>
+<span class="hs-linenum">514: </span>  <span class="hs-comment">-- i1..j1 overlaps i2..j2</span>
+<span class="hs-linenum">515: </span>  <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+                                                                             &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class="hs-varid">lem_split</span></a> <span class="hs-varid">i1</span> <span class="hs-varid">j2</span> <span class="hs-varid">j1</span>
+<span class="hs-linenum">516: </span>            <a class="annot" href="#"><span class="annottext">{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class="hs-varop">&amp;&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+                                                                             &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class="hs-varid">lem_split</span></a> <span class="hs-varid">i2</span> <span class="hs-varid">i1</span> <span class="hs-varid">j2</span>
+<span class="hs-linenum">517: </span>            <a class="annot" href="#"><span class="annottext">{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class="hs-varop">&amp;&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | x2 &lt;= v} -&gt; x4:Int -&gt; {v : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0} | v == RangeSet.lem_disj}</span><span class="hs-varid">lem_disj</span></a>  <span class="hs-varid">i2</span> <span class="hs-varid">i1</span> <span class="hs-varid">i1</span> <span class="hs-varid">j1</span>     <span class="hs-comment">-- discard i2..i1</span>
+<span class="hs-linenum">518: </span>            <a class="annot" href="#"><span class="annottext">{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class="hs-varop">&amp;&amp;&amp;</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | x2 &lt;= v} -&gt; x4:Int -&gt; {v : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0} | v == RangeSet.lem_disj}</span><span class="hs-varid">lem_disj</span></a>  <span class="hs-varid">i2</span> <span class="hs-varid">j2</span> <span class="hs-varid">j2</span> <span class="hs-varid">j1</span>     <span class="hs-comment">-- discard i2..j2</span>
+</pre>
+<h2 id="conclusions">Conclusions</h2>
+<p>Whew. That turned out a lot longer than I’d expected!</p>
+<p>On the bright side, we saw how to:</p>
+<ol style="list-style-type: decimal">
+<li><em>Specify</em> the semantics of range-sets,</li>
+<li><em>Write</em> equational proofs using plain Haskell code,</li>
+<li><em>Avoid</em> boring proof steps using PLE,</li>
+<li><em>Verify</em> key properties of operations on range-sets.</li>
+</ol>
+<p>Next time we’ll finish the series by showing how to use the above lemmas to specify and verify the correctness of <a href="https://www.joachim-breitner.de/blog/734-Finding_bugs_in_Haskell_code_by_proving_it">Breitner’s implementation</a>.</p>
+<div class="hidden">
+<pre><span class="hs-linenum">541: </span><span class="hs-comment">--------------------------------------------------------------------------------</span>
+<span class="hs-linenum">542: </span><span class="hs-comment">-- | Some helper definitions</span>
+<span class="hs-linenum">543: </span><span class="hs-comment">--------------------------------------------------------------------------------</span>
+<span class="hs-linenum">544: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">reflect</span> <span class="hs-varid">min</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">545: </span><span class="hs-definition">min</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
+<span class="hs-linenum">546: </span><a class="annot" href="#"><span class="annottext">(Ord a) =&gt;
+x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.min x2 x3
+                          &amp;&amp; VV == (if x2 &lt; x3 then x2 else x3)}</span><span class="hs-definition">min</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">y</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; x &lt; y}</span><span class="hs-keyword">if</span></a> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; x &lt; y}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:a -&gt; x2:a -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <span class="hs-varid">y</span> <span class="hs-keyword">then</span> <span class="hs-varid">x</span> <span class="hs-keyword">else</span> <span class="hs-varid">y</span>
+<span class="hs-linenum">547: </span>
+<span class="hs-linenum">548: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">reflect</span> <span class="hs-varid">max</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">549: </span><span class="hs-definition">max</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
+<span class="hs-linenum">550: </span><a class="annot" href="#"><span class="annottext">(Ord a) =&gt;
+x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
+                          &amp;&amp; VV == (if x2 &lt; x3 then x3 else x2)}</span><span class="hs-definition">max</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">y</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; x &lt; y}</span><span class="hs-keyword">if</span></a> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; x &lt; y}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:a -&gt; x2:a -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <span class="hs-varid">y</span> <span class="hs-keyword">then</span> <span class="hs-varid">y</span> <span class="hs-keyword">else</span> <span class="hs-varid">x</span>
+<span class="hs-linenum">551: </span>
+<span class="hs-linenum">552: </span><span class="hs-definition">rng</span>         <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">553: </span><span class="hs-definition">tesj1</span>       <span class="hs-keyglyph">::</span> <span class="hs-conid">()</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">554: </span><span class="hs-definition">tesj2</span>       <span class="hs-keyglyph">::</span> <span class="hs-conid">()</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">555: </span><span class="hs-definition">tesj1_ple</span>   <span class="hs-keyglyph">::</span> <span class="hs-conid">()</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">556: </span><span class="hs-definition">tesj2_ple</span>   <span class="hs-keyglyph">::</span> <span class="hs-conid">()</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">557: </span><span class="hs-definition">lem_mem</span>      <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">558: </span><span class="hs-definition">lem_mem_ple</span>  <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">559: </span><span class="hs-definition">lem_sub</span>      <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">560: </span><span class="hs-definition">lem_disj</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">561: </span><span class="hs-definition">lem_disj_ple</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">562: </span><span class="hs-definition">lem_split</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">563: </span>
+<span class="hs-linenum">564: </span><span class="hs-definition">lem_intersect</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">565: </span><span class="hs-definition">lem_union</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">566: </span><span class="hs-comment">-- https://ucsd-progsys.github.io/liquidhaskell-blog/tags/induction.html</span>
+<span class="hs-linenum">567: </span>
+<span class="hs-linenum">568: </span><span class="hs-comment">{-
+{- lem_split :: f:_ -&gt; x:{_ | f &lt;= x} -&gt; t:{_ | x &lt;= t} -&gt;
+                   { split (rng f t) (rng f x) (rng x t) }
+  @-}
+lem_split f x t = lem_split_union f x t &amp;&amp;&amp; lem_disj f x x t
+
+{- lem_split_union :: f:_ -&gt; x:{_ | f &lt;= x} -&gt; t:{_ | x &lt;= t} -&gt;
+                        { rng f t = S.union (rng f x) (rng x t) } / [x - f]  @-}
+lem_split_union :: Int -&gt; Int -&gt; Int -&gt; ()
+lem_split_union f x t
+  | f == x    =   rng f t
+              === S.union S.empty   (rng f t)
+              === S.union (rng f f) (rng f t)
+              *** QED
+
+  | otherwise =   rng f t
+              === S.union (S.singleton f) (rng (f+1) t)
+              ==? S.union (S.singleton f) (S.union (rng (f+1) x) (rng x t))
+                  ? lem_split_union (f + 1) x t
+              === S.union (S.union (S.singleton f) (rng (f+1) x)) (rng x t)
+              === S.union (rng f x) (rng x t)
+              *** QED
+
+{- lem_union :: i1:_ -&gt; j1:{_ | i1 &lt; j1} -&gt; i2:_ -&gt; j2:{_ | i2 &lt; j2 &amp;&amp; i1 &lt;= j2 &amp;&amp; j2 &lt;= j1 } -&gt;
+                { rng (min i1 i2) j1 = S.union (rng i1 j1) (rng i2 j2) }   @-}
+lem_union :: Int -&gt; Int -&gt; Int -&gt; Int -&gt; ()
+lem_union i1 j1 i2 j2
+  | i1 &lt; i2   =    rng (min i1 i2) j1
+              ===  rng i1 j1
+              ==?  S.union (rng i1 j1) (rng i2 j2) ? lem_sub i2 j2 i1 j1
+              *** QED
+
+  | otherwise =   S.union (rng i1 j1) (rng i2 j2)
+              ==? S.union (S.union (rng i1 j2) (rng j2 j1)) (S.union (rng i2 i1) (rng i1 j2))
+                  ? (lem_split i1 j2 j1 &amp;&amp;&amp; lem_split i2 i1 j2)
+              === S.union (rng i2 i1) (S.union (rng i1 j2) (rng j2 j1))
+              === S.union (rng i2 i1) (rng i1 j1)
+              ==? rng i2 j1 ? lem_split i2 i1 j1
+              === rng (min i1 i2) j1
+              *** QED
+
+--------------------------------------------------------------------------------
+-- | LEMMA: The inner-points define the intersection of overlapping range-sets.
+--------------------------------------------------------------------------------
+{- lem_intersect :: i1:_ -&gt; j1:{_ | i1 &lt; j1} -&gt; i2:_ -&gt; j2:{_ | i2 &lt; j2 &amp;&amp; i1 &lt;= j2 &amp;&amp; j2 &lt;= j1 } -&gt;
+                      { rng (max i1 i2) j2 = S.intersection (rng i1 j1) (rng i2 j2) }  @-}
+lem_intersect :: Int -&gt; Int -&gt; Int -&gt; Int -&gt; ()
+lem_intersect i1 j1 i2 j2
+  | i1 &lt; i2   =    rng (max i1 i2) j2
+              ===  rng i2 j2
+              ==?  S.intersection (rng i1 j1) (rng i2 j2)
+                        ? lem_sub i2 j2 i1 j1
+              *** QED
+
+  | otherwise =    S.intersection (rng i1 j1) (rng i2 j2)
+              ==?  (S.intersection (S.union (rng i1 j2) (rng j2 j1)) (S.union (rng i2 i1) (rng i1 j2)))
+                        ? (lem_split i1 j2 j1 &amp;&amp;&amp; lem_split i2 i1 j2)
+              ==?  rng i1 j2
+                        ? (lem_disj  i2 i1 i1 j1 &amp;&amp;&amp; lem_disj  i2 j2 j2 j1)
+              ===  rng (max i1 i2) j2
+              ***  QED
+-}</span>
+<span class="hs-linenum">630: </span>
+</pre>
+</div>
+                <hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+                <div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    var disqus_config = function () {
+        this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2017/12/24/splitting-and-splicing-intervals-II.lhs';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = '/2017/12/24/splitting-and-splicing-intervals-II.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+        var d = document, s = d.createElement('script');
+        s.src = '//liquidhaskell.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+            </div>
+        </div>
+    </div>
+</article>
+
+        </div>
+        <div id="footer">
+        </div>
+      <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="https://ucsd-progsys.github.io/liquidhaskell-blog/feed.xml" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/ranjitjhala" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/ucsd-progsys" target="_blank">
+                            <span class="fa-stack fa-lg">
+
+                              <i class="fa fa-arrow-circle-o-down"></i>
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+		    
+                </ul>
+                <p class="copyright text-muted">
+                
+                  Copyright &copy; Ranjit Jhala 2016-17.
+                
+                  Generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>,
+                  template by <a href="http://lucumr.pocoo.org">Armin Ronacher</a>,
+                  suggest improvements <a href="https://github.com/ucsd-progsys/liquidhaskell-blog/">here</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<!-- jQuery -->
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/jquery.min.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/spaceg.stylesheets.min.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/bootstrap.min.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/anim.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/scripts.js"></script>
+
+    </body>
+</html>
