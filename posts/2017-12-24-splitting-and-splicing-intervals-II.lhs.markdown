@@ -118,40 +118,39 @@ Any _implementation_ of the above type is a _proof_
 that `2` is indeed in `rng 1 3`. Notice that we can
 _reuse_ the operators from `Data.Set` (here, `S.member`)
 to talk about set operations in the refinement logic.
-
-We can construct a _proof_ of the above in an
-[equational style][bird-algebra]:
+Lets write this _proof_ in an [equational style][bird-algebra]:
 
 
-<pre><span class=hs-linenum>126: </span><a class=annot href="#"><span class=annottext>() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 1 3)}</span><span class='hs-definition'>test1</span></a> <span class='hs-conid'>()</span>
-<span class=hs-linenum>127: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-num'>2</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+<pre><span class=hs-linenum>124: </span><a class=annot href="#"><span class=annottext>() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 1 3)}</span><span class='hs-definition'>test1</span></a> <span class='hs-conid'>()</span>
+<span class=hs-linenum>125: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-num'>2</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-num'>1</span> <span class='hs-num'>3</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>128: </span>      <span class='hs-comment'>-- by unfolding `rng 1 3`</span>
-<span class=hs-linenum>129: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-num'>2</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>union</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+<span class=hs-linenum>126: </span>  <span class='hs-comment'>-- by unfolding `rng 1 3`</span>
+<span class=hs-linenum>127: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-num'>2</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>union</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-num'>2</span> <span class='hs-num'>3</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>130: </span>      <span class='hs-comment'>-- by unfolding `rng 2 3`</span>
-<span class=hs-linenum>131: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-num'>2</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>union</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-num'>1</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>132: </span>                          <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>union</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-num'>2</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+<span class=hs-linenum>128: </span>  <span class='hs-comment'>-- by unfolding `rng 2 3`</span>
+<span class=hs-linenum>129: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-num'>2</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>union</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-num'>1</span><span class='hs-layout'>)</span>
+<span class=hs-linenum>130: </span>                          <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>union</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-num'>2</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-num'>3</span> <span class='hs-num'>3</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>133: </span>      <span class='hs-comment'>-- by set-theory</span>
-<span class=hs-linenum>134: </span>  <span class='hs-varop'>===</span> <span class='hs-conid'>True</span>
-<span class=hs-linenum>135: </span>  <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
+<span class=hs-linenum>131: </span>  <span class='hs-comment'>-- by set-theory</span>
+<span class=hs-linenum>132: </span>  <span class='hs-varop'>===</span> <span class='hs-conid'>True</span>
+<span class=hs-linenum>133: </span>  <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
 </pre>
 
 the "proof" uses two library operators:
 
-- **Implicit Equality"** [`e1 === e2`][lh-imp-eq]
-  checks that `e1` is indeed `e2` after
-  **unfolding functions at most once**, and returns a term
-  that equals both `e1` and `e2`, and
+- **Implicit Equality** `e1 === e2`
+  [checks that][lh-imp-eq] `e1` is indeed equal
+  to `e2` after _unfolding functions at most once_,
+  and returns a term that equals both `e1` and `e2`, and
 
-- [`e *** QED`][lh-qed] allows us to convert any term `e`
-  into a `()` to complete a proof.
+- `e *** QED` allows us to [convert any term][lh-qed] `e`
+  into a proof.
 
-Thus, the first two steps of the above proof, simply unfold `rng`
-and the final step follows from the SMT solver's "native" decision
-procedure for sets which can _automatically_ verify equalities over
-set operations like `S.union`, `S.singleton` and `S.member`.
+The first two steps of `test1`, simply unfold `rng`
+and the final step uses the SMT solver's
+decision procedure for sets to check equalities
+over set operations like `S.union`, `S.singleton`
+and `S.member`.
 
 Reusing Proofs
 --------------
@@ -159,116 +158,113 @@ Reusing Proofs
 As a second example, lets check that:
 
 
-<pre><span class=hs-linenum>159: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>test2</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{ S.member 2 (rng 0 3) }</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>160: </span><a class=annot href="#"><span class=annottext>() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 0 3)}</span><span class='hs-definition'>test2</span></a> <span class='hs-conid'>()</span>
-<span class=hs-linenum>161: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-num'>2</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+<pre><span class=hs-linenum>158: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>test2</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{ S.member 2 (rng 0 3) }</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>159: </span><a class=annot href="#"><span class=annottext>() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 0 3)}</span><span class='hs-definition'>test2</span></a> <span class='hs-conid'>()</span>
+<span class=hs-linenum>160: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-num'>2</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-num'>0</span> <span class='hs-num'>3</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>162: </span>      <span class='hs-comment'>-- (1) by unfolding `rng 0 3`</span>
-<span class=hs-linenum>163: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-num'>2</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>union</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-num'>0</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
-                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-num'>1</span> <span class='hs-num'>3</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>164: </span>      <span class='hs-comment'>-- (2) by set-theory</span>
-<span class=hs-linenum>165: </span>  <span class='hs-varop'>===</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Bool</span><span class='hs-num'>2</span></a> <a class=annot href="#"><span class=annottext>x1:Integer -&gt; x2:Integer -&gt; {v : Bool | v &lt;=&gt; x1 == x2}</span><span class='hs-varop'>==</span></a> <span class='hs-num'>0</span> <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; x2:Bool -&gt; {v : Bool | v &lt;=&gt; x1
+<span class=hs-linenum>161: </span>  <span class='hs-comment'>-- by unfolding and set-theory</span>
+<span class=hs-linenum>162: </span>  <span class='hs-varop'>===</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Bool</span><span class='hs-num'>2</span></a> <a class=annot href="#"><span class=annottext>x1:Integer -&gt; x2:Integer -&gt; {v : Bool | v &lt;=&gt; x1 == x2}</span><span class='hs-varop'>==</span></a> <span class='hs-num'>0</span> <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; x2:Bool -&gt; {v : Bool | v &lt;=&gt; x1
                                              || x2} | v == GHC.Classes.||}</span><span class='hs-varop'>||</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-num'>2</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-num'>1</span> <span class='hs-num'>3</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>166: </span>      <span class='hs-comment'>-- (3) by using ex1</span>
-<span class=hs-linenum>167: </span>  <span class='hs-varop'>==?</span> <span class='hs-conid'>True</span> <span class='hs-varop'>?</span> <a class=annot href="#"><span class=annottext>{v : () -&gt; {v : () | Set_mem 2 (RangeSet.rng 1 3)} | v == RangeSet.test1}</span><span class='hs-varid'>test1</span></a> <span class='hs-conid'>()</span>
-<span class=hs-linenum>168: </span>
-<span class=hs-linenum>169: </span>  <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
+<span class=hs-linenum>163: </span>  <span class='hs-comment'>-- by re-using test1 as a lemma</span>
+<span class=hs-linenum>164: </span>  <span class='hs-varop'>==?</span> <span class='hs-conid'>True</span> <span class='hs-varop'>?</span> <a class=annot href="#"><span class=annottext>{v : () -&gt; {v : () | Set_mem 2 (RangeSet.rng 1 3)} | v == RangeSet.test1}</span><span class='hs-varid'>test1</span></a> <span class='hs-conid'>()</span>
+<span class=hs-linenum>165: </span>  <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
 </pre>
 
-The first two steps are as before and we _could_ complete
-the proof by continuing to unfold in the equational style.
-However, `test1` already establishes that `S.member 2 (rng 1 3)`
+We _could_ do the proof by unfolding in
+the equational style. However, `test1`
+already establishes that `S.member 2 (rng 1 3)`
 and we can _reuse_ this using:
 
-* **Explicit Equality** [`e1 ==? e2 ? pf`][lh-exp-eq]
-  which checks that `e1` is indeed `e2` _using_ any extra
-  facts asserted by the term `pf` (in addition to unfolding
-  functions at most once), and returns a term
-  that equals both `e1` and `e2`.
-
+- **Explicit Equality** `e1 ==? e2 ? pf`
+  [which checks][lh-exp-eq] `e1` equals `e2`
+  _using_ any extra facts asserted by the
+  "lemma" `pf` (in addition to unfolding
+  functions at most once), and returns a
+  term that equals both `e1` and `e2`.
 
 Proof by Logical Evaluation
 ---------------------------
 
-Equational proofs like `test1` and `test2` often
-have long chains of calculations that can be
-tedious to spell out. Fortunately, we taught LH a new
-trick called **Proof by Logical Evaluation** (PLE) that
-shifts the burden of performing those calculations
-onto the machine (if thats what the user wants.)
+Equational proofs like `test1` and `test2`
+often have long chains of calculations that
+can be tedious to spell out. Fortunately, we
+taught LH a new trick called
+**Proof by Logical Evaluation** (PLE) that
+optionally shifts the burden of performing
+those calculations onto the machine. For example,
+PLE completely automates the above proofs:
 
-For example, PLE completely automates the above proofs above proofs:
 
-
-<pre><span class=hs-linenum>197: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>test1_ple</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{ S.member 2 (rng 1 3) }</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>198: </span><a class=annot href="#"><span class=annottext>() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 1 3)}</span><span class='hs-definition'>test1_ple</span></a> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>199: </span>
-<span class=hs-linenum>200: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>test2_ple</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{ S.member 2 (rng 0 3) }</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>201: </span><a class=annot href="#"><span class=annottext>() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 0 3)}</span><span class='hs-definition'>test2_ple</span></a> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span>
+<pre><span class=hs-linenum>193: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>test1_ple</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{ S.member 2 (rng 1 3) }</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>194: </span><a class=annot href="#"><span class=annottext>() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 1 3)}</span><span class='hs-definition'>test1_ple</span></a> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>195: </span>
+<span class=hs-linenum>196: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>test2_ple</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{ S.member 2 (rng 0 3) }</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>197: </span><a class=annot href="#"><span class=annottext>() -&gt; {VV : () | Set_mem 2 (RangeSet.rng 0 3)}</span><span class='hs-definition'>test2_ple</span></a> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span>
 </pre>
 
-While automation is cool, it can be *very* helpful to first
-write out all the steps of an equational proof, at least
-while building up intuition.
+**Be Warned!** While automation is cool,
+it can be *very* helpful to first write
+out all the steps of an equational proof,
+at least while building up intuition.
 
 
-Membership: Proof by Induction
-------------------------------
+Proof by Induction
+------------------
 
 At this point, we have enough tools to start proving some
-interesting facts about _range-sets_. For example, if `x`
+interesting facts about range-sets. For example, if `x`
 is _outside_ the range `i..j` then it does not belong in
 `rng i j`:
 
 
-<pre><span class=hs-linenum>218: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_mem</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-keyword'>{x &lt; i || j &lt;= x}</span> <span class='hs-keyglyph'>-&gt;</span>
-<span class=hs-linenum>219: </span>                 <span class='hs-keyword'>{ not (S.member x (rng i j)) }</span> <span class='hs-varop'>/</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>j</span><span class='hs-comment'>-</span><span class='hs-varid'>i</span><span class='hs-keyglyph'>]</span>
-<span class=hs-linenum>220: </span>  <span class='hs-keyword'>@-}</span>
+<pre><span class=hs-linenum>215: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_mem</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-keyword'>{x &lt; i || j &lt;= x}</span> <span class='hs-keyglyph'>-&gt;</span>
+<span class=hs-linenum>216: </span>                 <span class='hs-keyword'>{ not (S.member x (rng i j)) }</span> <span class='hs-varop'>/</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>j</span> <span class='hs-comment'>-</span> <span class='hs-varid'>i</span><span class='hs-keyglyph'>]</span>
+<span class=hs-linenum>217: </span>  <span class='hs-keyword'>@-}</span>
 </pre>
 
-**Proof by Induction**
-
-We will prove the above ["by induction"][tag-induction]
-
+We will prove the above ["by induction"][tag-induction].
 A confession: I always had trouble understanding what
-exactly _by induction_ really meant. Why was it it ok
-to "do" induction on one thing but not another?
+exactly _proof by induction_ really meant. Why was it
+it ok to "do" induction on one thing but not another?
 
-Fortunately, with LH, _induction is just recursion_. That is,
+**Induction is Recursion**
 
-1. We can *recursively* use the same theorem we
+Fortunately, with LH, induction is just recursion. That is,
+
+1. We can **recursively** use the same theorem we
    are trying to prove, but
 
 2. We must make sure that the recursive function/proof
-   _terminates_.
+   **terminates**.
 
 The proof makes this clear:
 
 
-<pre><span class=hs-linenum>242: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+<pre><span class=hs-linenum>238: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
                                   || x2 &lt;= v} -&gt; {VV : () | not (Set_mem x3 (RangeSet.rng x1 x2))}</span><span class='hs-definition'>lem_mem</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j</span></a> <a class=annot href="#"><span class=annottext>{v : Int | v &lt; i
            || j &lt;= v}</span><span class='hs-varid'>x</span></a>
-<span class=hs-linenum>243: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i &gt;= j}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class='hs-varop'>&gt;=</span></a> <span class='hs-varid'>j</span>          <span class='hs-comment'>-- BASE CASE</span>
-<span class=hs-linenum>244: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class='hs-varid'>not</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-varid'>x</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+<span class=hs-linenum>239: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i &gt;= j}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class='hs-varop'>&gt;=</span></a> <span class='hs-varid'>j</span>
+<span class=hs-linenum>240: </span>  <span class='hs-comment'>-- BASE CASE</span>
+<span class=hs-linenum>241: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class='hs-varid'>not</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-varid'>x</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i</span> <span class='hs-varid'>j</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>245: </span>                    <span class='hs-comment'>-- by unfolding `rng i j`</span>
-<span class=hs-linenum>246: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class='hs-varid'>not</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-varid'>x</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>247: </span>                    <span class='hs-comment'>-- by set-theory</span>
-<span class=hs-linenum>248: </span>  <span class='hs-varop'>===</span> <span class='hs-conid'>True</span> <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
-<span class=hs-linenum>249: </span>
-<span class=hs-linenum>250: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i &lt; j}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>j</span>           <span class='hs-comment'>-- INDUCTIVE CASE</span>
-<span class=hs-linenum>251: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class='hs-varid'>not</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-varid'>x</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+<span class=hs-linenum>242: </span>  <span class='hs-comment'>-- by unfolding</span>
+<span class=hs-linenum>243: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class='hs-varid'>not</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-varid'>x</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span><span class='hs-layout'>)</span>
+<span class=hs-linenum>244: </span>  <span class='hs-comment'>-- by set-theory</span>
+<span class=hs-linenum>245: </span>  <span class='hs-varop'>===</span> <span class='hs-conid'>True</span> <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
+<span class=hs-linenum>246: </span>
+<span class=hs-linenum>247: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i &lt; j}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>j</span>
+<span class=hs-linenum>248: </span>  <span class='hs-comment'>-- INDUCTIVE CASE</span>
+<span class=hs-linenum>249: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class='hs-varid'>not</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-varid'>x</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i</span> <span class='hs-varid'>j</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>252: </span>                    <span class='hs-comment'>-- by unfolding `rng i j`</span>
-<span class=hs-linenum>253: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class='hs-varid'>not</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-varid'>x</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>union</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : (Set Int) | v == Set_sng i}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-varid'>i</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+<span class=hs-linenum>250: </span>  <span class='hs-comment'>-- by unfolding</span>
+<span class=hs-linenum>251: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class='hs-varid'>not</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-varid'>x</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>union</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : (Set Int) | v == Set_sng i}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-varid'>i</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i</span></a><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>j</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>254: </span>                    <span class='hs-comment'>-- by set-theory</span>
-<span class=hs-linenum>255: </span>  <span class='hs-varop'>===</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; x /= i}</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 /= x2}</span><span class='hs-varop'>/=</span></a> <span class='hs-varid'>i</span> <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; x2:Bool -&gt; {v : Bool | v &lt;=&gt; x1
-                                             &amp;&amp; x2} | v == GHC.Classes.&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class='hs-varid'>not</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-varid'>x</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
-                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i</span></a><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>j</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>256: </span>                    <span class='hs-comment'>-- by "induction hypothesis"</span>
-<span class=hs-linenum>257: </span>  <span class='hs-varop'>==?</span> <span class='hs-conid'>True</span> <span class='hs-varop'>?</span> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+<span class=hs-linenum>252: </span>  <span class='hs-comment'>-- by set-theory</span>
+<span class=hs-linenum>253: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>{v : x1:Bool -&gt; {v : Bool | v &lt;=&gt; not x1} | v == GHC.Classes.not}</span><span class='hs-varid'>not</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_mem x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>member</span> <span class='hs-varid'>x</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i</span></a><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>j</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<span class=hs-linenum>254: </span>  <span class='hs-comment'>-- by "induction hypothesis"</span>
+<span class=hs-linenum>255: </span>  <span class='hs-varop'>==?</span> <span class='hs-conid'>True</span> <span class='hs-varop'>?</span> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
                                   || x2 &lt;= v} -&gt; {VV : () | not (Set_mem x3 (RangeSet.rng x1 x2))}</span><span class='hs-varid'>lem_mem</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a> <span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>j</span> <span class='hs-varid'>x</span> <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
 </pre>
 
@@ -304,14 +300,14 @@ us eliminate all the boring calculational steps, leaving
 the essential bits: the recursive (inductive) skeleton
 
 
-<pre><span class=hs-linenum>292: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_mem_ple</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-keyword'>{x &lt; i || j &lt;= x}</span> <span class='hs-keyglyph'>-&gt;</span>
-<span class=hs-linenum>293: </span>                     <span class='hs-keyword'>{not (S.member x (rng i j))}</span> <span class='hs-varop'>/</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>j</span><span class='hs-comment'>-</span><span class='hs-varid'>i</span><span class='hs-keyglyph'>]</span>
-<span class=hs-linenum>294: </span>  <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>295: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+<pre><span class=hs-linenum>290: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_mem_ple</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-keyword'>{x &lt; i || j &lt;= x}</span> <span class='hs-keyglyph'>-&gt;</span>
+<span class=hs-linenum>291: </span>                     <span class='hs-keyword'>{not (S.member x (rng i j))}</span> <span class='hs-varop'>/</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>j</span><span class='hs-comment'>-</span><span class='hs-varid'>i</span><span class='hs-keyglyph'>]</span>
+<span class=hs-linenum>292: </span>  <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>293: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
                                   || x2 &lt;= v} -&gt; {VV : () | not (Set_mem x3 (RangeSet.rng x1 x2))}</span><span class='hs-definition'>lem_mem_ple</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j</span></a> <a class=annot href="#"><span class=annottext>{v : Int | v &lt; i
            || j &lt;= v}</span><span class='hs-varid'>x</span></a>
-<span class=hs-linenum>296: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i &gt;= j}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class='hs-varop'>&gt;=</span></a> <span class='hs-varid'>j</span> <span class='hs-keyglyph'>=</span>  <span class='hs-conid'>()</span>
-<span class=hs-linenum>297: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i &lt; j}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>j</span>  <span class='hs-keyglyph'>=</span>  <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+<span class=hs-linenum>294: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i &gt;= j}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class='hs-varop'>&gt;=</span></a> <span class='hs-varid'>j</span> <span class='hs-keyglyph'>=</span>  <span class='hs-conid'>()</span>
+<span class=hs-linenum>295: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i &lt; j}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>j</span>  <span class='hs-keyglyph'>=</span>  <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
                                   || x2 &lt;= v} -&gt; {VV : () | not (Set_mem x3 (RangeSet.rng x1 x2))}</span><span class='hs-varid'>lem_mem_ple</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a> <span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>j</span> <span class='hs-varid'>x</span>
 </pre>
 
@@ -326,57 +322,61 @@ Disjointness
 We say that two sets are _disjoint_ if their `intersection` is `empty`:
 
 
-<pre><span class=hs-linenum>311: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>inline</span> <span class='hs-varid'>disjoint</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>312: </span><span class='hs-definition'>disjoint</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-conid'>Set</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-conid'>Set</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
-<span class=hs-linenum>313: </span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {VV : Bool | VV &lt;=&gt; Set_cap x1 x2 == Set_empty 0}</span><span class='hs-definition'>disjoint</span></a> <a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-varid'>a</span></a> <a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-varid'>b</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cap x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>intersection</span> <span class='hs-varid'>a</span> <span class='hs-varid'>b</span> <a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; x1 == x2}</span><span class='hs-varop'>==</span></a> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span>
+<pre><span class=hs-linenum>309: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>inline</span> <span class='hs-varid'>disjoint</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>310: </span><span class='hs-definition'>disjoint</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-conid'>Set</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-conid'>Set</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span>
+<span class=hs-linenum>311: </span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {VV : Bool | VV &lt;=&gt; Set_cap x1 x2 == Set_empty 0}</span><span class='hs-definition'>disjoint</span></a> <a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-varid'>a</span></a> <a class=annot href="#"><span class=annottext>(Set Int)</span><span class='hs-varid'>b</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cap x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>intersection</span> <span class='hs-varid'>a</span> <span class='hs-varid'>b</span> <a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; x1 == x2}</span><span class='hs-varop'>==</span></a> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span>
 </pre>
 
 Lets prove that two intervals are disjoint if
 the first _ends_ before the second _begins_:
 
 
-<pre><span class=hs-linenum>320: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_disj</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>i2</span><span class='hs-conop'>:</span><span class='hs-keyword'>{j1 &lt;= i2}</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j2</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span>
-<span class=hs-linenum>321: </span>                  <span class='hs-keyword'>{disjoint (rng i1 j1) (rng i2 j2)}</span> <span class='hs-varop'>/</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>j2</span><span class='hs-comment'>-</span><span class='hs-varid'>i2</span><span class='hs-keyglyph'>]</span>
-<span class=hs-linenum>322: </span>  <span class='hs-keyword'>@-}</span>
+<pre><span class=hs-linenum>318: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_disj</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>i2</span><span class='hs-conop'>:</span><span class='hs-keyword'>{j1 &lt;= i2}</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j2</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span>
+<span class=hs-linenum>319: </span>                  <span class='hs-keyword'>{disjoint (rng i1 j1) (rng i2 j2)}</span> <span class='hs-varop'>/</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>j2</span><span class='hs-comment'>-</span><span class='hs-varid'>i2</span><span class='hs-keyglyph'>]</span>
+<span class=hs-linenum>320: </span>  <span class='hs-keyword'>@-}</span>
 </pre>
 
 This proof goes "by induction" on the size of
 the second interval, i.e. `j2-i2`:
 
 
-<pre><span class=hs-linenum>329: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class='hs-definition'>lem_disj</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j1</span></a> <a class=annot href="#"><span class=annottext>{i2 : Int | j1 &lt;= i2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j2</span></a>
-<span class=hs-linenum>330: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i2 &gt;= j2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class='hs-varop'>&gt;=</span></a> <span class='hs-varid'>j2</span>  <span class='hs-comment'>-- Base CASE</span>
-<span class=hs-linenum>331: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class='hs-varid'>disjoint</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
-                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
-                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i2</span> <span class='hs-varid'>j2</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>332: </span>              <span class='hs-comment'>-- by unfolding `rng i2 j2`</span>
-<span class=hs-linenum>333: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class='hs-varid'>disjoint</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
-                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span><span class='hs-layout'>)</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span>
-<span class=hs-linenum>334: </span>              <span class='hs-comment'>-- by set-theory</span>
-<span class=hs-linenum>335: </span>  <span class='hs-varop'>===</span> <span class='hs-conid'>True</span> <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
-<span class=hs-linenum>336: </span>
-<span class=hs-linenum>337: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i2 &lt; j2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>j2</span>   <span class='hs-comment'>-- Inductive CASE</span>
-<span class=hs-linenum>338: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class='hs-varid'>disjoint</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+<pre><span class=hs-linenum>327: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class='hs-definition'>lem_disj</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j1</span></a> <a class=annot href="#"><span class=annottext>{i2 : Int | j1 &lt;= i2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j2</span></a>
+<span class=hs-linenum>328: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i2 &gt;= j2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class='hs-varop'>&gt;=</span></a> <span class='hs-varid'>j2</span>
+<span class=hs-linenum>329: </span>  <span class='hs-comment'>-- Base CASE</span>
+<span class=hs-linenum>330: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class='hs-varid'>disjoint</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i2</span> <span class='hs-varid'>j2</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>339: </span>              <span class='hs-comment'>-- by unfolding `rng i2 j2`</span>
-<span class=hs-linenum>340: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class='hs-varid'>disjoint</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+<span class=hs-linenum>331: </span>  <span class='hs-comment'>-- by unfolding</span>
+<span class=hs-linenum>332: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class='hs-varid'>disjoint</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span><span class='hs-layout'>)</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-varid'>empty</span>
+<span class=hs-linenum>333: </span>  <span class='hs-comment'>-- by set-theory</span>
+<span class=hs-linenum>334: </span>  <span class='hs-varop'>===</span> <span class='hs-conid'>True</span>
+<span class=hs-linenum>335: </span>  <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
+<span class=hs-linenum>336: </span>
+<span class=hs-linenum>337: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i2 &lt; j2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>j2</span>
+<span class=hs-linenum>338: </span>  <span class='hs-comment'>-- Inductive CASE</span>
+<span class=hs-linenum>339: </span>  <span class='hs-keyglyph'>=</span>   <a class=annot href="#"><span class=annottext>{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class='hs-varid'>disjoint</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
+                                          &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i2</span> <span class='hs-varid'>j2</span><span class='hs-layout'>)</span>
+<span class=hs-linenum>340: </span>  <span class='hs-comment'>-- by unfolding</span>
+<span class=hs-linenum>341: </span>  <span class='hs-varop'>===</span> <a class=annot href="#"><span class=annottext>{v : x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : Bool | v &lt;=&gt; Set_cap x1 x2 == Set_empty 0} | v == RangeSet.disjoint}</span><span class='hs-varid'>disjoint</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:(Set Int) -&gt; x2:(Set Int) -&gt; {v : (Set Int) | v == Set_cup x1 x2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>union</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : (Set Int) | v == Set_sng i2}</span><span class='hs-conid'>S</span></a><span class='hs-varop'>.</span><span class='hs-varid'>singleton</span> <span class='hs-varid'>i2</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; {v : (Set Int) | v == RangeSet.rng x1 x2
                                           &amp;&amp; v == (if x1 &lt; x2 then Set_cup (Set_sng x1) (RangeSet.rng (x1 + 1) x2) else Set_empty 0)} | v == RangeSet.rng}</span><span class='hs-varid'>rng</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i2</span></a><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>j2</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>341: </span>              <span class='hs-comment'>-- by induction and lem_mem</span>
-<span class=hs-linenum>342: </span>  <span class='hs-varop'>==?</span> <span class='hs-conid'>True</span> <span class='hs-varop'>?</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
-                                       || x2 &lt;= v} -&gt; {v : () | not (Set_mem x3 (RangeSet.rng x1 x2))} | v == RangeSet.lem_mem}</span><span class='hs-varid'>lem_mem</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span> <span class='hs-varid'>i2</span> <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class='hs-varid'>lem_disj</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i2</span></a><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>j2</span><span class='hs-layout'>)</span> <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
+<span class=hs-linenum>342: </span>  <span class='hs-comment'>-- by induction and lem_mem</span>
+<span class=hs-linenum>343: </span>  <span class='hs-varop'>==?</span> <span class='hs-conid'>True</span> <span class='hs-varop'>?</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+                                       || x2 &lt;= v} -&gt; {v : () | not (Set_mem x3 (RangeSet.rng x1 x2))} | v == RangeSet.lem_mem}</span><span class='hs-varid'>lem_mem</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span> <span class='hs-varid'>i2</span> <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class='hs-varid'>lem_disj</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i2</span></a><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>j2</span><span class='hs-layout'>)</span>
+<span class=hs-linenum>344: </span>  <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
 </pre>
 
 Again, we can get PLE to do the boring calculations:
 
 
-<pre><span class=hs-linenum>348: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_disj_ple</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>i2</span><span class='hs-conop'>:</span><span class='hs-keyword'>{j1 &lt;= i2}</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j2</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span>
-<span class=hs-linenum>349: </span>                      <span class='hs-keyword'>{disjoint (rng i1 j1) (rng i2 j2)}</span> <span class='hs-varop'>/</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>j2</span><span class='hs-comment'>-</span><span class='hs-varid'>i2</span><span class='hs-keyglyph'>]</span>
-<span class=hs-linenum>350: </span>  <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>351: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class='hs-definition'>lem_disj_ple</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j1</span></a> <a class=annot href="#"><span class=annottext>{i2 : Int | j1 &lt;= i2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j2</span></a>
-<span class=hs-linenum>352: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i2 &gt;= j2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class='hs-varop'>&gt;=</span></a> <span class='hs-varid'>j2</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>353: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i2 &lt; j2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a>  <span class='hs-varid'>j2</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
+<pre><span class=hs-linenum>350: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_disj_ple</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>i2</span><span class='hs-conop'>:</span><span class='hs-keyword'>{j1 &lt;= i2}</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j2</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span>
+<span class=hs-linenum>351: </span>                      <span class='hs-keyword'>{disjoint (rng i1 j1) (rng i2 j2)}</span> <span class='hs-varop'>/</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>j2</span><span class='hs-comment'>-</span><span class='hs-varid'>i2</span><span class='hs-keyglyph'>]</span>
+<span class=hs-linenum>352: </span>  <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>353: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class='hs-definition'>lem_disj_ple</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j1</span></a> <a class=annot href="#"><span class=annottext>{i2 : Int | j1 &lt;= i2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j2</span></a>
+<span class=hs-linenum>354: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i2 &gt;= j2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class='hs-varop'>&gt;=</span></a> <span class='hs-varid'>j2</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>355: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i2 &lt; j2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a>  <span class='hs-varid'>j2</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | v &lt; x1
                                        || x2 &lt;= v} -&gt; {v : () | not (Set_mem x3 (RangeSet.rng x1 x2))} | v == RangeSet.lem_mem}</span><span class='hs-varid'>lem_mem</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span> <span class='hs-varid'>i2</span> <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class='hs-varid'>lem_disj_ple</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i2</span></a><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a><span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>j2</span>
 </pre>
 
@@ -387,11 +387,9 @@ Splitting Intervals
 Finally, we can establish the **splitting property**
 of an interval `i..j`, that is, given some `x` that lies
 between `i` and `j` we can _split_ `i..j` into `i..x`
-and `x..j`.
-
-To be precise, we define a predicate that a set `s`
-can be _split_ or if we're being fancy, _partitioned_
-into `a` and `b` as:
+and `x..j`. To be precise, we define a predicate that
+a set `s` can be _split_ or if we're being fancy,
+_partitioned_  into `a` and `b` as:
 
 
 <pre><span class=hs-linenum>370: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>inline</span> <span class='hs-varid'>split</span> <span class='hs-keyword'>@-}</span>
@@ -433,8 +431,8 @@ range-set of an interval is _contained within_
 that of an enclosing one.
 
 
-<pre><span class=hs-linenum>404: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_sub</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j1</span><span class='hs-conop'>:</span><span class='hs-keyword'>{_ | i1 &lt; j1}</span> <span class='hs-keyglyph'>-&gt;</span>
-<span class=hs-linenum>405: </span>               <span class='hs-varid'>i2</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j2</span><span class='hs-conop'>:</span><span class='hs-keyword'>{_ | i2 &lt; j2 &amp;&amp; i2 &lt;= i1 &amp;&amp; j1 &lt;= j2 }</span> <span class='hs-keyglyph'>-&gt;</span>
+<pre><span class=hs-linenum>404: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_sub</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j1</span><span class='hs-conop'>:</span><span class='hs-keyword'>{i1 &lt; j1}</span> <span class='hs-keyglyph'>-&gt;</span>
+<span class=hs-linenum>405: </span>               <span class='hs-varid'>i2</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j2</span><span class='hs-conop'>:</span><span class='hs-keyword'>{i2 &lt; j2 &amp;&amp; i2 &lt;= i1 &amp;&amp; j1 &lt;= j2 }</span> <span class='hs-keyglyph'>-&gt;</span>
 <span class=hs-linenum>406: </span>                 <span class='hs-keyword'>{ S.isSubsetOf (rng i1 j1) (rng i2 j2) }</span>
 <span class=hs-linenum>407: </span>  <span class='hs-keyword'>@-}</span>
 </pre>
@@ -449,7 +447,7 @@ is the `i1..j1`, thereby completing the proof:
 <div class="row-fluid">
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/lem_sub.png"
-       alt="Ribbons" height="150">
+       alt="Ribbons" height="50">
   </div>
 </div>
 
@@ -474,25 +472,24 @@ carve `i2..j2` into the relevant sub-intervals:
 An interval `i1..j1` _overlaps_ `i2..j2`
 if `i1 <= j2 <= i2`, that is, if the latter
 ends somewhere inside the former.
-
 The same splitting hammer lets us compute
 the union of two overlapping intervals
 simply by picking the interval defined
 by the _endpoints_.
 
 
-<pre><span class=hs-linenum>446: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_union</span> <span class='hs-keyglyph'>::</span>
-<span class=hs-linenum>447: </span>      <span class='hs-varid'>i1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j1</span><span class='hs-conop'>:</span><span class='hs-keyword'>{_ | i1 &lt; j1}</span> <span class='hs-keyglyph'>-&gt;</span>
-<span class=hs-linenum>448: </span>      <span class='hs-varid'>i2</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j2</span><span class='hs-conop'>:</span><span class='hs-keyword'>{_ | i2 &lt; j2 &amp;&amp; i1 &lt;= j2 &amp;&amp; j2 &lt;= j1 }</span> <span class='hs-keyglyph'>-&gt;</span>
-<span class=hs-linenum>449: </span>        <span class='hs-keyword'>{ rng (min i1 i2) j1 = S.union (rng i1 j1) (rng i2 j2) }</span>
-<span class=hs-linenum>450: </span>  <span class='hs-keyword'>@-}</span>
+<pre><span class=hs-linenum>445: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_union</span> <span class='hs-keyglyph'>::</span>
+<span class=hs-linenum>446: </span>      <span class='hs-varid'>i1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j1</span><span class='hs-conop'>:</span><span class='hs-keyword'>{i1 &lt; j1}</span> <span class='hs-keyglyph'>-&gt;</span>
+<span class=hs-linenum>447: </span>      <span class='hs-varid'>i2</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j2</span><span class='hs-conop'>:</span><span class='hs-keyword'>{i2 &lt; j2 &amp;&amp; i1 &lt;= j2 &amp;&amp; j2 &lt;= j1 }</span> <span class='hs-keyglyph'>-&gt;</span>
+<span class=hs-linenum>448: </span>        <span class='hs-keyword'>{ rng (min i1 i2) j1 = S.union (rng i1 j1) (rng i2 j2) }</span>
+<span class=hs-linenum>449: </span>  <span class='hs-keyword'>@-}</span>
 </pre>
 
 <br>
 <div class="row-fluid">
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/lem_union.png"
-       alt="Ribbons" height="150">
+       alt="Ribbons" height="50">
   </div>
 </div>
 <br>
@@ -508,21 +505,21 @@ The pictorial proof illustrates the two cases:
 Again, we render the picture into a formal proof as:
 
 
-<pre><span class=hs-linenum>473: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:{j1 : Int | x1 &lt; j1} -&gt; x3:Int -&gt; x4:{j2 : Int | x3 &lt; j2
+<pre><span class=hs-linenum>472: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:{j1 : Int | x1 &lt; j1} -&gt; x3:Int -&gt; x4:{j2 : Int | x3 &lt; j2
                                                               &amp;&amp; x1 &lt;= j2
                                                               &amp;&amp; j2 &lt;= x2} -&gt; {VV : () | RangeSet.rng (RangeSet.min x1 x3) x2 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x3 x4)}</span><span class='hs-definition'>lem_union</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>{j1 : Int | i1 &lt; j1}</span><span class='hs-varid'>j1</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>{j2 : Int | i2 &lt; j2
             &amp;&amp; i1 &lt;= j2
             &amp;&amp; j2 &lt;= j1}</span><span class='hs-varid'>j2</span></a>
-<span class=hs-linenum>474: </span>  <span class='hs-comment'>-- i1..j1 encloses i2..j2</span>
-<span class=hs-linenum>475: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i1 &lt; i2}</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>i2</span>   <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt; v} -&gt; x3:Int -&gt; x4:{v : Int | x3 &lt; v
+<span class=hs-linenum>473: </span>  <span class='hs-comment'>-- i1..j1 encloses i2..j2</span>
+<span class=hs-linenum>474: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i1 &lt; i2}</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>i2</span>   <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt; v} -&gt; x3:Int -&gt; x4:{v : Int | x3 &lt; v
                                                                 &amp;&amp; x3 &lt;= x1
                                                                 &amp;&amp; x2 &lt;= v} -&gt; {v : () | Set_sub (RangeSet.rng x1 x2) (RangeSet.rng x3 x4)} | v == RangeSet.lem_sub}</span><span class='hs-varid'>lem_sub</span></a> <span class='hs-varid'>i2</span> <span class='hs-varid'>j2</span> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span>
-<span class=hs-linenum>476: </span>  <span class='hs-comment'>-- i1..j1 overlaps i2..j2</span>
-<span class=hs-linenum>477: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+<span class=hs-linenum>475: </span>  <span class='hs-comment'>-- i1..j1 overlaps i2..j2</span>
+<span class=hs-linenum>476: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
                                                                              &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class='hs-varid'>lem_split</span></a> <span class='hs-varid'>i2</span> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span>
-<span class=hs-linenum>478: </span>            <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+<span class=hs-linenum>477: </span>            <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
                                                                              &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class='hs-varid'>lem_split</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j2</span> <span class='hs-varid'>j1</span>
-<span class=hs-linenum>479: </span>            <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+<span class=hs-linenum>478: </span>            <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
                                                                              &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class='hs-varid'>lem_split</span></a> <span class='hs-varid'>i2</span> <span class='hs-varid'>i1</span> <span class='hs-varid'>j2</span>
 </pre>
 
@@ -532,18 +529,18 @@ Finally, we check that the intersection of two overlapping intervals
 is given by their _inner-points_.
 
 
-<pre><span class=hs-linenum>488: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_intersect</span> <span class='hs-keyglyph'>::</span>
-<span class=hs-linenum>489: </span>      <span class='hs-varid'>i1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j1</span><span class='hs-conop'>:</span><span class='hs-keyword'>{_ | i1 &lt; j1}</span> <span class='hs-keyglyph'>-&gt;</span>
-<span class=hs-linenum>490: </span>      <span class='hs-varid'>i2</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j2</span><span class='hs-conop'>:</span><span class='hs-keyword'>{_ | i2 &lt; j2 &amp;&amp; i1 &lt;= j2 &amp;&amp; j2 &lt;= j1 }</span> <span class='hs-keyglyph'>-&gt;</span>
-<span class=hs-linenum>491: </span>        <span class='hs-keyword'>{rng (max i1 i2) j2 = S.intersection (rng i1 j1) (rng i2 j2)}</span>
-<span class=hs-linenum>492: </span>  <span class='hs-keyword'>@-}</span>
+<pre><span class=hs-linenum>487: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>lem_intersect</span> <span class='hs-keyglyph'>::</span>
+<span class=hs-linenum>488: </span>      <span class='hs-varid'>i1</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j1</span><span class='hs-conop'>:</span><span class='hs-keyword'>{i1 &lt; j1}</span> <span class='hs-keyglyph'>-&gt;</span>
+<span class=hs-linenum>489: </span>      <span class='hs-varid'>i2</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>j2</span><span class='hs-conop'>:</span><span class='hs-keyword'>{i2 &lt; j2 &amp;&amp; i1 &lt;= j2 &amp;&amp; j2 &lt;= j1 }</span> <span class='hs-keyglyph'>-&gt;</span>
+<span class=hs-linenum>490: </span>        <span class='hs-keyword'>{rng (max i1 i2) j2 = S.intersection (rng i1 j1) (rng i2 j2)}</span>
+<span class=hs-linenum>491: </span>  <span class='hs-keyword'>@-}</span>
 </pre>
 
 <br>
 <div class="row-fluid">
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/lem_intersect.png"
-       alt="Ribbons" height="150">
+       alt="Ribbons" height="50">
   </div>
 </div>
 <br>
@@ -559,22 +556,22 @@ We have the same two cases as for `lem_union`
    (c) _discarding_ the end segments which do not belong in the intersection.
 
 
-<pre><span class=hs-linenum>515: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:{j1 : Int | x1 &lt; j1} -&gt; x3:Int -&gt; x4:{j2 : Int | x3 &lt; j2
+<pre><span class=hs-linenum>514: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:{j1 : Int | x1 &lt; j1} -&gt; x3:Int -&gt; x4:{j2 : Int | x3 &lt; j2
                                                               &amp;&amp; x1 &lt;= j2
                                                               &amp;&amp; j2 &lt;= x2} -&gt; {VV : () | RangeSet.rng (RangeSet.max x1 x3) x4 == Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4)}</span><span class='hs-definition'>lem_intersect</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>{j1 : Int | i1 &lt; j1}</span><span class='hs-varid'>j1</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>{j2 : Int | i2 &lt; j2
             &amp;&amp; i1 &lt;= j2
             &amp;&amp; j2 &lt;= j1}</span><span class='hs-varid'>j2</span></a>
-<span class=hs-linenum>516: </span>  <span class='hs-comment'>-- i1..j1 encloses i2..j2</span>
-<span class=hs-linenum>517: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i1 &lt; i2}</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>i2</span>   <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt; v} -&gt; x3:Int -&gt; x4:{v : Int | x3 &lt; v
+<span class=hs-linenum>515: </span>  <span class='hs-comment'>-- i1..j1 encloses i2..j2</span>
+<span class=hs-linenum>516: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i1 &lt; i2}</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>i2</span>   <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt; v} -&gt; x3:Int -&gt; x4:{v : Int | x3 &lt; v
                                                                 &amp;&amp; x3 &lt;= x1
                                                                 &amp;&amp; x2 &lt;= v} -&gt; {v : () | Set_sub (RangeSet.rng x1 x2) (RangeSet.rng x3 x4)} | v == RangeSet.lem_sub}</span><span class='hs-varid'>lem_sub</span></a> <span class='hs-varid'>i2</span> <span class='hs-varid'>j2</span> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span>
-<span class=hs-linenum>518: </span>  <span class='hs-comment'>-- i1..j1 overlaps i2..j2</span>
-<span class=hs-linenum>519: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+<span class=hs-linenum>517: </span>  <span class='hs-comment'>-- i1..j1 overlaps i2..j2</span>
+<span class=hs-linenum>518: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
                                                                              &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class='hs-varid'>lem_split</span></a> <span class='hs-varid'>i1</span> <span class='hs-varid'>j2</span> <span class='hs-varid'>j1</span>
-<span class=hs-linenum>520: </span>            <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
+<span class=hs-linenum>519: </span>            <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:{v : Int | x1 &lt;= v} -&gt; x3:{v : Int | x2 &lt;= v} -&gt; {v : () | RangeSet.rng x1 x3 == Set_cup (RangeSet.rng x1 x2) (RangeSet.rng x2 x3)
                                                                              &amp;&amp; Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x2 x3) == Set_empty 0} | v == RangeSet.lem_split}</span><span class='hs-varid'>lem_split</span></a> <span class='hs-varid'>i2</span> <span class='hs-varid'>i1</span> <span class='hs-varid'>j2</span>
-<span class=hs-linenum>521: </span>            <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | x2 &lt;= v} -&gt; x4:Int -&gt; {v : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0} | v == RangeSet.lem_disj}</span><span class='hs-varid'>lem_disj</span></a>  <span class='hs-varid'>i2</span> <span class='hs-varid'>i1</span> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span>     <span class='hs-comment'>-- discard i2..i1</span>
-<span class=hs-linenum>522: </span>            <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | x2 &lt;= v} -&gt; x4:Int -&gt; {v : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0} | v == RangeSet.lem_disj}</span><span class='hs-varid'>lem_disj</span></a>  <span class='hs-varid'>i2</span> <span class='hs-varid'>j2</span> <span class='hs-varid'>j2</span> <span class='hs-varid'>j1</span>     <span class='hs-comment'>-- discard i2..j2</span>
+<span class=hs-linenum>520: </span>            <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | x2 &lt;= v} -&gt; x4:Int -&gt; {v : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0} | v == RangeSet.lem_disj}</span><span class='hs-varid'>lem_disj</span></a>  <span class='hs-varid'>i2</span> <span class='hs-varid'>i1</span> <span class='hs-varid'>i1</span> <span class='hs-varid'>j1</span>     <span class='hs-comment'>-- discard i2..i1</span>
+<span class=hs-linenum>521: </span>            <a class=annot href="#"><span class=annottext>{v : () -&gt; () -&gt; () | v == Language.Haskell.Liquid.NewProofCombinators.&amp;&amp;&amp;}</span><span class='hs-varop'>&amp;&amp;&amp;</span></a> <a class=annot href="#"><span class=annottext>{v : x1:Int -&gt; x2:Int -&gt; x3:{v : Int | x2 &lt;= v} -&gt; x4:Int -&gt; {v : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0} | v == RangeSet.lem_disj}</span><span class='hs-varid'>lem_disj</span></a>  <span class='hs-varid'>i2</span> <span class='hs-varid'>j2</span> <span class='hs-varid'>j2</span> <span class='hs-varid'>j1</span>     <span class='hs-comment'>-- discard i2..j2</span>
 </pre>
 
 
@@ -597,37 +594,37 @@ of [Breitner's implementation][nomeata-intervals].
 
 <div class="hidden">
 
-<pre><span class=hs-linenum>545: </span><span class='hs-comment'>--------------------------------------------------------------------------------</span>
-<span class=hs-linenum>546: </span><span class='hs-comment'>-- | Some helper definitions</span>
-<span class=hs-linenum>547: </span><span class='hs-comment'>--------------------------------------------------------------------------------</span>
-<span class=hs-linenum>548: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varid'>min</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>549: </span><span class='hs-definition'>min</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ord</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span>
-<span class=hs-linenum>550: </span><a class=annot href="#"><span class=annottext>(Ord a) =&gt;
+<pre><span class=hs-linenum>544: </span><span class='hs-comment'>--------------------------------------------------------------------------------</span>
+<span class=hs-linenum>545: </span><span class='hs-comment'>-- | Some helper definitions</span>
+<span class=hs-linenum>546: </span><span class='hs-comment'>--------------------------------------------------------------------------------</span>
+<span class=hs-linenum>547: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varid'>min</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>548: </span><span class='hs-definition'>min</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ord</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span>
+<span class=hs-linenum>549: </span><a class=annot href="#"><span class=annottext>(Ord a) =&gt;
 x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.min x2 x3
                           &amp;&amp; VV == (if x2 &lt; x3 then x2 else x3)}</span><span class='hs-definition'>min</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>y</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; x &lt; y}</span><span class='hs-keyword'>if</span></a> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; x &lt; y}</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>x1:a -&gt; x2:a -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>y</span> <span class='hs-keyword'>then</span> <span class='hs-varid'>x</span> <span class='hs-keyword'>else</span> <span class='hs-varid'>y</span>
-<span class=hs-linenum>551: </span>
-<span class=hs-linenum>552: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varid'>max</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>553: </span><span class='hs-definition'>max</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ord</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span>
-<span class=hs-linenum>554: </span><a class=annot href="#"><span class=annottext>(Ord a) =&gt;
+<span class=hs-linenum>550: </span>
+<span class=hs-linenum>551: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varid'>max</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>552: </span><span class='hs-definition'>max</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ord</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span>
+<span class=hs-linenum>553: </span><a class=annot href="#"><span class=annottext>(Ord a) =&gt;
 x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
                           &amp;&amp; VV == (if x2 &lt; x3 then x3 else x2)}</span><span class='hs-definition'>max</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>y</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; x &lt; y}</span><span class='hs-keyword'>if</span></a> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; x &lt; y}</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>x1:a -&gt; x2:a -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>y</span> <span class='hs-keyword'>then</span> <span class='hs-varid'>y</span> <span class='hs-keyword'>else</span> <span class='hs-varid'>x</span>
-<span class=hs-linenum>555: </span>
-<span class=hs-linenum>556: </span><span class='hs-definition'>rng</span>         <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-conid'>Set</span> <span class='hs-conid'>Int</span>
-<span class=hs-linenum>557: </span><span class='hs-definition'>test1</span>       <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>558: </span><span class='hs-definition'>test2</span>       <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>559: </span><span class='hs-definition'>test1_ple</span>   <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>560: </span><span class='hs-definition'>test2_ple</span>   <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>561: </span><span class='hs-definition'>lem_mem</span>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>562: </span><span class='hs-definition'>lem_mem_ple</span>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>563: </span><span class='hs-definition'>lem_sub</span>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>564: </span><span class='hs-definition'>lem_disj</span>     <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>565: </span><span class='hs-definition'>lem_disj_ple</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>566: </span><span class='hs-definition'>lem_split</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>567: </span>
-<span class=hs-linenum>568: </span><span class='hs-definition'>lem_intersect</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>569: </span><span class='hs-definition'>lem_union</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>570: </span><span class='hs-comment'>-- https://ucsd-progsys.github.io/liquidhaskell-blog/tags/induction.html</span>
-<span class=hs-linenum>571: </span>
+<span class=hs-linenum>554: </span>
+<span class=hs-linenum>555: </span><span class='hs-definition'>rng</span>         <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>S</span><span class='hs-varop'>.</span><span class='hs-conid'>Set</span> <span class='hs-conid'>Int</span>
+<span class=hs-linenum>556: </span><span class='hs-definition'>test1</span>       <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>557: </span><span class='hs-definition'>test2</span>       <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>558: </span><span class='hs-definition'>test1_ple</span>   <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>559: </span><span class='hs-definition'>test2_ple</span>   <span class='hs-keyglyph'>::</span> <span class='hs-conid'>()</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>560: </span><span class='hs-definition'>lem_mem</span>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>561: </span><span class='hs-definition'>lem_mem_ple</span>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>562: </span><span class='hs-definition'>lem_sub</span>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>563: </span><span class='hs-definition'>lem_disj</span>     <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>564: </span><span class='hs-definition'>lem_disj_ple</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>565: </span><span class='hs-definition'>lem_split</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>566: </span>
+<span class=hs-linenum>567: </span><span class='hs-definition'>lem_intersect</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>568: </span><span class='hs-definition'>lem_union</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>569: </span><span class='hs-comment'>-- https://ucsd-progsys.github.io/liquidhaskell-blog/tags/induction.html</span>
+<span class=hs-linenum>570: </span>
 </pre>
 </div>
 
