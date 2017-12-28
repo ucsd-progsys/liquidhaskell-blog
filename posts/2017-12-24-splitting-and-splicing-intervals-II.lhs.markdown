@@ -88,7 +88,7 @@ by importing the `Data.Set` library
 <pre><span class=hs-linenum>88: </span><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Set</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>S</span>
 </pre>
 
-to write a function `rng i j` that defines the **range-set** `i..j-1`
+to write a function `rng i j` that defines the **range-set** `i..j`
 
 
 <pre><span class=hs-linenum>94: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varid'>rng</span> <span class='hs-keyword'>@-}</span>
@@ -143,7 +143,7 @@ the "proof" uses two library operators:
 - `e1 === e2` is an [implicit equality][lh-imp-eq]
   that checks `e1` is indeed equal to `e2` after
   **unfolding functions at most once**, and returns
-  a term that equals both `e1` and `e2`, and
+  a term that equals `e1` and `e2`, and
 
 - `e *** QED` [converts any term][lh-qed] `e`
   into a proof.

@@ -307,7 +307,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p>We can describe the set of values corresponding to (i.e. “the semantics of”) an interval <code>i, j</code> by importing the <code>Data.Set</code> library</p>
 <pre><span class="hs-linenum">88: </span><span class="hs-keyword">import</span> <span class="hs-keyword">qualified</span> <span class="hs-conid">Data</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-keyword">as</span> <span class="hs-conid">S</span>
 </pre>
-<p>to write a function <code>rng i j</code> that defines the <strong>range-set</strong> <code>i..j-1</code></p>
+<p>to write a function <code>rng i j</code> that defines the <strong>range-set</strong> <code>i..j</code></p>
 <pre><span class="hs-linenum">94: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">reflect</span> <span class="hs-varid">rng</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">95: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">rng</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">S</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-conid">Int</span> <span class="hs-varop">/</span> <span class="hs-keyglyph">[</span><span class="hs-varid">j</span> <span class="hs-comment">-</span> <span class="hs-varid">i</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">96: </span><a class="annot" href="#"><span class="annottext">Int -&gt; Int -&gt; (Set Int)</span><span class="hs-definition">rng</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">j</span></a>
@@ -336,7 +336,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 <p>the “proof” uses two library operators:</p>
 <ul>
-<li><p><code>e1 === e2</code> is an <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/include/Language/Haskell/Liquid/NewProofCombinators.hs#L87-L96">implicit equality</a> that checks <code>e1</code> is indeed equal to <code>e2</code> after <strong>unfolding functions at most once</strong>, and returns a term that equals both <code>e1</code> and <code>e2</code>, and</p></li>
+<li><p><code>e1 === e2</code> is an <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/include/Language/Haskell/Liquid/NewProofCombinators.hs#L87-L96">implicit equality</a> that checks <code>e1</code> is indeed equal to <code>e2</code> after <strong>unfolding functions at most once</strong>, and returns a term that equals <code>e1</code> and <code>e2</code>, and</p></li>
 <li><p><code>e *** QED</code> <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/include/Language/Haskell/Liquid/NewProofCombinators.hs#L65-L69">converts any term</a> <code>e</code> into a proof.</p></li>
 </ul>
 <p>The first two steps of <code>test1</code>, simply unfold <code>rng</code> and the final step uses the SMT solver’s decision procedure for sets to check equalities over set operations like <code>S.union</code>, <code>S.singleton</code> and <code>S.member</code>.</p>
