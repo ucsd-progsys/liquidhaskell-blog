@@ -356,7 +356,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 <p>We could do the proof by unfolding in the equational style. However, <code>test1</code> already establishes that <code>S.member 2 (rng 1 3)</code> and we can reuse this fact using:</p>
 <ul>
-<li><code>e1 ==? e2 ? pf</code> an <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/include/Language/Haskell/Liquid/NewProofCombinators.hs#L98-L116">explicit equality</a> which checks that <code>e1</code> equals <code>e2</code> using the extra facts asserted by the <code>Proof</code> named <code>pf</code> (in addition to unfolding functions at most once) and returns a term that equals both <code>e1</code> and <code>e2</code>.</li>
+<li><code>e1 ==? e2 ? pf</code> an <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/include/Language/Haskell/Liquid/NewProofCombinators.hs#L98-L116">explicit equality</a> which checks that <code>e1</code> equals <code>e2</code> <em>because of</em> the extra facts asserted by the <code>Proof</code> named <code>pf</code> (in addition to unfolding functions at most once) and returns a term that equals both <code>e1</code> and <code>e2</code>.</li>
 </ul>
 <h2 id="proof-by-logical-evaluation">Proof by Logical Evaluation</h2>
 <p>Equational proofs like <code>test1</code> and <code>test2</code> often have long chains of calculations that can be tedious to spell out. Fortunately, we taught LH a new trick called <strong>Proof by Logical Evaluation</strong> (PLE) that optionally shifts the burden of performing those calculations onto the machine. For example, PLE completely automates the above proofs:</p>

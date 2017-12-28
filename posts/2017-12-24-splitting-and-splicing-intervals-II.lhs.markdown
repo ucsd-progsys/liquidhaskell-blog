@@ -179,10 +179,10 @@ already establishes that `S.member 2 (rng 1 3)`
 and we can reuse this fact using:
 
 - `e1 ==? e2 ? pf` an [explicit equality][lh-exp-eq]
-  which checks that `e1` equals `e2` using the extra
-  facts asserted by the `Proof` named `pf` (in addition
-  to unfolding functions at most once) and returns a
-  term that equals both `e1` and `e2`.
+  which checks that `e1` equals `e2` _because of_ the
+  extra facts asserted by the `Proof` named `pf`
+  (in addition to unfolding functions at most once)
+  and returns a term that equals both `e1` and `e2`.
 
 Proof by Logical Evaluation
 ---------------------------
