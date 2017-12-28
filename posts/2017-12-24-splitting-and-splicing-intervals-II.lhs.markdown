@@ -30,11 +30,11 @@ simplify the overhead of proof.
 <!-- more -->
 
 <div class="row">
-<div class="col-lg-1"></div>
-<div class="col-lg-10">
+<div class="col-lg-2"></div>
+<div class="col-lg-8">
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ribbon.png" alt="Ribbons">
 </div>
-<div class="col-lg-1"></div>
+<div class="col-lg-2"></div>
 </div>
 
 <div class="hidden">
@@ -446,11 +446,11 @@ is the `i1..j1`, thereby completing the proof:
 
 <br>
 <div class="row">
-  <div class="col-lg-1"></div>
-  <div class="col-lg-10">
+  <div class="col-lg-2"></div>
+  <div class="col-lg-8">
   ![`lem_sub` a proof by picture](/static/img/lem_sub.png "lem_sub proof by picture")
   </div>
-  <div class="col-lg-1"></div>
+  <div class="col-lg-2"></div>
 </div>
 <br>
 
@@ -488,11 +488,11 @@ by the _endpoints_.
 
 <br>
 <div class="row">
-  <div class="col-lg-1"></div>
-  <div class="col-lg-10">
+  <div class="col-lg-2"></div>
+  <div class="col-lg-8">
   ![`lem_union` a proof by picture](/static/img/lem_union.png "lem_union proof by picture")
   </div>
-  <div class="col-lg-1"></div>
+  <div class="col-lg-2"></div>
 </div>
 <br>
 
@@ -540,11 +540,11 @@ is given by their _inner-points_.
 
 <br>
 <div class="row">
-  <div class="col-lg-1"></div>
-  <div class="col-lg-10">
+  <div class="col-lg-2"></div>
+  <div class="col-lg-8">
   ![`lem_intersect` a proof by picture](/static/img/lem_intersect.png "lem_intersect proof by picture")
   </div>
-  <div class="col-lg-1"></div>
+  <div class="col-lg-2"></div>
 </div>
 <br>
 
