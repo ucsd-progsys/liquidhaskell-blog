@@ -8,9 +8,24 @@ See [about](about.md) for more details.
 
 To add a new post:
 
-1. Add the .markdown file in `posts/`
+1. Write a `.lhs` file with the name `YEAR-MONTH-DAY-TITLE.lhs` 
+e.g. [see this example](https://github.com/ucsd-progsys/liquidhaskell/blob/develop/docs/blog/2017-12-15-splitting-and-splicing-intervals-I.lhs)
 
-2. Run `make upload`
+2. Generate the `.markdown` file. 
+
+3. Copy the `.markdown` file in `posts/`
+
+4. Rebuild and upload.
+
+Here are the four steps:
+
+```
+cd blogpost/
+cat > YEAR-MONTH-DAY-TITLE.lhs
+stack exec -- liquid YEAR-MONTH-DAY-TITLE.lhs
+cp blogpost/.liquid/YEAR-MONTH-DAY.lhs.markdown /path/to/liquidhaskell-blog/posts/
+make upload
+```
 
 ## TODO
 
