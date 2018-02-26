@@ -27,6 +27,7 @@ main = hakyll $ do
   makeArchive
   makeIndex
   makeTemplates
+  makeAtom
 
 copyStatic =
   match "static/*/*" $ do
@@ -44,6 +45,7 @@ makePosts = do
             appendIndex
     compile $ pandocCompiler
         >>= loadAndApplyTemplate "templates/post.html"    (postCtxWithTags tags)
+        >>= saveSnapshot "content"
         >>= loadAndApplyTemplate "templates/default.html" (postCtxWithTags tags)
         >>= relativizeUrls
   return tags
@@ -109,7 +111,23 @@ makeIndex =
 makeTemplates =
   match "templates/*" $ compile templateCompiler
 
+makeAtom =
+  create ["atom.xml"] $ do
+    route idRoute
+    compile $ do
+        let feedCtx = postCtx `mappend` bodyField "description"
+        posts <- fmap (take 10) . recentFirst =<<
+            loadAllSnapshots "posts/*" "content"
+        renderAtom myFeedConfiguration feedCtx posts
 
+myFeedConfiguration :: FeedConfiguration
+myFeedConfiguration = FeedConfiguration
+  { feedTitle       = "LiquidHaskell Blog"
+  , feedDescription = "This feed provides recipes for safe code!"
+  , feedAuthorName  = "Ranjit Jhala"
+  , feedAuthorEmail = "rjhala@eng.ucsd.edu"
+  , feedRoot        = "https://ucsd-progsys.github.io/liquidhaskell-blog"
+  }
 
 appendIndex :: Routes
 appendIndex = customRoute $ (\(p, e) -> p </> "index" <.> e) . splitExtension . toFilePath

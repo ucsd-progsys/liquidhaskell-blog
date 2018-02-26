@@ -146,7 +146,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                 </li>-->
                 
                 <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/blog.html">Blog</a></li>
-                <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=SimpleRefinements.hs" target="_blank">Demo</a></li>
+                <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=MeasuresAndCaseSplitting.hs" target="_blank">Demo</a></li>
                 <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
                 <li><a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial" target="_blank">Book</a></li>
                 <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html" target="_blank">About</a></li>
@@ -212,7 +212,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                     <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/index.html">Home</a></li>
                     <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html">About</a></li>
                     <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/blog.html">Blog</a></li>
-                    <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=SimpleRefinements.hs" target="_blank">Demo</a></li>
+                    <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=MeasuresAndCaseSplitting.hs" target="_blank">Demo</a></li>
                     <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
                     <li><a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial" target="_blank">Book</a></li>
                     <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
@@ -228,15 +228,21 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
 
         <div id="content">
-            
-<!-- Post Header -->
+            <!-- Post Header -->
 <header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt title>
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-		            <div class="post-heading">
-                    <h1>Posts tagged "measures"</h1>
-		            </div>
+                <div class="post-heading">
+                    <h1>Measures and Case Splitting</h1>
+                    
+                    <span class="meta">
+		    
+			Posted by Niki Vazou
+		    
+			Feb 23, 2018
+		    </span>
+                </div>
             </div>
         </div>
     </div>
@@ -248,108 +254,101 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
 
+            <br>
+
+            <div class="info">
               
+                Tags: <a href="../../../../tags/measures.html">measures</a>, <a href="../../../../tags/advanced.html">advanced</a>
+              
+            </div>
 
-<ul>
-    
-        <div class="entry-overview">
-          <div class="date">Feb 23, 2018</div>
-          <div class="detail">
-            <h1><a href="../2018/02/23/measures-and-case-splitting.lhs">Measures and Case Splitting</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-        <div class="entry-overview">
-          <div class="date">Oct  6, 2016</div>
-          <div class="detail">
-            <h1><a href="../2016/10/06/structural-induction.lhs">Refinement Reflection on ADTs</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-        <div class="entry-overview">
-          <div class="date">Sep  5, 2016</div>
-          <div class="detail">
-            <h1><a href="../2016/09/01/normal-forms.lhs">Normal Forms</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-        <div class="entry-overview">
-          <div class="date">Jan 28, 2015</div>
-          <div class="detail">
-            <h1><a href="../2015/01/30/okasakis-lazy-queue.lhs">Okasaki's Lazy Queues</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-        <div class="entry-overview">
-          <div class="date">Feb 11, 2014</div>
-          <div class="detail">
-            <h1><a href="../2014/02/11/the-advantage-of-measures.lhs">The Advantage of Measures</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-        <div class="entry-overview">
-          <div class="date">Oct 10, 2013</div>
-          <div class="detail">
-            <h1><a href="../2013/10/10/csv-tables.lhs">CSV Tables</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-        <div class="entry-overview">
-          <div class="date">May 24, 2013</div>
-          <div class="detail">
-            <h1><a href="../2013/05/24/unique-zipper.lhs">Unique Zippers</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-        <div class="entry-overview">
-          <div class="date">Mar 26, 2013</div>
-          <div class="detail">
-            <h1><a href="../2013/03/26/talking-about-sets.lhs">Talking About Sets</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-        <div class="entry-overview">
-          <div class="date">Feb 17, 2013</div>
-          <div class="detail">
-            <h1><a href="../2013/02/17/kmeans-clustering-II.lhs">KMeans Clustering II</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-        <div class="entry-overview">
-          <div class="date">Feb 16, 2013</div>
-          <div class="detail">
-            <h1><a href="../2013/02/16/kmeans-clustering-I.lhs">KMeans Clustering I</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-        <div class="entry-overview">
-          <div class="date">Jan 31, 2013</div>
-          <div class="detail">
-            <h1><a href="../2013/01/31/safely-catching-a-list-by-its-tail.lhs">Safely Catching A List By Its Tail</a></h1>
-            <!-- <div class=summary><p>todo</p></div> -->
-          </div>
-        </div>
-    
-</ul>
-
-
+            <br>
+			            <p>Liquid Haskell has a flag called <code>--no-case-expand</code> which can make verification of your code much faster, especially when your code is using ADTs with many alternatives. This flag says relax precision to get fast verification, thus may lead to rejecting safe code.</p>
+<p>In this post, I explain how <code>--no-case-expand</code> works using a trivial example!</p>
+<p>(Click here to <a href="http://goto.ucsd.edu:8090/index.html#?demo=RangeSet.hs">demo</a>)</p>
+<!-- more -->
+<div class="hidden">
+<pre><span class="hs-linenum">28: </span>
+<span class="hs-linenum">29: </span><span class="hs-keyword">module</span> <span class="hs-conid">MeasuresAndCaseSplitting</span> <span class="hs-keyword">where</span>
+</pre>
+</div>
+<h2 id="measures">Measures</h2>
+<p>Let’s define a simple data type with three alternatives</p>
+<pre><span class="hs-linenum">40: </span><span class="hs-keyword">data</span> <span class="hs-conid">ABC</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">A</span> <span class="hs-keyglyph">|</span> <span class="hs-conid">B</span> <span class="hs-keyglyph">|</span> <span class="hs-conid">C</span> 
+</pre>
+<p>and a measure that turns <code>ABD</code> into an integer</p>
+<pre><span class="hs-linenum">46: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">measure</span> <span class="hs-varid">toInt</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">47: </span><span class="hs-definition">toInt</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">ABC</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> 
+<span class="hs-linenum">48: </span><a class="annot" href="#"><span class="annottext">x1:MeasuresAndCaseSplitting.ABC -&gt; {VV : GHC.Types.Int | VV == MeasuresAndCaseSplitting.toInt x1}</span><span class="hs-definition">toInt</span></a> <span class="hs-conid">A</span> <span class="hs-keyglyph">=</span> <span class="hs-num">1</span> 
+<span class="hs-linenum">49: </span><span class="hs-definition">toInt</span> <span class="hs-conid">B</span> <span class="hs-keyglyph">=</span> <span class="hs-num">2</span>
+<span class="hs-linenum">50: </span><span class="hs-definition">toInt</span> <span class="hs-conid">C</span> <span class="hs-keyglyph">=</span> <span class="hs-num">3</span> 
+</pre>
+<p>Though obvious to us, Liquid Haskell will fail to check that <code>toInt</code> of any <code>ABC</code> argument gives back a natural number. Or, the following call leads to a refinement type error.</p>
+<pre><span class="hs-linenum">59: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">unsafe</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">ABC</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{o:</span><span class="hs-conid">()</span> <span class="hs-keyword">| 0 &lt;= toInt x }</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">60: </span><span class="hs-keyword">unsafe</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">ABC</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span> 
+<span class="hs-linenum">61: </span><span class="hs-error"><a class="annot" href="#"><span class="annottext">x1:MeasuresAndCaseSplitting.ABC -&gt; {o : () | 0 &lt;= MeasuresAndCaseSplitting.toInt x1}</span><span class="hs-keyword">unsafe</span></a></span> <a class="annot" href="#"><span class="annottext">MeasuresAndCaseSplitting.ABC</span><span class="hs-varid">x</span></a>   <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span>
+</pre>
+<p>Why? By turning <code>toInt</code> into a measure, Liquid Haskell gives precise information to each data constructor of <code>ABC</code>. Thus it knows that <code>toInt</code> or <code>A</code>, <code>B</code>, and <code>C</code> is respectively <code>1</code>, <code>2</code>, and <code>3</code>, by <em>automatically</em> generating the following types:</p>
+<pre><span class="hs-linenum">72: </span><span class="hs-conid">A</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">ABC</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">toInt</span> <span class="hs-varid">v</span> <span class="hs-varop">==</span> <span class="hs-num">1</span> <span class="hs-layout">}</span>
+<span class="hs-linenum">73: </span><span class="hs-conid">B</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">ABC</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">toInt</span> <span class="hs-varid">v</span> <span class="hs-varop">==</span> <span class="hs-num">2</span> <span class="hs-layout">}</span>
+<span class="hs-linenum">74: </span><span class="hs-conid">C</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">ABC</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">toInt</span> <span class="hs-varid">v</span> <span class="hs-varop">==</span> <span class="hs-num">3</span> <span class="hs-layout">}</span>
+</pre>
+<p>Thus, to get the <code>toInt</code> information one need to explicitly perform case analysis on an <code>ABC</code> argument. The following code is safe</p>
+<pre><span class="hs-linenum">82: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">safe</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">ABC</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{o:</span><span class="hs-conid">()</span> <span class="hs-keyword">| 0 &lt;= toInt x}</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">83: </span><span class="hs-keyword">safe</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">ABC</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">84: </span><a class="annot" href="#"><span class="annottext">x1:MeasuresAndCaseSplitting.ABC -&gt; {o : () | 0 &lt;= MeasuresAndCaseSplitting.toInt x1}</span><span class="hs-keyword">safe</span></a> <span class="hs-conid">A</span>   <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span> 
+<span class="hs-linenum">85: </span><span class="hs-keyword">safe</span> <span class="hs-conid">B</span>   <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span> 
+<span class="hs-linenum">86: </span><span class="hs-keyword">safe</span> <span class="hs-conid">C</span>   <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span> 
+</pre>
+<p>Liquid Haskell type check the above code because in the first case the body is checked under the assumption that the argument, call it <code>x</code>, is an <code>A</code>. Under this assumption, <code>toInt x</code> is indeed non negative. Yet, this is the case for the rest two alternatives, where <code>x</code> is either <code>B</code> or <code>C</code>. So, <code>0 &lt;= toInt x</code> holds for all the alternatives, because case analysis on <code>x</code> automatically reasons about the value of the measure <code>toInt</code>.</p>
+<p>Now, what if I match the argument <code>x</code> only with <code>A</code> and provide a default body for the rest?</p>
+<pre><span class="hs-linenum">104: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">safeBut</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">ABC</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{o:</span><span class="hs-conid">()</span> <span class="hs-keyword">| 0 &lt;= toInt x}</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">105: </span><span class="hs-definition">safeBut</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">ABC</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">106: </span><a class="annot" href="#"><span class="annottext">x1:MeasuresAndCaseSplitting.ABC -&gt; {o : () | 0 &lt;= MeasuresAndCaseSplitting.toInt x1}</span><span class="hs-definition">safeBut</span></a> <span class="hs-conid">A</span>   <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span> 
+<span class="hs-linenum">107: </span><span class="hs-definition">safeBut</span> <span class="hs-keyword">_</span>   <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span> 
+</pre>
+<p>Liquid Haskell knows that if the argument <code>x</code> is actually an <code>A</code>, then <code>toInt x</code> is not negative, but does not know the value of <code>toInt</code> for the default case.</p>
+<p>But, <em>by default</em> Liquid Haskell will do the the case expansion of the default case for you and rewrite your code to match <code>_</code> with all the possible cases. Thus, Liquid Haskell will internally rewrite <code>safeBut</code> as</p>
+<pre><span class="hs-linenum">119: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">safeButLH</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">ABC</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{o:</span><span class="hs-conid">()</span> <span class="hs-keyword">| 0 &lt;= toInt x}</span> <span class="hs-keyword">@-}</span>
+<span class="hs-linenum">120: </span><span class="hs-definition">safeButLH</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">ABC</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">()</span>
+<span class="hs-linenum">121: </span><a class="annot" href="#"><span class="annottext">x1:MeasuresAndCaseSplitting.ABC -&gt; {o : () | 0 &lt;= MeasuresAndCaseSplitting.toInt x1}</span><span class="hs-definition">safeButLH</span></a> <span class="hs-conid">A</span>   <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span> 
+<span class="hs-linenum">122: </span><span class="hs-definition">safeButLH</span> <span class="hs-conid">B</span>   <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span> 
+<span class="hs-linenum">123: </span><span class="hs-definition">safeButLH</span> <span class="hs-conid">C</span>   <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span> 
+</pre>
+<p>With this rewrite Liquid Haskell gets precision! Thus, it has all the information it needs to prove <code>safeBut</code> as safe. Yet, it repeats the code of the default case, thus verification slows down.</p>
+<p>In this example, we only have three case alternatives, so we only repeat the code two times with a minor slow down. In cases with many more alternatives repeating the code of the default case can kill the verification time.</p>
+<p>For that reason, Liquid Haskell comes with the <code>no-case-expand</code> flag that deactivates this expansion of the default cases. With the <code>no-case-expand</code> flag on, the <code>safeBut</code> code will not type check and to fix it the user needs to perform the case expansion manually.</p>
+<p>In short, the <code>no-case-expand</code> increases verification speed but reduces precision. Then it is up to the user to manually expand the default cases, as required, to restore all the precision required for the code to type check.</p>
                 <hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+                <div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    var disqus_config = function () {
+        this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2018/02/23/measures-and-case-splitting.lhs';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = '/2018/02/23/measures-and-case-splitting.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+        var d = document, s = d.createElement('script');
+        s.src = '//liquidhaskell.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
 
             </div>
         </div>
     </div>
 </article>
-<hr>
 
         </div>
         <div id="footer">
@@ -403,6 +402,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 		    
                 </ul>
                 <p class="copyright text-muted">
+                
+                  Copyright &copy; Niki Vazou 2016-17.
                 
                   Generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>,
                   template by <a href="http://lucumr.pocoo.org">Armin Ronacher</a>,
