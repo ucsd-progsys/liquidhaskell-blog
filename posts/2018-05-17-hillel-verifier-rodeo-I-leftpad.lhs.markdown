@@ -153,8 +153,8 @@ the informal requirements:
 
 <pre><span class=hs-linenum>147: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>leftPadObviousThm</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>n</span><span class='hs-conop'>:</span><span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>c</span><span class='hs-conop'>:</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> 
 <span class=hs-linenum>148: </span>      <span class='hs-keyword'>{ leftPad n c xs = if (size xs &lt; n) 
-                            then (replicate (n - size xs) c ++ xs) 
-                            else xs }</span> 
+                         then (replicate (n - size xs) c ++ xs) 
+                         else xs }</span> 
 <span class=hs-linenum>151: </span>  <span class='hs-keyword'>@-}</span>
 <span class=hs-linenum>152: </span><a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:a -&gt; x3:[a] -&gt; {VV : () | leftPad x1 x2 x3 == (if size x3 &lt; x1 then ++ (replicate (x1 - size x3) x2) x3 else x3)}</span><span class='hs-definition'>leftPadObviousThm</span></a> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span> 
 </pre>
@@ -202,8 +202,8 @@ The Importance of being Decidable
 
 LH, like many of the other rodeo entries use SMT solvers to 
 automate verification. For example, the `leftPad` solutions 
-in [Dafny][leftpad-dafny] and [SPARK][leftpad-spark] and 
-[F*][leftpad-fstar] make heavy use [quantified axioms][dafny-seq-axioms] 
+in [Dafny][dafny-leftpad] and [SPARK][spark-leftpad] and 
+[F*][fstar-leftpad] make heavy use [quantified axioms][dafny-seq-axioms] 
 to encode properties of sequences.
 
 Unlike these other tools, LH takes a somewhat fanatical 
@@ -218,8 +218,17 @@ stance: it _never_ uses axioms, because:
    or more generally, quantified formulas rapidly take SMT solvers 
    out of this "comfort zone":
 
+<!--
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">I mean, I&#39;m somewhat kind of serious here, I think unneeded generality makes things really difficult often. as a random example quantifiers seem to throw z3 into a really bad place, even when they&#39;re easy ones.</p>&mdash; John Regehr (@johnregehr) <a href="https://twitter.com/johnregehr/status/996901816842440704?ref_src=twsrc%5Etfw">May 16, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+-->
+
+<div class="row-fluid">
+  <div class="span12 pagination-centered">
+  <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/regehr-tweet-quantifiers.png"
+       alt="Ribbons" height="100">
+  </div>
+</div>
 
 Thus, we've chosen to avoid the siren song of quantifiers 
 by lashing LH firmly to the steady mast of decidable fragments.
@@ -237,11 +246,11 @@ To start, lets define the notion of the `i`-th element of
 a sequence (this is pretty much Haskell's list-index operator)
 
 
-<pre><span class=hs-linenum>233: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varop'>!!</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>234: </span><span class='hs-keyword'>{-@</span> <span class='hs-layout'>(</span><span class='hs-varop'>!!</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{n:</span><span class='hs-conid'>Nat</span> <span class='hs-keyword'>| n &lt; size xs}</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>235: </span><span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span><span class='hs-layout'>)</span>  <a class=annot href="#"><span class=annottext>x1:[a] -&gt; {v : GHC.Types.Int | v &gt;= 0
+<pre><span class=hs-linenum>242: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varop'>!!</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>243: </span><span class='hs-keyword'>{-@</span> <span class='hs-layout'>(</span><span class='hs-varop'>!!</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{n:</span><span class='hs-conid'>Nat</span> <span class='hs-keyword'>| n &lt; size xs}</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>244: </span><span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span><span class='hs-layout'>)</span>  <a class=annot href="#"><span class=annottext>x1:[a] -&gt; {v : GHC.Types.Int | v &gt;= 0
                                &amp;&amp; v &lt; size x1} -&gt; a</span><span class='hs-varop'>!!</span></a> <span class='hs-num'>0</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>x</span> 
-<span class=hs-linenum>236: </span><span class='hs-layout'>(</span><span class='hs-keyword'>_</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-varop'>!!</span> <span class='hs-varid'>n</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:[a] -&gt; {v : GHC.Types.Int | v &gt;= 0
+<span class=hs-linenum>245: </span><span class='hs-layout'>(</span><span class='hs-keyword'>_</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-varop'>!!</span> <span class='hs-varid'>n</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:[a] -&gt; {v : GHC.Types.Int | v &gt;= 0
                                &amp;&amp; v &lt; size x1} -&gt; a</span><span class='hs-varid'>xs</span></a> <span class='hs-varop'>!!</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a> <span class='hs-num'>1</span><span class='hs-layout'>)</span>
 </pre>
 
@@ -251,14 +260,14 @@ Next, we can verify that _every_ element in a `replicate`d
 sequence is equal to the element being cloned:
 
 
-<pre><span class=hs-linenum>245: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>thmReplicate</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>n</span><span class='hs-conop'>:</span><span class='hs-conid'>Nat</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>c</span><span class='hs-conop'>:</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>i</span><span class='hs-conop'>:</span><span class='hs-keyword'>{Nat | i &lt; n}</span> <span class='hs-keyglyph'>-&gt;</span> 
-<span class=hs-linenum>246: </span>                    <span class='hs-keyword'>{ replicate n c !! i  == c }</span> 
-<span class=hs-linenum>247: </span>  <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>248: </span><a class=annot href="#"><span class=annottext>x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; x2:a -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
+<pre><span class=hs-linenum>254: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>thmReplicate</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>n</span><span class='hs-conop'>:</span><span class='hs-conid'>Nat</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>c</span><span class='hs-conop'>:</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>i</span><span class='hs-conop'>:</span><span class='hs-keyword'>{Nat | i &lt; n}</span> <span class='hs-keyglyph'>-&gt;</span> 
+<span class=hs-linenum>255: </span>                    <span class='hs-keyword'>{ replicate n c !! i  == c }</span> 
+<span class=hs-linenum>256: </span>  <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>257: </span><a class=annot href="#"><span class=annottext>x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; x2:a -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
                                                                    &amp;&amp; v &lt; x1} -&gt; {VV : () | !! (replicate x1 x2) x3 == x2}</span><span class='hs-definition'>thmReplicate</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0}</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>c</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0
                      &amp;&amp; v &lt; n}</span><span class='hs-varid'>i</span></a> 
-<span class=hs-linenum>249: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>GHC.Types.Bool</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | v &lt;=&gt; x1 == x2}</span><span class='hs-varop'>==</span></a> <span class='hs-num'>0</span>    <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>250: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; x2:a -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
+<span class=hs-linenum>258: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>GHC.Types.Bool</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | v &lt;=&gt; x1 == x2}</span><span class='hs-varop'>==</span></a> <span class='hs-num'>0</span>    <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>259: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; x2:a -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
                                                                    &amp;&amp; v &lt; x1} -&gt; {VV : () | !! (replicate x1 x2) x3 == x2}</span><span class='hs-varid'>thmReplicate</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a> <span class='hs-num'>1</span><span class='hs-layout'>)</span> <span class='hs-varid'>c</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a> <span class='hs-num'>1</span><span class='hs-layout'>)</span> 
 </pre>
 
@@ -277,20 +286,20 @@ namely, the `i`-th element of `xs ++ ys` is:
 - **Right** the `i - size xs` element of `ys` otherwise.
 
 
-<pre><span class=hs-linenum>268: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>thmAppLeft</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>ys</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{i:</span><span class='hs-conid'>Nat</span> <span class='hs-keyword'>| i &lt; size xs}</span> <span class='hs-keyglyph'>-&gt;</span> 
-<span class=hs-linenum>269: </span>                  <span class='hs-keyword'>{ (xs ++ ys) !! i == xs !! i }</span> 
-<span class=hs-linenum>270: </span>  <span class='hs-keyword'>@-}</span> 
-<span class=hs-linenum>271: </span><a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:[a] -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
+<pre><span class=hs-linenum>277: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>thmAppLeft</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>ys</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{i:</span><span class='hs-conid'>Nat</span> <span class='hs-keyword'>| i &lt; size xs}</span> <span class='hs-keyglyph'>-&gt;</span> 
+<span class=hs-linenum>278: </span>                  <span class='hs-keyword'>{ (xs ++ ys) !! i == xs !! i }</span> 
+<span class=hs-linenum>279: </span>  <span class='hs-keyword'>@-}</span> 
+<span class=hs-linenum>280: </span><a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:[a] -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
                                             &amp;&amp; v &lt; size x1} -&gt; {VV : () | !! (++ x1 x2) x3 == !! x1 x3}</span><span class='hs-definition'>thmAppLeft</span></a> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <a class=annot href="#"><span class=annottext>[a]</span><span class='hs-varid'>ys</span></a> <span class='hs-num'>0</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span> 
-<span class=hs-linenum>272: </span><span class='hs-definition'>thmAppLeft</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-varid'>ys</span> <span class='hs-varid'>i</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:[a] -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
+<span class=hs-linenum>281: </span><span class='hs-definition'>thmAppLeft</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-varid'>ys</span> <span class='hs-varid'>i</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:[a] -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
                                             &amp;&amp; v &lt; size x1} -&gt; {VV : () | !! (++ x1 x2) x3 == !! x1 x3}</span><span class='hs-varid'>thmAppLeft</span></a> <span class='hs-varid'>xs</span> <span class='hs-varid'>ys</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>i</span></a><a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a><span class='hs-num'>1</span><span class='hs-layout'>)</span>      
-<span class=hs-linenum>273: </span>
-<span class=hs-linenum>274: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>thmAppRight</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>ys</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{i:</span><span class='hs-conid'>Nat</span> <span class='hs-keyword'>| size xs &lt;= i}</span> <span class='hs-keyglyph'>-&gt;</span> 
-<span class=hs-linenum>275: </span>                   <span class='hs-keyword'>{ (xs ++ ys) !! i == ys !! (i - size xs) }</span> 
-<span class=hs-linenum>276: </span>  <span class='hs-keyword'>@-}</span> 
-<span class=hs-linenum>277: </span><a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:[a] -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
+<span class=hs-linenum>282: </span>
+<span class=hs-linenum>283: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>thmAppRight</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>ys</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{i:</span><span class='hs-conid'>Nat</span> <span class='hs-keyword'>| size xs &lt;= i}</span> <span class='hs-keyglyph'>-&gt;</span> 
+<span class=hs-linenum>284: </span>                   <span class='hs-keyword'>{ (xs ++ ys) !! i == ys !! (i - size xs) }</span> 
+<span class=hs-linenum>285: </span>  <span class='hs-keyword'>@-}</span> 
+<span class=hs-linenum>286: </span><a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:[a] -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
                                             &amp;&amp; size x1 &lt;= v} -&gt; {VV : () | !! (++ x1 x2) x3 == !! x2 (x3 - size x1)}</span><span class='hs-definition'>thmAppRight</span></a> <span class='hs-conid'>[]</span>     <a class=annot href="#"><span class=annottext>[a]</span><span class='hs-varid'>ys</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0}</span><span class='hs-varid'>i</span></a> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>()</span> 
-<span class=hs-linenum>278: </span><span class='hs-definition'>thmAppRight</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-varid'>ys</span> <span class='hs-varid'>i</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:[a] -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
+<span class=hs-linenum>287: </span><span class='hs-definition'>thmAppRight</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-varid'>ys</span> <span class='hs-varid'>i</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:[a] -&gt; x3:{v : GHC.Types.Int | v &gt;= 0
                                             &amp;&amp; size x1 &lt;= v} -&gt; {VV : () | !! (++ x1 x2) x3 == !! x2 (x3 - size x1)}</span><span class='hs-varid'>thmAppRight</span></a> <span class='hs-varid'>xs</span> <span class='hs-varid'>ys</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>i</span></a><a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a><span class='hs-num'>1</span><span class='hs-layout'>)</span>      
 </pre>
 
@@ -308,9 +317,9 @@ it automatically, when type-checking `leftPad` against the
 signature:
 
 
-<pre><span class=hs-linenum>295: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>leftPad</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>n</span><span class='hs-conop'>:</span><span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>c</span><span class='hs-conop'>:</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> 
-<span class=hs-linenum>296: </span>                <span class='hs-keyword'>{res:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>| size res = max n (size xs)}</span> 
-<span class=hs-linenum>297: </span>  <span class='hs-keyword'>@-}</span>
+<pre><span class=hs-linenum>304: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>leftPad</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>n</span><span class='hs-conop'>:</span><span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>c</span><span class='hs-conop'>:</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> 
+<span class=hs-linenum>305: </span>                <span class='hs-keyword'>{res:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>| size res = max n (size xs)}</span> 
+<span class=hs-linenum>306: </span>  <span class='hs-keyword'>@-}</span>
 </pre>
 
 **Pad-Value Specification**
@@ -320,18 +329,18 @@ element equals `c` or the corresponding element of `xs` --
 by a type signature:
 
 
-<pre><span class=hs-linenum>307: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>thmLeftPad</span> 
-<span class=hs-linenum>308: </span>      <span class='hs-keyglyph'>::</span> <span class='hs-varid'>n</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>c</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyword'>{size xs &lt; n}</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>i</span><span class='hs-conop'>:</span><span class='hs-keyword'>{Nat | i &lt; n}</span> <span class='hs-keyglyph'>-&gt;</span>
-<span class=hs-linenum>309: </span>         <span class='hs-keyword'>{ leftPad n c xs !! i ==  leftPadVal n c xs i }</span>                               
-<span class=hs-linenum>310: </span>  <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>311: </span>
-<span class=hs-linenum>312: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varid'>leftPadVal</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>313: </span><a class=annot href="#"><span class=annottext>{n : GHC.Types.Int | False} -&gt; a -&gt; [a] -&gt; GHC.Types.Int -&gt; a</span><span class='hs-definition'>leftPadVal</span></a> <a class=annot href="#"><span class=annottext>{n : GHC.Types.Int | False}</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>c</span></a> <a class=annot href="#"><span class=annottext>[a]</span><span class='hs-varid'>xs</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>i</span></a> 
-<span class=hs-linenum>314: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Bool | v &lt;=&gt; i &lt; k}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>k</span>     <span class='hs-keyglyph'>=</span> <span class='hs-varid'>c</span> 
-<span class=hs-linenum>315: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : [a] | size v &gt;= 0
+<pre><span class=hs-linenum>316: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>thmLeftPad</span> 
+<span class=hs-linenum>317: </span>      <span class='hs-keyglyph'>::</span> <span class='hs-varid'>n</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>c</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyword'>{size xs &lt; n}</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>i</span><span class='hs-conop'>:</span><span class='hs-keyword'>{Nat | i &lt; n}</span> <span class='hs-keyglyph'>-&gt;</span>
+<span class=hs-linenum>318: </span>         <span class='hs-keyword'>{ leftPad n c xs !! i ==  leftPadVal n c xs i }</span>                               
+<span class=hs-linenum>319: </span>  <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>320: </span>
+<span class=hs-linenum>321: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varid'>leftPadVal</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>322: </span><a class=annot href="#"><span class=annottext>{n : GHC.Types.Int | False} -&gt; a -&gt; [a] -&gt; GHC.Types.Int -&gt; a</span><span class='hs-definition'>leftPadVal</span></a> <a class=annot href="#"><span class=annottext>{n : GHC.Types.Int | False}</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>c</span></a> <a class=annot href="#"><span class=annottext>[a]</span><span class='hs-varid'>xs</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>i</span></a> 
+<span class=hs-linenum>323: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Bool | v &lt;=&gt; i &lt; k}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>k</span>     <span class='hs-keyglyph'>=</span> <span class='hs-varid'>c</span> 
+<span class=hs-linenum>324: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : [a] | size v &gt;= 0
            &amp;&amp; len v &gt;= 0
            &amp;&amp; v == xs}</span><span class='hs-varid'>xs</span></a> <span class='hs-varop'>!!</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == i - k}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a> <span class='hs-varid'>k</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>316: </span>  <span class='hs-keyword'>where</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>k</span></a>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0
+<span class=hs-linenum>325: </span>  <span class='hs-keyword'>where</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>k</span></a>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0
                      &amp;&amp; v == size xs}</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a> <span class='hs-varid'>size</span> <span class='hs-varid'>xs</span> 
 </pre>
 
@@ -341,18 +350,18 @@ We _verify_ the above property by filling in the
 implementation of `thmLeftPad` as:
 
 
-<pre><span class=hs-linenum>325: </span><a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:a -&gt; x3:{v : [a] | size v &lt; x1} -&gt; x4:{v : GHC.Types.Int | v &gt;= 0
+<pre><span class=hs-linenum>334: </span><a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:a -&gt; x3:{v : [a] | size v &lt; x1} -&gt; x4:{v : GHC.Types.Int | v &gt;= 0
                                                                                   &amp;&amp; v &lt; x1} -&gt; {VV : () | !! (leftPad x1 x2 x3) x4 == leftPadVal x1 x2 x3 x4}</span><span class='hs-definition'>thmLeftPad</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>c</span></a> <a class=annot href="#"><span class=annottext>{v : [a] | size v &lt; n}</span><span class='hs-varid'>xs</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0
                      &amp;&amp; v &lt; n}</span><span class='hs-varid'>i</span></a> 
-<span class=hs-linenum>326: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Bool | v &lt;=&gt; i &lt; k}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>k</span>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:{v : GHC.Types.Int | v &gt;= 0
+<span class=hs-linenum>335: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Bool | v &lt;=&gt; i &lt; k}</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | v &lt;=&gt; x1 &lt; x2}</span><span class='hs-varop'>&lt;</span></a> <span class='hs-varid'>k</span>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:{v : GHC.Types.Int | v &gt;= 0
                                   &amp;&amp; v &lt; size cs} -&gt; {v : () | !! (++ cs x1) x2 == !! cs x2}</span><span class='hs-varid'>thmAppLeft</span></a>  <span class='hs-varid'>cs</span> <span class='hs-varid'>xs</span> <span class='hs-varid'>i</span> <span class='hs-varop'>`seq`</span> <a class=annot href="#"><span class=annottext>x1:a -&gt; x2:{v : GHC.Types.Int | v &gt;= 0
                                 &amp;&amp; v &lt; k} -&gt; {v : () | !! (replicate k x1) x2 == x1}</span><span class='hs-varid'>thmReplicate</span></a> <span class='hs-varid'>k</span> <span class='hs-varid'>c</span> <span class='hs-varid'>i</span>   
-<span class=hs-linenum>327: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:{v : GHC.Types.Int | v &gt;= 0
+<span class=hs-linenum>336: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:[a] -&gt; x2:{v : GHC.Types.Int | v &gt;= 0
                                   &amp;&amp; size cs &lt;= v} -&gt; {v : () | !! (++ cs x1) x2 == !! x1 (x2 - size cs)}</span><span class='hs-varid'>thmAppRight</span></a> <span class='hs-varid'>cs</span> <span class='hs-varid'>xs</span> <span class='hs-varid'>i</span>
-<span class=hs-linenum>328: </span>  <span class='hs-keyword'>where</span> 
-<span class=hs-linenum>329: </span>    <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>k</span></a>         <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0
+<span class=hs-linenum>337: </span>  <span class='hs-keyword'>where</span> 
+<span class=hs-linenum>338: </span>    <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>k</span></a>         <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0
                      &amp;&amp; v == size xs}</span><span class='hs-varid'>size</span></a> <span class='hs-varid'>xs</span> 
-<span class=hs-linenum>330: </span>    <a class=annot href="#"><span class=annottext>{v : [a] | size v == k
+<span class=hs-linenum>339: </span>    <a class=annot href="#"><span class=annottext>{v : [a] | size v == k
            &amp;&amp; v == replicate k c
            &amp;&amp; v == (if 0 == k then [] else : c (replicate (k - 1) c))}</span><span class='hs-varid'>cs</span></a>        <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : x1:a -&gt; {v : [a] | size v == k
                         &amp;&amp; v == replicate k x1
@@ -399,7 +408,11 @@ That concludes part I of the rodeo. What did I learn from this exercise?
    quite short, letting LH verify expressive specifications 
    while remaining clear of the siren song of quantifiers.
 
-[demo]:          http://goto.ucsd.edu:8090/index.html#?demo=LeftPad.hs
-[dafny-leftpad]: https://rise4fun.com/Dafny/nbNTl
-[idris-leftpad]: https://github.com/hwayne/lets-prove-leftpad/blob/master/idris/Leftpad.idr
+[demo]:             http://goto.ucsd.edu:8090/index.html#?demo=LeftPad.hs
+[dafny-leftpad]:    https://rise4fun.com/Dafny/nbNTl
+[spark-leftpad]:    https://blog.adacore.com/taking-on-a-challenge-in-spark
+[fstar-leftpad]:    https://gist.github.com/graydon/901f98049d05db65d9a50f741c7f7626
+[idris-leftpad]:    https://github.com/hwayne/lets-prove-leftpad/blob/master/idris/Leftpad.idr
 [dafny-seq-axioms]: https://github.com/Microsoft/dafny/blob/master/Binaries/DafnyPrelude.bpl#L898-L1110
+[tag-reflection]:   /tags/reflection.html
+[tag-ple]:          /tags/ple.html
