@@ -9,12 +9,13 @@ tags: reflection
 demo: LeftPad.hs
 ---
 
-A month ago, [Hillel Wayne](https://twitter.com/Hillelogram)
-posted a three-part [verification challenge](https://twitter.com/Hillelogram/status/987432180837167104): 
-
+<!--
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">You have to provide a 100%, machine-checked guarantee that there are no problems with your code whatsoever. If it&#39;s so much easier to analyze FP programs than imperative programs, this should be simple, right?</p>&mdash; Hillel (@Hillelogram) <a href="https://twitter.com/Hillelogram/status/987432180837167104?ref_src=twsrc%5Etfw">April 20, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+-->
 
+A month ago, [Hillel Wayne](https://twitter.com/Hillelogram)
+posted a three-part [verification challenge](https://twitter.com/Hillelogram/status/987432180837167104): 
 While some of the problems might sound frivolous, in fact, 
 they hit the sweet spot of being easy to describe and yet 
 tricky to implement and verify. I had a lot of fun hacking 
@@ -30,31 +31,31 @@ and to check Hillel's specification with LH.
 
 <div class="hidden">
 
-<pre><span class=hs-linenum>33: </span><span class='hs-keyword'>{-@</span> <span class='hs-conid'>LIQUID</span> <span class='hs-str'>"--reflection"</span>  <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>34: </span><span class='hs-keyword'>{-@</span> <span class='hs-conid'>LIQUID</span> <span class='hs-str'>"--ple"</span>         <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>35: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>infixr</span> <span class='hs-varop'>++</span>              <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>36: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>infixr</span> <span class='hs-varop'>!!</span>              <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>37: </span>
-<span class=hs-linenum>38: </span><span class='hs-keyword'>module</span> <span class='hs-conid'>PadLeft</span> <span class='hs-keyword'>where</span> 
-<span class=hs-linenum>39: </span>
-<span class=hs-linenum>40: </span><span class='hs-keyword'>import</span> <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>max</span><span class='hs-layout'>,</span> <span class='hs-varid'>replicate</span><span class='hs-layout'>,</span> <span class='hs-layout'>(</span><span class='hs-varop'>++</span><span class='hs-layout'>)</span><span class='hs-layout'>,</span> <span class='hs-layout'>(</span><span class='hs-varop'>!!</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>41: </span><span class='hs-layout'>(</span><span class='hs-varop'>!!</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> 
-<span class=hs-linenum>42: </span><span class='hs-definition'>size</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
-<span class=hs-linenum>43: </span><span class='hs-layout'>(</span><span class='hs-varop'>++</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span>
-<span class=hs-linenum>44: </span><span class='hs-definition'>obviously</span>         <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span> 
-<span class=hs-linenum>45: </span><span class='hs-definition'>replicate</span>         <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span>
-<span class=hs-linenum>46: </span><span class='hs-definition'>thmReplicate</span>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span> 
-<span class=hs-linenum>47: </span><span class='hs-definition'>thmAppLeft</span>        <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>48: </span><span class='hs-definition'>thmAppRight</span>       <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>49: </span><span class='hs-definition'>thmLeftPad</span>        <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
-<span class=hs-linenum>50: </span>
-<span class=hs-linenum>51: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varid'>max</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>52: </span><span class='hs-definition'>max</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> 
-<span class=hs-linenum>53: </span><a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {VV : GHC.Types.Int | VV == max x1 x2
+<pre><span class=hs-linenum>34: </span><span class='hs-keyword'>{-@</span> <span class='hs-conid'>LIQUID</span> <span class='hs-str'>"--reflection"</span>  <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>35: </span><span class='hs-keyword'>{-@</span> <span class='hs-conid'>LIQUID</span> <span class='hs-str'>"--ple"</span>         <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>36: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>infixr</span> <span class='hs-varop'>++</span>              <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>37: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>infixr</span> <span class='hs-varop'>!!</span>              <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>38: </span>
+<span class=hs-linenum>39: </span><span class='hs-keyword'>module</span> <span class='hs-conid'>PadLeft</span> <span class='hs-keyword'>where</span> 
+<span class=hs-linenum>40: </span>
+<span class=hs-linenum>41: </span><span class='hs-keyword'>import</span> <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>max</span><span class='hs-layout'>,</span> <span class='hs-varid'>replicate</span><span class='hs-layout'>,</span> <span class='hs-layout'>(</span><span class='hs-varop'>++</span><span class='hs-layout'>)</span><span class='hs-layout'>,</span> <span class='hs-layout'>(</span><span class='hs-varop'>!!</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>
+<span class=hs-linenum>42: </span><span class='hs-layout'>(</span><span class='hs-varop'>!!</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> 
+<span class=hs-linenum>43: </span><span class='hs-definition'>size</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
+<span class=hs-linenum>44: </span><span class='hs-layout'>(</span><span class='hs-varop'>++</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span>
+<span class=hs-linenum>45: </span><span class='hs-definition'>obviously</span>         <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span> 
+<span class=hs-linenum>46: </span><span class='hs-definition'>replicate</span>         <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span>
+<span class=hs-linenum>47: </span><span class='hs-definition'>thmReplicate</span>      <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span> 
+<span class=hs-linenum>48: </span><span class='hs-definition'>thmAppLeft</span>        <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>49: </span><span class='hs-definition'>thmAppRight</span>       <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>50: </span><span class='hs-definition'>thmLeftPad</span>        <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>()</span>
+<span class=hs-linenum>51: </span>
+<span class=hs-linenum>52: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varid'>max</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>53: </span><span class='hs-definition'>max</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span> 
+<span class=hs-linenum>54: </span><a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {VV : GHC.Types.Int | VV == max x1 x2
                                                               &amp;&amp; VV == (if x1 &gt; x2 then x1 else x2)}</span><span class='hs-definition'>max</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>y</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Bool | v &lt;=&gt; x &gt; y}</span><span class='hs-keyword'>if</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Bool | v &lt;=&gt; x &gt; y}</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | v &lt;=&gt; x1 &gt; x2}</span><span class='hs-varop'>&gt;</span></a> <span class='hs-varid'>y</span> <span class='hs-keyword'>then</span> <span class='hs-varid'>x</span> <span class='hs-keyword'>else</span> <span class='hs-varid'>y</span> 
-<span class=hs-linenum>54: </span>
-<span class=hs-linenum>55: </span><span class='hs-comment'>-- A ghost function only used in the specification</span>
-<span class=hs-linenum>56: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>leftPadVal</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>n</span><span class='hs-conop'>:</span><span class='hs-keyword'>{Int | False}</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>@-}</span>
+<span class=hs-linenum>55: </span>
+<span class=hs-linenum>56: </span><span class='hs-comment'>-- A ghost function only used in the specification</span>
+<span class=hs-linenum>57: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>leftPadVal</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>n</span><span class='hs-conop'>:</span><span class='hs-keyword'>{Int | False}</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>_</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>@-}</span>
 </pre>
 </div>
 
@@ -66,7 +67,6 @@ The first of these problems was
 
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">1. Leftpad. Takes a padding character, a string, and a total length, returns the string padded with that length with that character. If length is less than string, does nothing.<a href="https://t.co/X8qR8gTZdO">https://t.co/X8qR8gTZdO</a></p>&mdash; Hillel (@Hillelogram) <a href="https://twitter.com/Hillelogram/status/987432181889994759?ref_src=twsrc%5Etfw">April 20, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
 
 Implementation 
 --------------
@@ -219,12 +219,11 @@ queries from (certain) **decidable logics**.
 Axioms, or more generally, quantified formulas 
 rapidly take SMT solvers out of this "comfort zone",
 causing them to reject valid formulas, run slowly, 
-or even, to run forever.
+or even, [to run forever][regehr-tweet].
 
 <!--
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">I mean, I&#39;m somewhat kind of serious here, I think unneeded generality makes things really difficult often. as a random example quantifiers seem to throw z3 into a really bad place, even when they&#39;re easy ones.</p>&mdash; John Regehr (@johnregehr) <a href="https://twitter.com/johnregehr/status/996901816842440704?ref_src=twsrc%5Etfw">May 16, 2018</a></blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
--->
 
 <div class="row-fluid">
   <div class="span12 pagination-centered">
@@ -232,6 +231,7 @@ or even, to run forever.
        alt="Ribbons" height="100">
   </div>
 </div>
+-->
 
 Thus, we have chosen to deliberately avoid 
 the siren song of quantifiers by lashing LH 
@@ -425,3 +425,4 @@ That concludes part I of the rodeo. What did I learn from this exercise?
 [dafny-seq-axioms]: https://github.com/Microsoft/dafny/blob/master/Binaries/DafnyPrelude.bpl#L898-L1110
 [tag-reflection]:   /tags/reflection.html
 [tag-ple]:          /tags/ple.html
+[regehr-tweet]:     https://twitter.com/johnregehr/status/996901816842440704
