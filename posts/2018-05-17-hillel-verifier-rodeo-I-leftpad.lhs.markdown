@@ -414,7 +414,7 @@ That concludes part I of the rodeo. What did I learn from this exercise?
    till about a year ago. I'm also quite pleased by how 
    [logical evaluation][tag-ple] makes these proofs 
    quite short, letting LH verify expressive specifications 
-   while remaining clear of the siren song of quantifiers.
+   while steering clear of the siren song of quantifiers.
 
 [demo]:             http://goto.ucsd.edu:8090/index.html#?demo=LeftPad.hs
 [dafny-leftpad]:    https://rise4fun.com/Dafny/nbNTl
