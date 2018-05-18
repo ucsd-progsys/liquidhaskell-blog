@@ -344,7 +344,7 @@ by a type signature:
                      &amp;&amp; v == size xs}</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a> <span class='hs-varid'>size</span> <span class='hs-varid'>xs</span> 
 </pre>
 
-**Pad-Value Value**
+**Pad-Value Verification**
 
 We _verify_ the above property by filling in the 
 implementation of `thmLeftPad` as:

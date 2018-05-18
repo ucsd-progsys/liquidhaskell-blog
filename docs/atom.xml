@@ -257,7 +257,7 @@ You have to provide a 100%, machine-checked guarantee that there are no problems
 <span class=hs-linenum>325: </span>  <span class='hs-keyword'>where</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>k</span></a>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0
                      &amp;&amp; v == size xs}</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a> <span class='hs-varid'>size</span> <span class='hs-varid'>xs</span> 
 </pre>
-<p><strong>Pad-Value Value</strong></p>
+<p><strong>Pad-Value Verification</strong></p>
 <p>We <em>verify</em> the above property by filling in the implementation of <code>thmLeftPad</code> as:</p>
 <pre><span class=hs-linenum>334: </span><a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:a -&gt; x3:{v : [a] | size v &lt; x1} -&gt; x4:{v : GHC.Types.Int | v &gt;= 0
                                                                                   &amp;&amp; v &lt; x1} -&gt; {VV : () | !! (leftPad x1 x2 x3) x4 == leftPadVal x1 x2 x3 x4}</span><span class='hs-definition'>thmLeftPad</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>n</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>c</span></a> <a class=annot href="#"><span class=annottext>{v : [a] | size v &lt; n}</span><span class='hs-varid'>xs</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0
