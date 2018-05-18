@@ -159,7 +159,7 @@
 <h2 id="hillels-specifications">Hillel’s Specifications</h2>
 <p>However, the verification rodeo is made more interesting by Hillel’s <a href="https://rise4fun.com/Dafny/nbNTl">Dafny specifications</a>:</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Size</strong> The <code>size</code> of the returned sequence is the larger of <code>n</code> and the size of the input <code>xs</code>;</p></li>
+<li><p><strong>Size</strong> The <code>size</code> of the returned sequence is the larger of <code>n</code> and the size of <code>xs</code>;</p></li>
 <li><p><strong>Pad-Value</strong> Suppose <code>n &gt; size xs</code>, and let <code>K = n - size xs</code>. We require that the <code>i</code>-th element of the padded-sequence equals <code>c</code> if <code>0 &lt;= i &lt; K</code>, and equals the <code>i - K</code>-th element of <code>xs</code> otherwise.</p></li>
 </ol>
 <div class="row-fluid">

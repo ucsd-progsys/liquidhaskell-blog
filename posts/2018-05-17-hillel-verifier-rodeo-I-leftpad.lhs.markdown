@@ -185,7 +185,7 @@ However, the verification rodeo is made more
 interesting by Hillel's [Dafny specifications][dafny-leftpad]:
 
 1. **Size** The `size` of the returned sequence is the 
-   larger of `n` and the size of the input `xs`;
+   larger of `n` and the size of `xs`;
 
 2. **Pad-Value** Suppose `n > size xs`, and let 
    `K = n - size xs`. We require that the `i`-th 
