@@ -294,27 +294,27 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p>Unfortunately, the signature for plus and hence, the above “fact” are both lies.</p>
 <p>LH <em>checks</em> <code>plus</code> as the same signature is <em>assumed</em> for the primitive <code>Int</code> addition operator <code>Prelude.+</code>. LH has to assume <em>some</em> signature for this “foreign” machine operation, and by default, LH assumes that machine addition behaves like logical addition.</p>
 <p>However, this assumption, and its consequences are only true upto a point:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span>  monoPlus <span class="dv">0</span>
-<span class="dt">True</span>
-λ<span class="fu">&gt;</span>  monoPlus <span class="dv">100</span>
-<span class="dt">True</span>
-λ<span class="fu">&gt;</span>  monoPlus <span class="dv">10000</span>
-<span class="dt">True</span>
-λ<span class="fu">&gt;</span>  monoPlus <span class="dv">1000000</span>
-<span class="dt">True</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1">λ<span class="op">&gt;</span>  monoPlus <span class="dv">0</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="dt">True</span></a>
+<a class="sourceLine" id="cb1-3" title="3">λ<span class="op">&gt;</span>  monoPlus <span class="dv">100</span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="dt">True</span></a>
+<a class="sourceLine" id="cb1-5" title="5">λ<span class="op">&gt;</span>  monoPlus <span class="dv">10000</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="dt">True</span></a>
+<a class="sourceLine" id="cb1-7" title="7">λ<span class="op">&gt;</span>  monoPlus <span class="dv">1000000</span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="dt">True</span></a></code></pre></div>
 <p>Once we get to <code>maxBound</code> at the very edge of <code>Int</code>, a tiny bump is enough to send us tumbling backwards into a twilight zone.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span> monoPlus maxBound
-<span class="dt">False</span>
-
-λ<span class="fu">&gt;</span> plus maxBound <span class="dv">1</span>
-<span class="fu">-</span><span class="dv">9223372036854775808</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1">λ<span class="op">&gt;</span> monoPlus <span class="fu">maxBound</span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="dt">False</span></a>
+<a class="sourceLine" id="cb2-3" title="3"></a>
+<a class="sourceLine" id="cb2-4" title="4">λ<span class="op">&gt;</span> plus <span class="fu">maxBound</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="op">-</span><span class="dv">9223372036854775808</span></a></code></pre></div>
 <h2 id="keeping-int-in-their-place">2. Keeping Int In Their Place</h2>
 <p>The news isn’t all bad: the glass half full view is that for “reasonable” values like 10, 100, 10000 and 1000000, the machine’s arithmetic <em>is</em> the same as logical arithmetic. Lets see how to impart this wisdom to LH. We do this in two steps: define the <em>biggest</em> <code>Int</code> value, and then, use this value to type the arithmetic operations.</p>
 <p><strong>A. The Biggest Int</strong></p>
 <p>First, we need a way to talk about “the edge” – i.e. the largest <code>Int</code> value at which overflows occur.</p>
 <p>We could use the concrete number</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span><span class="ot"> maxBound ::</span> <span class="dt">Int</span>
-<span class="dv">9223372036854775807</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" title="1">λ<span class="op">&gt;</span><span class="ot"> maxBound ::</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="dv">9223372036854775807</span></a></code></pre></div>
 <p>However, instead of hardwiring a particular number, a more general strategy is to define a symbolic constant <code>maxInt</code> to represent <em>any</em> arbitrary overflow value and thus, make the type checking robust to different machine integer widths.</p>
 <pre><span class="hs-linenum">135: </span><span class="hs-comment">-- defines an Int constant called `maxInt`</span>
 <span class="hs-linenum">136: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">measure</span> <span class="hs-varid">maxInt</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyword">@-}</span>

@@ -305,7 +305,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p>First off, it is apparent that if we call <code>sum</code> with a negative <code>n</code> then it <strong>will not</strong> terminate. Thus, we should only call <code>sum</code> with non-negative integers.</p>
 <p>Fine, lets assume <code>n</code> is non-negative. Why then does it terminate?</p>
 <p>Intuitively,</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>If <code>n</code> is <code>0</code> then it trivially returns with the value <code>0</code>.</p></li>
 <li><p>If <code>n</code> is non-zero, then we recurse <em>but</em> with a strictly smaller <code>n</code> …</p></li>
 <li><p>… but ultimately hit <code>0</code> at which point it terminates.</p></li>
@@ -327,10 +327,10 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <li><code>n   :: Nat</code></li>
 <li><code>sum :: Vec -&gt; n':{v:Nat | v &lt; n} -&gt; Val</code></li>
 </ul>
-<p>This ensures that any (recursive) call in the body only calls <code>sum</code> with inputs smaller than the current parameter <code>n</code>. Since its body typechecks in this environment, i.e. <code>sum</code> is called with <code>n-1</code> which is smaller than <code>n</code> and, in this case, a <code>Nat</code>, LiquidHaskell proves that sum terminates for all <code>n</code>.</p>
+<p>This ensures that any (recursive) call in the body only calls <code>sum</code> with inputs smaller than the current parameter <code>n</code>. Since its body typechecks in this environment, i.e. <code>sum</code> is called with <code>n-1</code> which is smaller than <code>n</code> and, in this case, a <code>Nat</code>, LiquidHaskell proves that sum terminates for all <code>n</code>.</p>
 <p>For those keeping track at home, this is the technique of <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.124.5589">sized types</a>, , expressed using refinements. Sized types themselves are an instance of the classical method of proving termination via well founded metrics that goes back, at least, to <a href="http://www.turingarchive.org/viewer/?id=462&amp;title=01b">Turing</a>.</p>
 <h2 id="choosing-the-correct-argument">Choosing the Correct Argument</h2>
-<p>The example above is quite straightforward, and you might well wonder if this method works well for ``real-world&quot; programs. With a few generalizations and extensions, and by judiciously using the wealth of information captured in refinement types, the answer is an emphatic, yes!</p>
+<p>The example above is quite straightforward, and you might well wonder if this method works well for ``real-world" programs. With a few generalizations and extensions, and by judiciously using the wealth of information captured in refinement types, the answer is an emphatic, yes!</p>
 <p>Lets see one extension today.</p>
 <p>We saw that liquidHaskell can happily check that some Natural number is decreasing at each iteration, but it uses a naïve heuristic to choose which one – for now, assume that it always chooses <em>the first</em> <code>Int</code> parameter.</p>
 <p>As you might imagine, this is quite simpleminded.</p>

@@ -557,7 +557,7 @@ foldr' :: forall &lt;p :: [a] -&gt; b -&gt; Prop&gt;.
 ({VV : [a] | ((len VV) &gt;= 0)} -&gt; a -&gt; b -&gt; b) -&gt; b -&gt; [a] -&gt; b</span><span class="hs-varid">foldr'</span></a> <a class="annot" href="#"><span class="annottext">{x2 : [a] | ((len x2) &gt;= 0)} -&gt; a -&gt; b -&gt; b</span><span class="hs-varid">f</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV == z)}</span><span class="hs-varid">z</span></a> <a class="annot" href="#"><span class="annottext">{x5 : [a] | (x5 == xs) &amp;&amp; ((len x5) &gt;= 0) &amp;&amp; ((olens x5) &gt;= 0) &amp;&amp; ((sumLens x5) &gt;= 0)}</span><span class="hs-varid">xs</span></a><span class="hs-layout">)</span>
 </pre>
 <p>We’ve added a <em>ghost parameter</em> to the folding function, letting us refer to the tail of the list at each folding step. This lets us encode inductive reasoning in the type of <code>foldr</code>, specifically that</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>given a base case <code>z</code> that satisfies <code>p []</code></li>
 <li>and a function that, given a value that satisfies <code>p xs</code>, returns a value satisfying <code>p (x:xs)</code></li>
 <li>the value returned by <code>foldr f z ys</code> must satisfy <code>p ys</code>!</li>

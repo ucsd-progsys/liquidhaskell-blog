@@ -151,12 +151,6 @@ dateFolders =
 dropPostsPrefix :: Routes
 dropPostsPrefix = gsubRoute "posts/" $ const ""
 
--- prependCategory :: Routes
--- prependCategory = metadataRoute $ \md -> customRoute $
---     let mbCategory = lookupString "category" md
---        category   = fromMaybe (error "Posts: Post without category") mbCategory
---    in  (category </>) . toFilePath
-
 --------------------------------------------------------------------------------
 postCtxWithTags :: Tags -> Context String
 postCtxWithTags tags =

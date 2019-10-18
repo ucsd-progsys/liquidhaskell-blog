@@ -1,4 +1,3 @@
-
 ---
 layout: post
 title: Liquid Types vs. Floyd-Hoare Logic (Part 1)
@@ -7,7 +6,7 @@ comments: false
 author: Ranjit Jhala
 published: false 
 tags: basic
-demo: IntervalSets.hs
+demo: TypesVLogic.hs
 ---
 
 Several folks who are experts in the program verification 

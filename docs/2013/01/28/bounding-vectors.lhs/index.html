@@ -719,7 +719,7 @@ Indeed! Let us recall the type of the <code>foldl</code> operation
 </pre>
 <p>LiquidHaskell digests this too, without much difficulty.</p>
 <p>The main trick is in how the polymorphism of <code>foldl'</code> is instantiated.</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>The GHC type inference engine deduces that at this site, the type variable <code>b</code> from the signature of <code>foldl'</code> is instantiated to the Haskell type <code>(Int, a)</code>.</p></li>
 <li><p>Correspondingly, LiquidHaskell infers that in fact <code>b</code> can be instantiated to the <em>refined</em> type <code>({v: Int | (Btwn 0 v (vlen x))}, a)</code>.</p></li>
 </ol>

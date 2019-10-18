@@ -296,7 +296,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">57: </span>
 </pre>
 </div>
-<h2 id="shallow-vs.deep-specifications">Shallow vs. Deep Specifications</h2>
+<h2 id="shallow-vs.-deep-specifications">Shallow vs. Deep Specifications</h2>
 <p>Up to now, we have been using Liquid Haskell to specify and verify “shallow” specifications that abstractly describe the behavior of functions. For example, below, we specify and verify that <code>fib</code>restricted to natural numbers, always terminates returning a natural number.</p>
 <pre><span class="hs-linenum">70: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">fib</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Nat</span> <span class="hs-varop">/</span> <span class="hs-keyglyph">[</span><span class="hs-varid">i</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">71: </span><a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v &gt;= 0} -&gt; {v : GHC.Types.Int | v &gt;= 0}</span><span class="hs-definition">fib</span></a> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v &gt;= 0}</span><span class="hs-varid">i</span></a> <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Bool</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | Prop v &lt;=&gt; x1 == x2}</span><span class="hs-varop">==</span></a> <span class="hs-num">0</span>    <span class="hs-keyglyph">=</span> <span class="hs-num">0</span> 
@@ -423,7 +423,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">291: </span>  <a class="annot" href="#"><span class="annottext">GHC.Types.Int -&gt; GHC.Types.Int -&gt; GHC.Types.Int</span><span class="hs-varop">==.</span></a> <span class="hs-num">2</span> 
 <span class="hs-linenum">292: </span>  <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
 </pre>
-<h2 id="proofs-by-induction-i.e.recursion">Proofs by Induction (i.e. Recursion)</h2>
+<h2 id="proofs-by-induction-i.e.-recursion">Proofs by Induction (i.e. Recursion)</h2>
 <p>Next, combining the above operators we specify and prove that <code>fib</code> is increasing, that is for each natural number <code>i</code>, <code>fib i &lt;= fib (i+1)</code>.</p>
 <p>We specify the theorem as a refinement type for <code>fubUp</code> and use Haskell code to persuade Liquid Haskell that the theorem holds.</p>
 <pre><span class="hs-linenum">309: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">fibUp</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{fib i &lt;= fib (i+1)}</span> <span class="hs-keyword">@-}</span>

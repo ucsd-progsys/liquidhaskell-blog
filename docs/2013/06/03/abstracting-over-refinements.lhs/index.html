@@ -373,7 +373,7 @@ where the function <code>isEven</code> is from the Language.Haskell.Liquid.Prelu
 <pre><span class="hs-linenum">192: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">predicate</span> <span class="hs-conid">Even</span> <span class="hs-conid">X</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-conid">X</span> <span class="hs-varid">mod</span> <span class="hs-num">2</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-num">0</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 </pre>
 <p>To verify that <code>maxEvens1</code> returns an even number, LiquidHaskell</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>infers that the list <code>(0:xs')</code> has type <code>[{v:Int | (Even v)}]</code>, that is, is a list of even numbers.</p></li>
 <li><p>automatically instantiates the <em>refinement</em> parameter of <code>maximumInt</code> with the concrete refinement <code>{\v -&gt; (Even v)}</code> and so</p></li>
 <li><p>concludes that the value returned by <code>maxEvens1</code> is indeed <code>Even</code>.</p></li>
@@ -442,7 +442,7 @@ y:{VV : (GHC.Types.Int) | ((VV mod 2) == 0)}
 <p>Second, at the call-site for <code>maximumPoly</code> in <code>maxEvens2</code> LiquidHaskell instantiates the type variable <code>a</code> with <code>Int</code>, and the abstract refinement parameter <code>p</code> with <code>{\v -&gt; (Even v)}</code> after which, the verification proceeds as described earlier (for the <code>Int</code> case).</p>
 <h2 id="and-so">And So</h2>
 <p>If you’ve courageously slogged through to this point then you’ve learnt that</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>Sometimes, choosing the right type can be quite difficult!</p></li>
 <li><p>But fortunately, with <em>abstract refinements</em> we needn’t choose, but can write types that are parameterized over the actual concrete invariants or refinements, which</p></li>
 <li><p>Can be instantiated at the call-sites i.e. users of the functions.</p></li>

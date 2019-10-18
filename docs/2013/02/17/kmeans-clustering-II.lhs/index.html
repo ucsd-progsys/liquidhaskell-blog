@@ -560,8 +560,8 @@ that <code>clusterSize</code> is strictly positive, and hence, from
 <span class="hs-linenum">205: </span>                  <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Clustering</span> <span class="hs-layout">(</span><span class="hs-conid">GenPoint</span> <span class="hs-varid">a</span> <span class="hs-varid">n</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 </pre>
 <p>The refined clustering is computed in three steps.</p>
-<ol style="list-style-type: decimal">
-<li><p>First, we compute the <code>centers :: [(Point n)]</code> of the current <code>clusters</code>. This is achieved by using <code>clusterCenter</code>, which maps a list of generalized <code>n</code>-dimensional points to a <em>single</em> <code>n</code> dimensional point (i.e. <code>Point n</code>).</p></li>
+<ol type="1">
+<li><p>First, we compute the <code>centers :: [(Point n)]</code> of the current <code>clusters</code>. This is achieved by using <code>clusterCenter</code>, which maps a list of generalized <code>n</code>-dimensional points to a <em>single</em> <code>n</code> dimensional point (i.e. <code>Point n</code>).</p></li>
 <li><p>Next, we pair each point <code>p</code> in the list of all <code>points</code> with its <code>nearestCenter</code>.</p></li>
 <li><p>Finally, the pairs in the list of <code>centeredPoints</code> are grouped by the center, i.e. the first element of the tuple. The resulting groups are projected back to the original generalized points yielding the new clustering.</p></li>
 </ol>
@@ -660,11 +660,11 @@ In this scenario, <code>xs'</code> is
 <p>LiquidHaskell verifies that the divide-by-zero never occurs, and furthermore, that <code>clusterCenter</code> indeed computes an <code>n</code>-dimensional center by inferring that</p>
 <pre><span class="hs-linenum">295: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">clusterCenter</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">NonEmptyList</span> <span class="hs-layout">(</span><span class="hs-conid">GenPoint</span> <span class="hs-varid">a</span> <span class="hs-varid">n</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Point</span> <span class="hs-varid">n</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>LiquidHaskell deduces that the <em>input</em> list of points <code>xs</code> is non-empty from the fact that <code>clusterCenter</code> is only invoked on the elements of a <code>Clustering</code> which comprise only non-empty lists. Since <code>xs</code> is non-empty, i.e. <code>(len xs) &gt; 0</code>, LiquidHaskell infers that <code>numPoints</code> is positive (hover over <code>length</code> to understand why), and hence, LiquidHaskell is satisfied that the call to <code>safeDiv</code> will always proceed without any incident.</p>
+<p>LiquidHaskell deduces that the <em>input</em> list of points <code>xs</code> is non-empty from the fact that <code>clusterCenter</code> is only invoked on the elements of a <code>Clustering</code> which comprise only non-empty lists. Since <code>xs</code> is non-empty, i.e. <code>(len xs) &gt; 0</code>, LiquidHaskell infers that <code>numPoints</code> is positive (hover over <code>length</code> to understand why), and hence, LiquidHaskell is satisfied that the call to <code>safeDiv</code> will always proceed without any incident.</p>
 To establish the <em>output</em> type <code>Point n</code> LiquidHaskell leans on the fact that
 <pre><span class="hs-linenum">307: </span><span class="hs-definition">transpose</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">m</span><span class="hs-conop">:</span><span class="hs-conid">PosInt</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Matrix</span> <span class="hs-varid">a</span> <span class="hs-varid">m</span> <span class="hs-varid">n</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Matrix</span> <span class="hs-varid">a</span> <span class="hs-varid">n</span> <span class="hs-varid">m</span>
 </pre>
-<p>to deduce that <code>xs'</code> is of type <code>Matrix Double n numPoints</code>, that is to say, a list of length <code>n</code> containing lists of length <code>numPoints</code>. Since <code>map</code> preserves the length, the value <code>map average xs'</code> is also a list of length <code>n</code>, i.e. <code>Point n</code>.</p>
+<p>to deduce that <code>xs'</code> is of type <code>Matrix Double n numPoints</code>, that is to say, a list of length <code>n</code> containing lists of length <code>numPoints</code>. Since <code>map</code> preserves the length, the value <code>map average xs'</code> is also a list of length <code>n</code>, i.e. <code>Point n</code>.</p>
 <h2 id="finding-the-nearest-center">Finding the Nearest Center</h2>
 <p>The last piece of the puzzle is <code>nearestCenter</code> which maps each (generalized) point to the center that it is nearest. The code is pretty self-explanatory:</p>
 <pre><span class="hs-linenum">324: </span><span class="hs-definition">nearestCenter</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">WrapType</span> <span class="hs-keyglyph">[</span><span class="hs-conid">Double</span><span class="hs-keyglyph">]</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-keyglyph">[</span><span class="hs-conid">Double</span><span class="hs-keyglyph">]</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-conid">Double</span><span class="hs-keyglyph">]</span>
@@ -862,7 +862,7 @@ Consequently, the call to
 </pre>
 <h2 id="conclusions">Conclusions</h2>
 <p>I hope that over the last two posts you have gotten a sense of</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>What KMeans clustering is all about,</p></li>
 <li><p>How measures and refinements can be used to describe the behavior of common list operations like <code>map</code>, <code>transpose</code>, <code>groupBy</code>, <code>zipWith</code>, and so on,</p></li>
 <li><p>How LiquidHaskell’s automated inference makes it easy to write and verify invariants of non-trivial programs.</p></li>

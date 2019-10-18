@@ -265,13 +265,13 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
             </div>
 
             <br>
-			            <p>A large part of the allure of Haskell is its elegant, high-level ADTs that ensure<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> that programs won’t be plagued by problems like the infamous <a href="http://en.wikipedia.org/wiki/Heartbleed">SSL heartbleed bug</a>.</p>
+			            <p>A large part of the allure of Haskell is its elegant, high-level ADTs that ensure<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> that programs won’t be plagued by problems like the infamous <a href="http://en.wikipedia.org/wiki/Heartbleed">SSL heartbleed bug</a>.</p>
 <p>However, another part of Haskell’s charm is that when you really really need to, you can drop down to low-level pointer twiddling to squeeze the most performance out of your machine. But of course, that opens the door to the #heartbleeds.</p>
 <p>Can we have have our cake and eat it too?</p>
 <p>Can we twiddle pointers and still get the nice safety assurances of high-level types?</p>
 <!-- more -->
 <p>To understand the potential for potential bleeding, let’s study the popular <code>text</code> library for efficient text processing. The library provides the high-level API Haskellers have come to expect while using stream fusion and byte arrays under the hood to guarantee high performance.</p>
-Suppose we wanted to get the <em>i</em>th <code>Char</code> of a <code>Text</code>, we could write a function<a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a>
+Suppose we wanted to get the <em>i</em>th <code>Char</code> of a <code>Text</code>, we could write a function<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
 <pre><span class="hs-linenum">39: </span><span class="hs-definition">charAt</span> <span class="hs-layout">(</span><span class="hs-conid">Text</span> <span class="hs-varid">a</span> <span class="hs-varid">o</span> <span class="hs-varid">l</span><span class="hs-layout">)</span> <span class="hs-varid">i</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">word2char</span> <span class="hs-varop">$</span> <span class="hs-varid">unsafeIndex</span> <span class="hs-varid">a</span> <span class="hs-layout">(</span><span class="hs-varid">o</span><span class="hs-varop">+</span><span class="hs-varid">i</span><span class="hs-layout">)</span>
 <span class="hs-linenum">40: </span>  <span class="hs-keyword">where</span> 
 <span class="hs-linenum">41: </span>    <span class="hs-varid">word2char</span>         <span class="hs-keyglyph">=</span> <span class="hs-varid">chr</span> <span class="hs-varop">.</span> <span class="hs-varid">fromIntegral</span>
@@ -362,12 +362,11 @@ Looks good so far, what happens if we keep going?
 </div>
 <h2 id="the-text-lifecycle">The <code>Text</code> Lifecycle</h2>
 <p><code>text</code> splits the reading and writing array operations between two types of arrays, immutable <code>Array</code>s and mutable <code>MArray</code>s. This leads to the following general lifecycle:</p>
-<div class="figure">
-<img src="../../../../static/img/text-lifecycle.png" alt="The lifecycle of a Text" />
-<p class="caption">The lifecycle of a <code>Text</code></p>
-</div>
+<figure>
+<img src="../../../../static/img/text-lifecycle.png" alt="The lifecycle of a Text" /><figcaption>The lifecycle of a <code>Text</code></figcaption>
+</figure>
 <p>The main four array operations we care about are:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><strong>creating</strong> an <code>MArray</code>,</li>
 <li><strong>writing</strong> into an <code>MArray</code>,</li>
 <li><strong>freezing</strong> an <code>MArray</code> into an <code>Array</code>, and</li>
@@ -587,13 +586,13 @@ x1:(MArray a) -&gt; (ST a {v : Array | ((aLen v) == (maLen x1))})</span><span cl
 <span class="hs-linenum">463: </span>         <span class="hs-keyword">else</span> <a class="annot" href="#"><span class="annottext">[Char] -&gt; (IO ())</span><span class="hs-varid">putStrLn</span></a> <a class="annot" href="#"><span class="annottext">{x2 : [Char] | ((len x2) &gt;= 0)}</span><span class="hs-str">"Bad Input!"</span></a>
 </pre>
 <p>Thus, we can use LiquidHaskell to block, at compile time, any serious bleeding from pointers gone wild.</p>
-<div class="footnotes">
+<section class="footnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Assuming the absence of errors in the compiler and run-time…<a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p>This function is bad for numerous reasons, least of which is that <code>Data.Text.index</code> is already provided, but stay with us…<a href="#fnref2">↩</a></p></li>
+<li id="fn1"><p>Assuming the absence of errors in the compiler and run-time…<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn2"><p>This function is bad for numerous reasons, least of which is that <code>Data.Text.index</code> is already provided, but stay with us…<a href="#fnref2" class="footnote-back">↩</a></p></li>
 </ol>
-</div>
+</section>
                 <hr>
                 <ul class="pager">
                     

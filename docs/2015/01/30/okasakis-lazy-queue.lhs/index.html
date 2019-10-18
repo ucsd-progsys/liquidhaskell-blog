@@ -291,10 +291,9 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </div>
 <h2 id="queues">Queues</h2>
 <p>A <a href="http://en.wikipedia.org/wiki/Queue_%28abstract_data_type%29">queue</a> is a structure into which we can <code>insert</code> and <code>remove</code> data such that the order in which the data is removed is the same as the order in which it was inserted.</p>
-<div class="figure">
-<img src="../../../../static/img/queue.png" alt="A Queue" />
-<p class="caption">A Queue</p>
-</div>
+<figure>
+<img src="../../../../static/img/queue.png" alt="A Queue" /><figcaption>A Queue</figcaption>
+</figure>
 <p>To implement a queue <em>efficiently</em> one needs to have rapid access to both the “head” as well as the “tail” because we <code>remove</code> elements from former and <code>insert</code> elements into the latter. This is quite straightforward with explicit pointers and mutation – one uses an old school linked list and maintains pointers to the head and the tail. But can we implement the structure efficiently without having stoop so low?</p>
 <h2 id="queues-pair-of-lists">Queues = Pair of Lists</h2>
 <p>Almost two decades ago, Chris Okasaki came up with a very cunning way to implement queues using a <em>pair</em> of lists – let’s call them <code>front</code> and <code>back</code> which represent the corresponding parts of the Queue.</p>
@@ -302,20 +301,18 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <li>To <code>insert</code> elements, we just <em>cons</em> them onto the <code>back</code> list,</li>
 <li>To <code>remove</code> elements, we just <em>un-cons</em> them from the <code>front</code> list.</li>
 </ul>
-<div class="figure">
-<img src="../../../../static/img/queue-lists.png" alt="A Queue is Two Lists" />
-<p class="caption">A Queue is Two Lists</p>
-</div>
+<figure>
+<img src="../../../../static/img/queue-lists.png" alt="A Queue is Two Lists" /><figcaption>A Queue is Two Lists</figcaption>
+</figure>
 <p>The catch is that we need to shunt elements from the back to the front every so often, e.g. when</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>a <code>remove</code> call is triggered, and</li>
 <li>the <code>front</code> list is empty,</li>
 </ol>
 <p>We can transfer the elements from the <code>back</code> to the <code>front</code>.</p>
-<div class="figure">
-<img src="../../../../static/img/queue-rotate.png" alt="Transferring Elements from Back to Front" />
-<p class="caption">Transferring Elements from Back to Front</p>
-</div>
+<figure>
+<img src="../../../../static/img/queue-rotate.png" alt="Transferring Elements from Back to Front" /><figcaption>Transferring Elements from Back to Front</figcaption>
+</figure>
 <p>Okasaki observed that every element is only moved <em>once</em> from the front to the back; hence, the time for <code>insert</code> and <code>lookup</code> could be <code>O(1)</code> when <em>amortized</em> over all the operations. Awesome, right?!</p>
 <p>Almost. Some set of unlucky <code>remove</code> calls (which occur when the <code>front</code> is empty) are stuck paying the bill. They have a rather high latency up to <code>O(n)</code> where <code>n</code> is the total number of operations. Oops.</p>
 <h2 id="queue-balanced-lazy-lists">Queue = Balanced Lazy Lists</h2>
@@ -323,9 +320,9 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p><strong>Invariant:</strong> Size of <code>front</code> &gt;= Size of <code>back</code></p>
 <p>Now, if the lists are <em>lazy</em> i.e. only constructed as the head value is demanded, then a single <code>remove</code> needs only a tiny <code>O(log n)</code> in the worst case, and so no single <code>remove</code> is stuck paying the bill.</p>
 <p>Let’s see how to represent these Queues and ensure the crucial invariant(s) with LiquidHaskell. What we need are the following ingredients:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>A type for <code>List</code>s, and a way to track their <code>size</code>,</p></li>
-<li><p>A type for <code>Queue</code>s which encodes the <em>balance</em> invariant – ``front longer than back“,</p></li>
+<li><p>A type for <code>Queue</code>s which encodes the <em>balance</em> invariant – ``front longer than back",</p></li>
 <li><p>A way to implement the <code>insert</code>, <code>remove</code> and <code>transfer</code> operations.</p></li>
 </ol>
 <h2 id="sized-lists">Sized Lists</h2>

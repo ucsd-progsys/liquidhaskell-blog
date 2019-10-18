@@ -397,7 +397,7 @@ which, the SMT solver is happy to verify, is indeed a subtype
 </pre>
 <h2 id="conclusion">Conclusion</h2>
 <p>There are several things to take away.</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>We need to distinguish between <em>assumptions</em> and <em>guarantees</em> when writing specifications for functions.</p></li>
 <li><p>For <em>modularity</em>, LiquidHaskell, like every type system, uses only the (refinement) <em>type</em> of each function at each use site, and not the function’s <em>body</em>.</p></li>
 <li><p>Some seemingly intuitive specifications often aren’t; in future work it would be useful to actually <a href="http://www.cs.purdue.edu/homes/zhu103/pubs/vmcai13.pdf">generate</a> <a href="http://en.wikipedia.org/wiki/Concolic_testing">tests</a> as <a href="http://goto.ucsd.edu/~rjhala/papers/generating_tests_from_counterexamples.html">counterexamples</a> that illustrate when a specification <a href="http://dl.acm.org/citation.cfm?doid=1348250.1348254">fails</a>.</p></li>

@@ -305,10 +305,10 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p>The first of these problems was <a href="https://twitter.com/Hillelogram/status/987432181889994759">leftPad</a></p>
 <blockquote class="twitter-tweet" data-lang="en">
 <p lang="en" dir="ltr">
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Leftpad. Takes a padding character, a string, and a total length, returns the string padded with that length with that character. If length is less than string, does nothing.<a href="https://t.co/X8qR8gTZdO">https://t.co/X8qR8gTZdO</a>
 </p>
-— Hillel (<span class="citation">@Hillelogram</span>) <a href="https://twitter.com/Hillelogram/status/987432181889994759?ref_src=twsrc%5Etfw">April 20, 2018</a>
+— Hillel (<span class="citation" data-cites="Hillelogram">@Hillelogram</span>) <a href="https://twitter.com/Hillelogram/status/987432181889994759?ref_src=twsrc%5Etfw">April 20, 2018</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></li>
 </ol>
@@ -373,7 +373,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p>So, if you are happy with the above specification, you can stop reading right here: we’re done.</p>
 <h2 id="hillels-specifications">Hillel’s Specifications</h2>
 <p>However, the verification rodeo is made more interesting by Hillel’s <a href="https://rise4fun.com/Dafny/nbNTl">Dafny specifications</a>:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p><strong>Size</strong> The <code>size</code> of the returned sequence is the larger of <code>n</code> and the size of <code>xs</code>;</p></li>
 <li><p><strong>Pad-Value</strong> Let <code>K = n - size xs</code>. We require that the <code>i</code>-th element of the padded-sequence is <code>c</code> if <code>0 &lt;= i &lt; K</code>, and is the <code>i - K</code>-th element of <code>xs</code> otherwise.</p></li>
 </ol>
@@ -398,7 +398,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 -->
 <p>Thus, we have chosen to deliberately avoid the siren song of quantifiers by lashing LH firmly to the steady mast of decidable logics.</p>
 <h2 id="reasoning-about-sequences">Reasoning about Sequences</h2>
-<p>Unfortunately, this design choice leaves us with some work: we must develop i.e. <em>state</em> and <em>prove</em> relevant properties about sequences from scratch.</p>
+<p>Unfortunately, this design choice leaves us with some work: we must develop i.e. <em>state</em> and <em>prove</em> relevant properties about sequences from scratch.</p>
 <p><strong>Indexing into a Sequence</strong></p>
 <p>To start, lets define the notion of the <code>i</code>-th element of a sequence (this is pretty much Haskell’s list-index operator)</p>
 <pre><span class="hs-linenum">247: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">reflect</span> <span class="hs-varop">!!</span> <span class="hs-keyword">@-}</span>
@@ -494,7 +494,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p>The “proof” – in quotes because its just a Haskell function – simply combines the replicate- and concatenate-left theorems if <code>i</code> is in the “pad”, and the concatenate-right theorem, otherwise.</p>
 <h2 id="conclusions">Conclusions</h2>
 <p>That concludes part I of the rodeo. What did I learn from this exercise?</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>Even apparently simple functions like <code>leftPad</code> can have <em>many</em> different specifications; there is no necessarily “best” specification as different specs make different assumptions about what is “trusted”, and more importantly, though we didn’t see it here, ultimately a spec is a particular <em>view</em> into how a piece of code behaves and we may want different views depending on the context where we want to use the given piece of code.</p></li>
 <li><p>The <code>leftPad</code> exercise illustrates a fundamental problem with Floyd-Hoare style “modular” verification, where pre- and post-conditions (or contracts or refinement types or …) are used to modularly “abstract” functions i.e. are used to describe the behavior of a function at a call-site. As the above exercise shows, we often need properties connecting the behavior of different functions, e.g. append (<code>++</code>), indexing (<code>!!</code>). In these cases, the only meaningful <em>specification</em> for the underlying function <em>is its implementation</em>.</p></li>
 <li><p>Finally, the above proofs are all over user-defined recursive functions which this was not even possible before <a href="../../../../tags/reflection.html">refinement reflection</a>, i.e till about a year ago. I’m also quite pleased by how <a href="../../../../tags/ple.html">logical evaluation</a> makes these proofs quite short, letting LH verify expressive specifications while steering clear of the siren song of quantifiers.</p></li>

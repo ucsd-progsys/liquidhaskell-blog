@@ -8,12 +8,217 @@
         <name>Ranjit Jhala</name>
         <email>rjhala@eng.ucsd.edu</email>
     </author>
-    <updated>2018-05-17T00:00:00Z</updated>
+    <updated>2019-10-21T00:00:00Z</updated>
     <entry>
+    <title>Liquid Types vs. Floyd-Hoare Logic (Part 1)</title>
+    <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2019/10/20/why-types-I.lhs" />
+    <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2019/10/20/why-types-I.lhs</id>
+    <published>false</published>
+    <updated>2019-10-21T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<!-- Post Header -->
+<header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Liquid Types vs. Floyd-Hoare Logic (Part 1)</h1>
+                    
+                    <span class="meta">
+		    
+			Posted by Ranjit Jhala
+		    
+			Oct 21, 2019
+		    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="/tags/basic.html">basic</a>
+              
+            </div>
+
+            <br>
+			            <p>Several folks who are experts in the program verification literature have asked me some variant of the following question:</p>
+<pre><code>  How are *Liquid/Refinement* types different from *Floyd-Hoare logics*?</code></pre>
+<p>This question always reminds me of <a href="https://yanniss.github.io/">Yannis Smaragdakis’</a> clever limerick:</p>
+<pre><code>  No idea is too obvious or dreary, 
+  If appropriately expressed in type theory, 
+  It&#39;s a research advance, 
+  That no one understands, 
+  But they are all too impressed to be leery.</code></pre>
+<p>That is, the above question can be rephrased as: why bother with the hassle of encoding properties in <em>types</em> when good old-fashioned <em>assertions</em>, <em>pre</em>- and <em>post</em>-conditions would do? Is it just a marketing gimmick to make readers too impressed to be leery?</p>
+<h2 id="the-problem-quantifiers">The Problem: Quantifiers</h2>
+<p>The main <em>algorithmic</em> problem with classical Floyd-Hoare logic is that to do useful things, you need to use <strong>universally quantified</strong> logical formulas inside invariants, pre- and post-conditions.</p>
+<p>Verification then proceeds by asking SMT solvers to check <em>verification conditions</em> (VCs) over these quantified formulas. While SMT solvers are marvelous technological artifacts, and I bow to no one in my admiration of them, in reality, they work best on formulas from a narrowly defined set of <em>decidable theories</em>.</p>
+<p>In particular, they are notoriously (and justifiably!) fickle when quizzed on VCs with quantifiers. Briefly, this is because even if the solver “knows” the universally quantified fact:</p>
+<pre><code>forall x. P(x)</code></pre>
+<p>the solver doesn’t know which particular terms <code>e1</code>, <code>e2</code> or <code>e3</code> to <strong>instantiate</strong> the fact at. That is, the solver doesn’t know which <code>P(e1)</code> or <code>P(e2)</code> or <code>P(e3)</code> it should work with to prove some given goal. At best, it can make some educated guesses, or use hints from the user, but these heuristics can turn out to be <a href="https://www.semanticscholar.org/paper/Trigger-Selection-Strategies-to-Stabilize-Program-Leino-Pit-Claudel/ca873df7c3172ab96dfc0d808e1654077c92064d">quite brittle</a> as the underlying logics are undecidable in general. To make verification predictable, we really want to ensure that the VCs remain decidable, and to do so, we must steer clear of the precipice of quantification.</p>
+<h2 id="the-solution-types">The Solution: Types</h2>
+<p>The great thing about types, as any devotee will tell you, is that the <em>compose</em>. Regrettably, that statement is only comprehensible to believers. I prefer to think of it differently: types <em>decompose</em>. To be precise:</p>
+<pre><code>  Types _decompose_ quantified assertions into quantifier-free refinements.</code></pre>
+<p>Let me make my point with some examples that show what verification looks like when using Refinement Types (as implemented in <a href="https://github.com/ucsd-progsys/liquidhaskell">LiquidHaskell</a>) vs Floyd-Hoare style contracts (as implemented in <a href="https://github.com/dafny-lang/dafny">Dafny</a>).</p>
+<p>The goal of this exercise is to illustrate how types help with verification, not to compare the tools LH and Dafny. In particular, Dafny could profit from refinement types, and LH could benefit from the many clever ideas embodied within Dafny.</p>
+<h2 id="example-1-properties-of-data">Example 1: Properties of Data</h2>
+<p>Consider the following standard definition of a <code>List</code> datatype in Dafny (left) and LH (right).</p>
+<div class="row-fluid">
+<div class="span12 pagination-centered">
+<img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_1.png"
+       alt="A list data type in Dafny (L) and LiquidHaskell (R)" height="200">
+</div>
+</div>
+<p>(You can see the full definitions for <a href="https://rise4fun.com/Dafny/tkfQ">Dafny</a> and <a href="FIXME">LiquidHaskell</a>.)</p>
+<h3 id="a.-accessing-a-list">a. Accessing a list</h3>
+<p>The two descriptions are more or less the same except for some minor issues of concrete syntax. However, next consider the respective implementations of a function to access the <code>ith</code> element of a <code>List</code>. We also pass in a <code>def</code>ault value that is returned when the index <code>i</code> is <em>invalid</em>.</p>
+<div class="row-fluid">
+<div class="span12 pagination-centered">
+<img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_2.png"
+       alt="Accessing the i-th element of a list" height="200">
+</div>
+</div>
+<p>It is (usually) silly to access lists in this fashion. I use this example merely to illustrate the common case of defining a <em>container</em> structure (here, <code>List</code>) and then <em>accessing</em> its contents (here, <code>ith</code>). As such, we’d like to *specify** that the value returned by the <code>ith</code> element is indeed in the container <em>or</em> is the <code>def</code>ault.</p>
+<h4 id="floyd-hoare-logic">Floyd-Hoare Logic</h4>
+<p>With classical Floyd-Hoare logic, as shown in the Dafny listing on the left, we must spell out the specification quite explicitly. The programmer must write an <code>elements</code> function that describes the <em>set</em> of values in the container, and then the <em>post-condition</em> of <code>ith</code> states that the <code>res</code> is either in that set or the default.</p>
+<p>While this specification seems simple enough, we are already on dicey terrain: how are we to encode the semantics of the user-defined function <code>elements</code> to the SMT solver? In the classical Floyd-Hoare approach, we must use a <em>quantified invariant</em> of the form:</p>
+<pre><code>   elements(Nil) = empty 
+&amp;&amp; forall h t :: elements(Cons(h, t)) = {h} + elements(t)</code></pre>
+<p>Thanks to the ingenuity of <a href="https://en.wikipedia.org/wiki/Greg_Nelson_(computer_scientist)">Greg Nelson</a> who invented the notion of <em>triggers</em> and of Rustan Leino and many others, who devised ingenious heuristics for using them, Dafny handles the quantifier calmly to verify the above specification for <code>ith</code>. However, we are not always so fortunate: it frightfully easy to run into quantifier-related problems with user-defined functions, as we will see in due course.</p>
+<h4 id="liquidrefinement-types">Liquid/Refinement Types</h4>
+<p>In contrast, the liquid/refinement version is quite spare: there <em>is</em> no extra specification beyond the code! Surely there must be some mistake? Look again: the <em>type signature</em> says everything we need!</p>
+<p>“If you <code>ith</code> with a list of <code>a</code> values and a default <code>a</code> value Then you will get back an <code>a</code> value”.</p>
+<p>That is <em>type parametricity</em> lets us eschew the overhead of using an explicit <code>elements</code> function.</p>
+<h3 id="b.-building-a-list">b. Building a list</h3>
+<p>Next, lets extend our example to illustrate the common situation where we want some <em>invariant</em> to be true for <em>all</em> the values in a container. To this end, let us write a function <code>mkList</code> that <em>builds</em> a container with values <code>k+1</code>,…,<code>k+n</code> and then <em>test</em> that when <code>k</code> is non-negative, any arbitrarily chosen value from the container is indeed strictly positive.</p>
+<div class="row-fluid">
+<div class="span12 pagination-centered">
+<img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_3.png"
+       alt="Building and accessing a container" height="200">
+</div>
+</div>
+<p>The code in Dafny and LH is more or less the same, except for one crucial difference.</p>
+<h4 id="floyd-hoare-logic-1">Floyd-Hoare Logic</h4>
+<p>Recall that the specification for <code>ith(pos, i, 1)</code> states that the returned value is <em>some</em> element of the container (or <code>1</code>). Thus, to verify the <code>assert</code> in <code>testPosN</code> using classical Floyd-Hoare logic, we need a way to specify that <em>every</em> element in <code>pos</code> is indeed strictly positive. With classical program logics, the only way to do so is to use a <strong>universally quantified</strong> post-condition, highlighted in blue:</p>
+<p>“<strong>for all</strong> <code>v</code> <em>if</em> <code>v</code> is in the elements-of the <code>res</code>ult <em>then</em> <code>v</code> is greater than <code>k</code>”</p>
+<h4 id="liquidrefinement-types-1">Liquid/Refinement Types</h4>
+<p>Did I mention I don’t like quantifiers?</p>
+<p>Regardless, surely we can agree that the version on the right is <em>simpler</em> as it omits the above complication entirely. Types make it unnecessary to mention <code>elements</code> or <code>forall</code>. Instead, LH <em>infers</em></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1">mkList <span class="ot">::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> k<span class="op">:</span><span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">List</span> {v<span class="op">:</span><span class="dt">Int</span> <span class="op">|</span> k <span class="op">&lt;</span> v}</a></code></pre></div>
+<p>That is, that the output type of <code>mkList</code> is a list of values <code>v</code> that are all greater than <code>k</code>. The scary <em>forall</em> has been replaced by the friendly <em>type constructor</em> <code>List</code>. In other words, types allow us to <em>decompose</em> the monolithic universally quantified invariant into:</p>
+<ol type="1">
+<li>a <em>quantifier-free</em> refinement <code>k &lt; v</code>, and</li>
+<li>a type <em>constructor</em> that implicitly “quantifies”</li>
+</ol>
+<p>over all the elements inside the container.</p>
+<h3 id="lesson-decomposition-eliminates-quantifiers-and-enables-inference">Lesson: Decomposition Eliminates Quantifiers and Enables Inference</h3>
+<p>Am I cheating? After all, what prevents Dafny from <em>inferring</em> the same post-condition as LH? Once again, those cursed quantifiers.</p>
+<p>There have been many decades worth of papers on the topic of inferring quantified invariants, but save some nicely circumscribed use-cases these methods turn out to be rather difficult to get working efficiently and predictably enough to be practical. In contrast, once the quantifiers are decomposed away, even an extremely basic approach called <a href="http://www-verimag.imag.fr/~graf/PAPERS/GrafSaidi97.pdf">Monomial Predicate Abstraction</a>, or more snappily, <a href="https://dl.acm.org/citation.cfm?id=730008">Houdini</a>, suffices to infer the above liquid type.</p>
+<h2 id="example-2-properties-of-structures">Example 2: Properties of Structures</h2>
+<p>Recall that when discussing the user-defined <code>elements</code> function above, I had issued some dark warnings about quantifier-related problems that arise from user-defined functions. Allow me to explain with another simple example, that continues with the <code>List</code> datatype defined above.</p>
+<p>(You can see the full definitions for <a href="https://rise4fun.com/Dafny/nphIv">Dafny</a> and <a href="FIXME">LiquidHaskell</a>.)</p>
+<h3 id="specifying-a-size-function">Specifying a <code>size</code> Function</h3>
+<p>Lets write the usual <em>recursive</em> function that computes the <code>size</code> of a list. The definitions are mostly identical, except for the green <code>measure</code> highlight that we will discuss below.</p>
+<div class="row-fluid">
+<div class="span12 pagination-centered">
+<img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_2_1.png"
+       alt="A list data type in Dafny (L) and LiquidHaskell (R)" height="200">
+</div>
+</div>
+<h4 id="floyd-hoare-logic-2">Floyd-Hoare Logic</h4>
+<p>SMT solvers are restricted to a set of <em>ground</em> theories and hence, do not “natively” understand user-defined functions. Thus, the verifer must <em>teach</em> them how to reason about formulas (VCs) containing uses of user-defined functions like <code>size</code>. In the classical Floyd-Hoare approach, this is done by converting the definition of <code>size</code> into a universally quantified <em>axiom</em> like:</p>
+<pre><code>size Nil == 0  &amp;&amp; forall h, t :: size (Cons h t) = 1 + size t</code></pre>
+<p>A quantifier! By the pricking of my thumbs, something wicked this way comes…</p>
+<h4 id="liquidrefinement-types-2">Liquid/Refinement Types</h4>
+<p>With a more <em>type-centric</em> view, we can think of the recursive function <code>size</code> as a way to <em>decorate</em> or <em>refine</em> the types of the <em>data constructors</em>. So, when you write the definition in the green box above, specifically when you add the <code>measure</code> annotation, the function is converted to <em>strengthened</em> versions for the types of the constructors <code>Nil</code> and <code>Cons</code>, so its as if we had defined the list type as two constructor functions</p>
+<pre><code>data List a where
+  Cons :: h:a -&gt; t:List a -&gt; {v:List a | size v == 1 + size t}
+  Nil  :: {v:List a | size v == 0} </code></pre>
+<p>That is, the bodies of the measures get translated to refinements on the output types of the corresponding constructors. After this, the SMT solver “knows nothing” about the semantics of <code>size</code>, except that it is a function. In logic-speak, <code>size</code> is <strong>uninterpreted</strong> in the refinement, and there are no quantified axioms. That is, we choose to keep SMT solver blissfully ignorant about the semantics of <code>size</code>. How could this possibly be a good thing?</p>
+<h3 id="verifying-the-size-of-a-list">Verifying the <code>size</code> of a List</h3>
+<p>Next, lets see what happens when we write a simple test that builds a small list with two elements and <code>assert</code>s that the lists <code>size</code> is indeed <code>2</code>:</p>
+<div class="row-fluid">
+<div class="span12 pagination-centered">
+<img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_2_2.png"
+       alt="A list data type in Dafny (L) and LiquidHaskell (R)" height="200">
+</div>
+</div>
+<h4 id="floyd-hoare-logic-3">Floyd-Hoare Logic</h4>
+<p>To get Dafny to verifier to sign off on the <code>assert (size(pos) == 2)</code> we have to add a mysterious <em>extra assertion</em> that checks the size of the intermediate value <code>Cons (1, Nil)</code>. (Without it, verification fails.)</p>
+<p>Huh? Pesky quantifiers.</p>
+<p>The SMT solver doesn’t know <em>where</em> to instantiate the <code>size</code> axom. In this carefully chosen, but nevertheless simple situation, Dafny’s instantiation heuristics come up short. I had to help them along by guessing this intermediate assertion, which effectively “adds” the fact that the size of the intermediate list is 1, thereby letting the SMT solver prove the second assertion.</p>
+<h4 id="liquidrefinement-types-3">Liquid/Refinement Types</h4>
+<p>In contrast, with types, the solver is able to verify the code without batting an eyelid. But how could it possibly do so even though we kept it ignorant of the semantics of <code>size</code>?</p>
+<p>Because types decompose reasoning. In particular, here, the measure and constructor trick lets us <em>factor reasoning about <code>size</code> into the type system</em>.</p>
+<p>In particular, LH internally views the code for <code>test</code> in A-Normal Form which is a fancy way of saying, by introducing temporary variables for all sub-expressions:</p>
+<pre><code>test x1 = 
+   let t0  = Nil                
+       t1  = Cons x1 t0 
+       pos = Cons  0 t1
+   in 
+      assert (size pos == 2)</code></pre>
+<p>And now, just by the rules of type checking, and applying the types of the constructors, it deduces that:</p>
+<pre><code>   t0 :: {size t0 == 0}
+   t1 :: {size t1 == 1 + size t0}
+   t2 :: {size t2 == 1 + size t1}</code></pre>
+<p>which lets the SMT solver prove that <code>size t2 == 2</code> without even requiring any axiomatic description of <code>size</code>. It turns out that this simple <code>measure</code> method goes a very long way in specifying and verifying a <a href="http://goto.ucsd.edu/~rjhala/papers/real_world_liquid.pdf">large class of properties</a>.</p>
+<h3 id="lesson-decomposition-eliminates-axioms-enables-type-directed-instantiation">Lesson: Decomposition Eliminates Axioms Enables Type-Directed Instantiation</h3>
+<p>I’d like to emphasize again that this trick was enabled simply by taking a type-centric view: encode the function semantics in <em>data constructors</em>, and let the type checking do the <em>instantiation</em>. It could easily by incorporated inside and work together with axioms in Floyd-Hoare based systems like Dafny. Of course, the trick is limited to a restricted class of functions, but one can generalize the method quite a bit using the idea of <a href="https://arxiv.org/abs/1711.03842">logical evaluation</a>.</p>
+<h2 id="summary">Summary</h2>
+<p>To sum up, we saw two examples where taking a type-centric view made verification more <em>ergonomic</em>, essentially by <em>factoring</em> reasoning about quantifiers into the type system.</p>
+<ul>
+<li><p>In the first case, when reasoning about <em>data</em> in containers, the polymorphic type constructor <code>List</code> provided an natural way to reason about the fact that <em>all</em> elements in a container satisfied some property.</p></li>
+<li><p>In the second case, when reasoning about the <em>structure</em> of the container via a recursive function, the types of the data constructors allowed us to factor the instantiation of properties of <code>size</code> at places where the list was constructed (and dually, not shown, destructed) without burdening the SMT solver with any axioms and the pressure of figuring out where to instantiate them.</p></li>
+</ul>
+<p>As you might imagine, the benefits are even more pronounced when working with higher-order functions, e.g. iterating over containers…</p>
+<h3 id="acknowledgments">Acknowledgments</h3>
+<p>Huge thanks to <a href="http://leino.science/">Rustan Leino</a> <a href="https://cseweb.ucsd.edu/~npolikarpova/">Nadia Polikarpova</a> <a href="http://cseweb.ucsd.edu/~daricket/">Daniel Ricketts</a> <a href="https://twitter.com/hillelogram">Hillel Wayne</a> <a href="https://twitter.com/zizzivon">Zizz Vonnegut</a> for patiently answering my many questions about Dafny!</p>
+                <hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+                <div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    var disqus_config = function () {
+        this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2019/10/20/why-types-I.lhs';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = '/2019/10/20/why-types-I.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+        var d = document, s = d.createElement('script');
+        s.src = '//liquidhaskell.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+            </div>
+        </div>
+    </div>
+</article>
+]]></summary>
+</entry>
+<entry>
     <title>The Hillelogram Verifier Rodeo I (LeftPad)</title>
     <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2018/05/17/hillel-verifier-rodeo-I-leftpad.lhs" />
     <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2018/05/17/hillel-verifier-rodeo-I-leftpad.lhs</id>
-    <published>2018-05-17T00:00:00Z</published>
+    <published>true</published>
     <updated>2018-05-17T00:00:00Z</updated>
     <summary type="html"><![CDATA[<!-- Post Header -->
 <header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
@@ -90,10 +295,10 @@
 <p>The first of these problems was <a href="https://twitter.com/Hillelogram/status/987432181889994759">leftPad</a></p>
 <blockquote class="twitter-tweet" data-lang="en">
 <p lang="en" dir="ltr">
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Leftpad. Takes a padding character, a string, and a total length, returns the string padded with that length with that character. If length is less than string, does nothing.<a href="https://t.co/X8qR8gTZdO">https://t.co/X8qR8gTZdO</a>
 </p>
-— Hillel (<span class="citation">@Hillelogram</span>) <a href="https://twitter.com/Hillelogram/status/987432181889994759?ref_src=twsrc%5Etfw">April 20, 2018</a>
+— Hillel (<span class="citation" data-cites="Hillelogram">@Hillelogram</span>) <a href="https://twitter.com/Hillelogram/status/987432181889994759?ref_src=twsrc%5Etfw">April 20, 2018</a>
 </blockquote>
 <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script></li>
 </ol>
@@ -158,7 +363,7 @@
 <p>So, if you are happy with the above specification, you can stop reading right here: we’re done.</p>
 <h2 id="hillels-specifications">Hillel’s Specifications</h2>
 <p>However, the verification rodeo is made more interesting by Hillel’s <a href="https://rise4fun.com/Dafny/nbNTl">Dafny specifications</a>:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p><strong>Size</strong> The <code>size</code> of the returned sequence is the larger of <code>n</code> and the size of <code>xs</code>;</p></li>
 <li><p><strong>Pad-Value</strong> Let <code>K = n - size xs</code>. We require that the <code>i</code>-th element of the padded-sequence is <code>c</code> if <code>0 &lt;= i &lt; K</code>, and is the <code>i - K</code>-th element of <code>xs</code> otherwise.</p></li>
 </ol>
@@ -184,7 +389,7 @@
 -->
 <p>Thus, we have chosen to deliberately avoid the siren song of quantifiers by lashing LH firmly to the steady mast of decidable logics.</p>
 <h2 id="reasoning-about-sequences">Reasoning about Sequences</h2>
-<p>Unfortunately, this design choice leaves us with some work: we must develop i.e. <em>state</em> and <em>prove</em> relevant properties about sequences from scratch.</p>
+<p>Unfortunately, this design choice leaves us with some work: we must develop i.e. <em>state</em> and <em>prove</em> relevant properties about sequences from scratch.</p>
 <p><strong>Indexing into a Sequence</strong></p>
 <p>To start, lets define the notion of the <code>i</code>-th element of a sequence (this is pretty much Haskell’s list-index operator)</p>
 <pre><span class=hs-linenum>247: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>reflect</span> <span class='hs-varop'>!!</span> <span class='hs-keyword'>@-}</span>
@@ -280,7 +485,7 @@
 <p>The “proof” – in quotes because its just a Haskell function – simply combines the replicate- and concatenate-left theorems if <code>i</code> is in the “pad”, and the concatenate-right theorem, otherwise.</p>
 <h2 id="conclusions">Conclusions</h2>
 <p>That concludes part I of the rodeo. What did I learn from this exercise?</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>Even apparently simple functions like <code>leftPad</code> can have <em>many</em> different specifications; there is no necessarily “best” specification as different specs make different assumptions about what is “trusted”, and more importantly, though we didn’t see it here, ultimately a spec is a particular <em>view</em> into how a piece of code behaves and we may want different views depending on the context where we want to use the given piece of code.</p></li>
 <li><p>The <code>leftPad</code> exercise illustrates a fundamental problem with Floyd-Hoare style “modular” verification, where pre- and post-conditions (or contracts or refinement types or …) are used to modularly “abstract” functions i.e. are used to describe the behavior of a function at a call-site. As the above exercise shows, we often need properties connecting the behavior of different functions, e.g. append (<code>++</code>), indexing (<code>!!</code>). In these cases, the only meaningful <em>specification</em> for the underlying function <em>is its implementation</em>.</p></li>
 <li><p>Finally, the above proofs are all over user-defined recursive functions which this was not even possible before <a href="/tags/reflection.html">refinement reflection</a>, i.e till about a year ago. I’m also quite pleased by how <a href="/tags/ple.html">logical evaluation</a> makes these proofs quite short, letting LH verify expressive specifications while steering clear of the siren song of quantifiers.</p></li>
@@ -321,7 +526,7 @@
     <title>Measures and Case Splitting</title>
     <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2018/02/23/measures-and-case-splitting.lhs" />
     <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2018/02/23/measures-and-case-splitting.lhs</id>
-    <published>2018-02-23T00:00:00Z</published>
+    <published>true</published>
     <updated>2018-02-23T00:00:00Z</updated>
     <summary type="html"><![CDATA[<!-- Post Header -->
 <header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
@@ -450,7 +655,7 @@
     <title>Splitting and Splicing Intervals (Part 2)</title>
     <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2017/12/24/splitting-and-splicing-intervals-II.lhs" />
     <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2017/12/24/splitting-and-splicing-intervals-II.lhs</id>
-    <published>2017-12-24T00:00:00Z</published>
+    <published>true</published>
     <updated>2017-12-24T00:00:00Z</updated>
     <summary type="html"><![CDATA[<!-- Post Header -->
 <header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
@@ -518,17 +723,17 @@
 </div>
 <h2 id="intervals">Intervals</h2>
 <p>Recall that the key idea is to represent sets of integers like</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">{ <span class="dv">7</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">4</span>}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1">{ <span class="dv">7</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">4</span>}</a></code></pre></div>
 <p>as ordered lists of <em>intervals</em></p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[ (<span class="dv">1</span>, <span class="dv">5</span>), (<span class="dv">7</span>, <span class="dv">8</span>), (<span class="dv">9</span>, <span class="dv">13</span>) ]</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1">[ (<span class="dv">1</span>, <span class="dv">5</span>), (<span class="dv">7</span>, <span class="dv">8</span>), (<span class="dv">9</span>, <span class="dv">13</span>) ]</a></code></pre></div>
 <p>where each pair <code>(i, j)</code> represents the set <code>{i, i+1,..., j-1}</code>.</p>
 <p>To verify that the implementation correctly implements a set data type, we need a way to</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><em>Specify</em> the set of values being described,</li>
 <li><em>Establish</em> some key properties of these sets.</li>
 </ol>
 <h2 id="range-sets-semantics-of-intervals">Range-Sets: Semantics of Intervals</h2>
-<p>We can describe the set of values corresponding to (i.e. “the semantics of”) an interval <code>i, j</code> by importing the <code>Data.Set</code> library</p>
+<p>We can describe the set of values corresponding to (i.e. “the semantics of”) an interval <code>i, j</code> by importing the <code>Data.Set</code> library</p>
 <pre><span class=hs-linenum>88: </span><span class='hs-keyword'>import</span> <span class='hs-keyword'>qualified</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Set</span> <span class='hs-keyword'>as</span> <span class='hs-conid'>S</span>
 </pre>
 <p>to write a function <code>rng i j</code> that defines the <strong>range-set</strong> <code>i..j</code></p>
@@ -600,7 +805,7 @@
 <p>We will prove the above <a href="/tags/induction.html">“by induction”</a>. A confession: I always had trouble understanding what exactly <em>proof by induction</em> really meant. Why was it it ok to “do” induction on one thing but not another?</p>
 <p><strong>Induction is Recursion</strong></p>
 <p>Fortunately, with LH, induction is just recursion. That is,</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>We can <strong>recursively</strong> use the same theorem we are trying to prove, but</p></li>
 <li><p>We must make sure that the recursive function/proof <strong>terminates</strong>.</p></li>
 </ol>
@@ -637,7 +842,7 @@
 <li><p><strong>Inductive Case</strong> As <code>i &lt; j</code> we can unfold <code>rng i j</code> and then <em>recursively call</em> <code>lem_mem (i+1) j</code> to obtain the fact that <code>x</code> cannot be in <code>i+1..j</code> to complete the proof.</p></li>
 </ul>
 <p>LH automatically checks that the proof:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p><strong>Accounts for all cases</strong>, as otherwise the function is <em>not total</em> i.e. like the <code>head</code> function which is only defined on non-empty lists. (Try deleting a case at the <a href="http://goto.ucsd.edu:8090/index.html#?demo=RangeSet.hs">demo</a> to see what happens.)</p></li>
 <li><p><strong>Terminates</strong>, as otherwise the induction is bogus, or in math-speak, not <em>well-founded</em>. We use the <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/README.md#explicit-termination-metrics">explicit termination metric</a> <code>/ [j-i]</code> as a hint to tell LH that in each recursive call, the size of the interval <code>j-i</code> shrinks and is always non-negative. LH checks that is indeed the case, ensuring that we have a legit proof by induction.</p></li>
 </ol>
@@ -665,7 +870,7 @@
 <span class=hs-linenum>319: </span>                  <span class='hs-keyword'>{disjoint (rng i1 j1) (rng i2 j2)}</span> <span class='hs-varop'>/</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>j2</span><span class='hs-comment'>-</span><span class='hs-varid'>i2</span><span class='hs-keyglyph'>]</span>
 <span class=hs-linenum>320: </span>  <span class='hs-keyword'>@-}</span>
 </pre>
-<p>This proof goes “by induction” on the size of the second interval, i.e. <code>j2-i2</code>:</p>
+<p>This proof goes “by induction” on the size of the second interval, i.e. <code>j2-i2</code>:</p>
 <pre><span class=hs-linenum>327: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class='hs-definition'>lem_disj</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>i1</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j1</span></a> <a class=annot href="#"><span class=annottext>{i2 : Int | j1 &lt;= i2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>j2</span></a>
 <span class=hs-linenum>328: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : Bool | v &lt;=&gt; i2 &gt;= j2}</span><span class='hs-varid'>i2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class='hs-varop'>&gt;=</span></a> <span class='hs-varid'>j2</span>
 <span class=hs-linenum>329: </span>      <span class='hs-comment'>-- Base CASE</span>
@@ -777,7 +982,7 @@
 </div>
 <p><br></p>
 <p>The pictorial proof illustrates the two cases:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p><code>i1..j1</code> encloses <code>i2..j2</code>; here the union is just <code>i1..j1</code>,</p></li>
 <li><p><code>i1..j1</code> only overlaps <code>i1..j1</code>; here the union is <code>i2..j1</code> which can be split into <code>i2..i1</code>, <code>i1..j2</code> and <code>j2..j1</code> which are exactly the union of the intervals <code>i1..j1</code> and <code>i2..j2</code>.</p></li>
 </ol>
@@ -821,14 +1026,14 @@
 </div>
 <p><br></p>
 <p>We have the same two cases as for <code>lem_union</code></p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p><code>i1..j1</code> encloses <code>i2..j2</code>; here the intersection is just <code>i2..j2</code>,</p></li>
-<li><code>i1..j1</code> only overlaps <code>i1..j1</code>; here the intersection is the <em>middle segment</em> <code>i1..j2</code>, which we obtain by</li>
-</ol>
-<ol style="list-style-type: lower-alpha">
+<li><code>i1..j1</code> only overlaps <code>i1..j1</code>; here the intersection is the <em>middle segment</em> <code>i1..j2</code>, which we obtain by
+<ol type="a">
 <li><em>splitting</em> <code>i1..j1</code> at <code>j2</code>,</li>
 <li><em>splitting</em> <code>i2..j2</code> at <code>i1</code>,</li>
 <li><em>discarding</em> the end segments which do not belong in the intersection.</li>
+</ol></li>
 </ol>
 <pre><span class=hs-linenum>517: </span><a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:{j1 : Int | x1 &lt; j1} -&gt; x3:Int -&gt; x4:{j2 : Int | x3 &lt; j2
                                                               &amp;&amp; x1 &lt;= j2
@@ -850,7 +1055,7 @@
 <h2 id="conclusions">Conclusions</h2>
 <p>Whew. That turned out a lot longer than I’d expected!</p>
 <p>On the bright side, we saw how to:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><em>Specify</em> the semantics of range-sets,</li>
 <li><em>Write</em> equational proofs using plain Haskell code,</li>
 <li><em>Avoid</em> boring proof steps using PLE,</li>
@@ -927,7 +1132,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
     <title>Splitting and Splicing Intervals (Part 1)</title>
     <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2017/12/15/splitting-and-splicing-intervals-I.lhs" />
     <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2017/12/15/splitting-and-splicing-intervals-I.lhs</id>
-    <published>2017-12-15T00:00:00Z</published>
+    <published>true</published>
     <updated>2017-12-15T00:00:00Z</updated>
     <summary type="html"><![CDATA[<!-- Post Header -->
 <header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
@@ -996,13 +1201,13 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
 </div>
 <h2 id="encoding-sets-as-intervals">Encoding Sets as Intervals</h2>
 <p>The key idea underlying the intervals data structure, is that we can represent sets of integers like:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">{ <span class="dv">7</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">4</span>}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1">{ <span class="dv">7</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">4</span>}</a></code></pre></div>
 <p>by first <em>ordering</em> them into a list</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[ <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span> ]</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1">[ <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span> ]</a></code></pre></div>
 <p>and then <em>partitioning</em> the list into compact intervals</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[ (<span class="dv">1</span>, <span class="dv">5</span>), (<span class="dv">7</span>, <span class="dv">8</span>), (<span class="dv">9</span>, <span class="dv">13</span>) ]</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" title="1">[ (<span class="dv">1</span>, <span class="dv">5</span>), (<span class="dv">7</span>, <span class="dv">8</span>), (<span class="dv">9</span>, <span class="dv">13</span>) ]</a></code></pre></div>
 <p>That is,</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>Each interval <code>(from, to)</code> corresponds to the set <code>{from,from+1,...,to-1}</code>.</p></li>
 <li><p>Ordering ensures there is a canonical representation that simplifies interval operations.</p></li>
 </ol>
@@ -1041,7 +1246,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
 <pre><span class=hs-linenum>143: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>type</span> <span class='hs-conid'>OrdItvs</span> <span class='hs-conid'>N</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>LbItv</span> <span class='hs-conid'>N</span><span class='hs-keyglyph'>]</span><span class='hs-varop'>&lt;</span><span class='hs-layout'>{</span><span class='hs-keyglyph'>\</span><span class='hs-varid'>vHd</span> <span class='hs-varid'>vTl</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>to</span> <span class='hs-varid'>vHd</span> <span class='hs-varop'>&lt;=</span> <span class='hs-varid'>from</span> <span class='hs-varid'>vTl</span><span class='hs-layout'>}</span><span class='hs-varop'>&gt;</span> <span class='hs-keyword'>@-}</span>
 </pre>
 <p>The signature above uses an <a href="/tags/abstract-refinements.html">abstract-refinement</a> to capture the legality requirements.</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>An <code>OrdInterval N</code> is a list of <code>Interval</code> that are lower-bounded by <code>N</code>, and</p></li>
 <li><p>In each sub-list, the head <code>Interval</code> <code>vHd</code> <em>precedes</em> each in the tail <code>vTl</code>.</p></li>
 </ol>
@@ -1248,7 +1453,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
     <title>Arithmetic Overflows</title>
     <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2017/03/20/arithmetic-overflows.lhs" />
     <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2017/03/20/arithmetic-overflows.lhs</id>
-    <published>2017-03-20T00:00:00Z</published>
+    <published>true</published>
     <updated>2017-03-20T00:00:00Z</updated>
     <summary type="html"><![CDATA[<!-- Post Header -->
 <header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
@@ -1314,27 +1519,27 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
 <p>Unfortunately, the signature for plus and hence, the above “fact” are both lies.</p>
 <p>LH <em>checks</em> <code>plus</code> as the same signature is <em>assumed</em> for the primitive <code>Int</code> addition operator <code>Prelude.+</code>. LH has to assume <em>some</em> signature for this “foreign” machine operation, and by default, LH assumes that machine addition behaves like logical addition.</p>
 <p>However, this assumption, and its consequences are only true upto a point:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span>  monoPlus <span class="dv">0</span>
-<span class="dt">True</span>
-λ<span class="fu">&gt;</span>  monoPlus <span class="dv">100</span>
-<span class="dt">True</span>
-λ<span class="fu">&gt;</span>  monoPlus <span class="dv">10000</span>
-<span class="dt">True</span>
-λ<span class="fu">&gt;</span>  monoPlus <span class="dv">1000000</span>
-<span class="dt">True</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1">λ<span class="op">&gt;</span>  monoPlus <span class="dv">0</span></a>
+<a class="sourceLine" id="cb1-2" title="2"><span class="dt">True</span></a>
+<a class="sourceLine" id="cb1-3" title="3">λ<span class="op">&gt;</span>  monoPlus <span class="dv">100</span></a>
+<a class="sourceLine" id="cb1-4" title="4"><span class="dt">True</span></a>
+<a class="sourceLine" id="cb1-5" title="5">λ<span class="op">&gt;</span>  monoPlus <span class="dv">10000</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="dt">True</span></a>
+<a class="sourceLine" id="cb1-7" title="7">λ<span class="op">&gt;</span>  monoPlus <span class="dv">1000000</span></a>
+<a class="sourceLine" id="cb1-8" title="8"><span class="dt">True</span></a></code></pre></div>
 <p>Once we get to <code>maxBound</code> at the very edge of <code>Int</code>, a tiny bump is enough to send us tumbling backwards into a twilight zone.</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span> monoPlus maxBound
-<span class="dt">False</span>
-
-λ<span class="fu">&gt;</span> plus maxBound <span class="dv">1</span>
-<span class="fu">-</span><span class="dv">9223372036854775808</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1">λ<span class="op">&gt;</span> monoPlus <span class="fu">maxBound</span></a>
+<a class="sourceLine" id="cb2-2" title="2"><span class="dt">False</span></a>
+<a class="sourceLine" id="cb2-3" title="3"></a>
+<a class="sourceLine" id="cb2-4" title="4">λ<span class="op">&gt;</span> plus <span class="fu">maxBound</span> <span class="dv">1</span></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="op">-</span><span class="dv">9223372036854775808</span></a></code></pre></div>
 <h2 id="keeping-int-in-their-place">2. Keeping Int In Their Place</h2>
 <p>The news isn’t all bad: the glass half full view is that for “reasonable” values like 10, 100, 10000 and 1000000, the machine’s arithmetic <em>is</em> the same as logical arithmetic. Lets see how to impart this wisdom to LH. We do this in two steps: define the <em>biggest</em> <code>Int</code> value, and then, use this value to type the arithmetic operations.</p>
 <p><strong>A. The Biggest Int</strong></p>
 <p>First, we need a way to talk about “the edge” – i.e. the largest <code>Int</code> value at which overflows occur.</p>
 <p>We could use the concrete number</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">λ<span class="fu">&gt;</span><span class="ot"> maxBound ::</span> <span class="dt">Int</span>
-<span class="dv">9223372036854775807</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" title="1">λ<span class="op">&gt;</span><span class="ot"> maxBound ::</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb3-2" title="2"><span class="dv">9223372036854775807</span></a></code></pre></div>
 <p>However, instead of hardwiring a particular number, a more general strategy is to define a symbolic constant <code>maxInt</code> to represent <em>any</em> arbitrary overflow value and thus, make the type checking robust to different machine integer widths.</p>
 <pre><span class=hs-linenum>135: </span><span class='hs-comment'>-- defines an Int constant called `maxInt`</span>
 <span class=hs-linenum>136: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>measure</span> <span class='hs-varid'>maxInt</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyword'>@-}</span>
@@ -1487,7 +1692,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
     <title>Refinement Reflection on ADTs</title>
     <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2016/10/06/structural-induction.lhs" />
     <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2016/10/06/structural-induction.lhs</id>
-    <published>2016-10-06T00:00:00Z</published>
+    <published>true</published>
     <updated>2016-10-06T00:00:00Z</updated>
     <summary type="html"><![CDATA[<!-- Post Header -->
 <header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
@@ -1792,7 +1997,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
     <title>Haskell as a Theorem Prover</title>
     <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2016/09/18/refinement-reflection.lhs" />
     <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2016/09/18/refinement-reflection.lhs</id>
-    <published>2016-09-18T00:00:00Z</published>
+    <published>true</published>
     <updated>2016-09-18T00:00:00Z</updated>
     <summary type="html"><![CDATA[<!-- Post Header -->
 <header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
@@ -1861,7 +2066,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
 <span class=hs-linenum>57: </span>
 </pre>
 </div>
-<h2 id="shallow-vs.deep-specifications">Shallow vs. Deep Specifications</h2>
+<h2 id="shallow-vs.-deep-specifications">Shallow vs. Deep Specifications</h2>
 <p>Up to now, we have been using Liquid Haskell to specify and verify “shallow” specifications that abstractly describe the behavior of functions. For example, below, we specify and verify that <code>fib</code>restricted to natural numbers, always terminates returning a natural number.</p>
 <pre><span class=hs-linenum>70: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>fib</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i</span><span class='hs-conop'>:</span><span class='hs-conid'>Nat</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Nat</span> <span class='hs-varop'>/</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>i</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
 <span class=hs-linenum>71: </span><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0} -&gt; {v : GHC.Types.Int | v &gt;= 0}</span><span class='hs-definition'>fib</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v &gt;= 0}</span><span class='hs-varid'>i</span></a> <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>GHC.Types.Bool</span><span class='hs-varid'>i</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | Prop v &lt;=&gt; x1 == x2}</span><span class='hs-varop'>==</span></a> <span class='hs-num'>0</span>    <span class='hs-keyglyph'>=</span> <span class='hs-num'>0</span> 
@@ -1988,7 +2193,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
 <span class=hs-linenum>291: </span>  <a class=annot href="#"><span class=annottext>GHC.Types.Int -&gt; GHC.Types.Int -&gt; GHC.Types.Int</span><span class='hs-varop'>==.</span></a> <span class='hs-num'>2</span> 
 <span class=hs-linenum>292: </span>  <span class='hs-varop'>***</span> <span class='hs-conid'>QED</span>
 </pre>
-<h2 id="proofs-by-induction-i.e.recursion">Proofs by Induction (i.e. Recursion)</h2>
+<h2 id="proofs-by-induction-i.e.-recursion">Proofs by Induction (i.e. Recursion)</h2>
 <p>Next, combining the above operators we specify and prove that <code>fib</code> is increasing, that is for each natural number <code>i</code>, <code>fib i &lt;= fib (i+1)</code>.</p>
 <p>We specify the theorem as a refinement type for <code>fubUp</code> and use Haskell code to persuade Liquid Haskell that the theorem holds.</p>
 <pre><span class=hs-linenum>309: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>fibUp</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>i</span><span class='hs-conop'>:</span><span class='hs-conid'>Nat</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{fib i &lt;= fib (i+1)}</span> <span class='hs-keyword'>@-}</span>
@@ -2117,7 +2322,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
     <title>Normal Forms</title>
     <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2016/09/01/normal-forms.lhs" />
     <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2016/09/01/normal-forms.lhs</id>
-    <published>2016-09-05T00:00:00Z</published>
+    <published>true</published>
     <updated>2016-09-05T00:00:00Z</updated>
     <summary type="html"><![CDATA[<!-- Post Header -->
 <header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
@@ -2322,7 +2527,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
 <pre><span class=hs-linenum>240: </span><span class='hs-layout'>(</span><span class='hs-keyglyph'>[</span><span class='hs-layout'>(</span><span class='hs-varid'>x1</span><span class='hs-layout'>,</span> <span class='hs-varid'>a1</span><span class='hs-layout'>)</span> <span class='hs-varop'>...</span> <span class='hs-layout'>(</span><span class='hs-varid'>xn</span><span class='hs-layout'>,</span> <span class='hs-varid'>an</span><span class='hs-layout'>)</span><span class='hs-keyglyph'>]</span><span class='hs-layout'>,</span> <span class='hs-varid'>v1</span><span class='hs-layout'>)</span>
 </pre>
 <p>where</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><code>a1...an</code> are <code>AnfExpr</code>, and</li>
 <li><code>v1</code> is an immediate <code>ImmExpr</code></li>
 </ol>
@@ -3945,7 +4150,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
 <span class=hs-linenum>397: </span>    <span class='hs-varid'>anf2</span> <span class='hs-varop'>*</span> <span class='hs-varid'>anf3</span>
 </pre>
 <p>There! The refinements make this tricky conversion quite straightforward and natural, without requiring us to duplicate types and code. As an exercise, can you use refinements to:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Port the classic <a href="http://matt.might.net/articles/a-normalization/">continuation-based conversion ?</a></li>
 <li>Check that the conversion yields <a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial/10-case-study-associative-maps.html#/using-maps-well-scoped-expressions">well-scoped terms ?</a></li>
 </ol>
@@ -3985,7 +4190,7 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
     <title>Okasaki's Lazy Queues</title>
     <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2015/01/30/okasakis-lazy-queue.lhs" />
     <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2015/01/30/okasakis-lazy-queue.lhs</id>
-    <published>2015-01-28T00:00:00Z</published>
+    <published>true</published>
     <updated>2015-01-28T00:00:00Z</updated>
     <summary type="html"><![CDATA[<!-- Post Header -->
 <header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
@@ -4048,10 +4253,9 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
 </div>
 <h2 id="queues">Queues</h2>
 <p>A <a href="http://en.wikipedia.org/wiki/Queue_%28abstract_data_type%29">queue</a> is a structure into which we can <code>insert</code> and <code>remove</code> data such that the order in which the data is removed is the same as the order in which it was inserted.</p>
-<div class="figure">
-<img src="/static/img/queue.png" alt="A Queue" />
-<p class="caption">A Queue</p>
-</div>
+<figure>
+<img src="/static/img/queue.png" alt="A Queue" /><figcaption>A Queue</figcaption>
+</figure>
 <p>To implement a queue <em>efficiently</em> one needs to have rapid access to both the “head” as well as the “tail” because we <code>remove</code> elements from former and <code>insert</code> elements into the latter. This is quite straightforward with explicit pointers and mutation – one uses an old school linked list and maintains pointers to the head and the tail. But can we implement the structure efficiently without having stoop so low?</p>
 <h2 id="queues-pair-of-lists">Queues = Pair of Lists</h2>
 <p>Almost two decades ago, Chris Okasaki came up with a very cunning way to implement queues using a <em>pair</em> of lists – let’s call them <code>front</code> and <code>back</code> which represent the corresponding parts of the Queue.</p>
@@ -4059,20 +4263,18 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
 <li>To <code>insert</code> elements, we just <em>cons</em> them onto the <code>back</code> list,</li>
 <li>To <code>remove</code> elements, we just <em>un-cons</em> them from the <code>front</code> list.</li>
 </ul>
-<div class="figure">
-<img src="/static/img/queue-lists.png" alt="A Queue is Two Lists" />
-<p class="caption">A Queue is Two Lists</p>
-</div>
+<figure>
+<img src="/static/img/queue-lists.png" alt="A Queue is Two Lists" /><figcaption>A Queue is Two Lists</figcaption>
+</figure>
 <p>The catch is that we need to shunt elements from the back to the front every so often, e.g. when</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>a <code>remove</code> call is triggered, and</li>
 <li>the <code>front</code> list is empty,</li>
 </ol>
 <p>We can transfer the elements from the <code>back</code> to the <code>front</code>.</p>
-<div class="figure">
-<img src="/static/img/queue-rotate.png" alt="Transferring Elements from Back to Front" />
-<p class="caption">Transferring Elements from Back to Front</p>
-</div>
+<figure>
+<img src="/static/img/queue-rotate.png" alt="Transferring Elements from Back to Front" /><figcaption>Transferring Elements from Back to Front</figcaption>
+</figure>
 <p>Okasaki observed that every element is only moved <em>once</em> from the front to the back; hence, the time for <code>insert</code> and <code>lookup</code> could be <code>O(1)</code> when <em>amortized</em> over all the operations. Awesome, right?!</p>
 <p>Almost. Some set of unlucky <code>remove</code> calls (which occur when the <code>front</code> is empty) are stuck paying the bill. They have a rather high latency up to <code>O(n)</code> where <code>n</code> is the total number of operations. Oops.</p>
 <h2 id="queue-balanced-lazy-lists">Queue = Balanced Lazy Lists</h2>
@@ -4080,9 +4282,9 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
 <p><strong>Invariant:</strong> Size of <code>front</code> &gt;= Size of <code>back</code></p>
 <p>Now, if the lists are <em>lazy</em> i.e. only constructed as the head value is demanded, then a single <code>remove</code> needs only a tiny <code>O(log n)</code> in the worst case, and so no single <code>remove</code> is stuck paying the bill.</p>
 <p>Let’s see how to represent these Queues and ensure the crucial invariant(s) with LiquidHaskell. What we need are the following ingredients:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>A type for <code>List</code>s, and a way to track their <code>size</code>,</p></li>
-<li><p>A type for <code>Queue</code>s which encodes the <em>balance</em> invariant – ``front longer than back“,</p></li>
+<li><p>A type for <code>Queue</code>s which encodes the <em>balance</em> invariant – ``front longer than back",</p></li>
 <li><p>A way to implement the <code>insert</code>, <code>remove</code> and <code>transfer</code> operations.</p></li>
 </ol>
 <h2 id="sized-lists">Sized Lists</h2>
@@ -4297,343 +4499,6 @@ x1:(LazyQueue.SList a)
     var disqus_config = function () {
         this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2015/01/30/okasakis-lazy-queue.lhs';  // Replace PAGE_URL with your page's canonical URL variable
         this.page.identifier = '/2015/01/30/okasakis-lazy-queue.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-    };
-    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
-        var d = document, s = d.createElement('script');
-        s.src = '//liquidhaskell.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-
-
-            </div>
-        </div>
-    </div>
-</article>
-]]></summary>
-</entry>
-<entry>
-    <title>A Finer Filter</title>
-    <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2014/08/15/a-finer-filter.lhs" />
-    <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2014/08/15/a-finer-filter.lhs</id>
-    <published>2014-08-15T00:00:00Z</published>
-    <updated>2014-08-15T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<!-- Post Header -->
-<header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <div class="post-heading">
-                    <h1>A Finer Filter</h1>
-                    
-                    <span class="meta">
-		    
-			Posted by Ranjit Jhala
-		    
-			Aug 15, 2014
-		    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
-
-<!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-
-            <br>
-
-            <div class="info">
-              
-                Tags: <a href="/tags/abstract-refinements.html">abstract-refinements</a>
-              
-            </div>
-
-            <br>
-			            <p>This morning, I came across this <a href="https://twitter.com/ertesx/status/500034598042996736">nice post</a> which describes how one can write a very expressive type for <code>filter</code> using <a href="https://hackage.haskell.org/package/singletons">singletons</a>.</p>
-<p>Lets see how one might achieve this with <a href="/blog/2013/06/03/abstracting-over-refinements.lhs/">abstract refinements</a>.</p>
-<!-- more -->
-<div class="hidden">
-<pre><span class=hs-linenum>23: </span>
-<span class=hs-linenum>24: </span><span class='hs-keyword'>{-@</span> <span class='hs-conid'>LIQUID</span> <span class='hs-str'>"--short-names"</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>25: </span>
-<span class=hs-linenum>26: </span><span class='hs-keyword'>module</span> <span class='hs-conid'>Filter</span> <span class='hs-layout'>(</span><span class='hs-varid'>filter</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
-<span class=hs-linenum>27: </span>
-<span class=hs-linenum>28: </span><span class='hs-keyword'>import</span> <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>filter</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>29: </span><span class='hs-keyword'>import</span> <span class='hs-conid'>Data</span><span class='hs-varop'>.</span><span class='hs-conid'>Set</span> <span class='hs-layout'>(</span><span class='hs-conid'>Set</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>30: </span>
-<span class=hs-linenum>31: </span><span class='hs-keyword'>import</span> <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>filter</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>32: </span><span class='hs-definition'>isPos</span><span class='hs-layout'>,</span> <span class='hs-varid'>isEven</span><span class='hs-layout'>,</span> <span class='hs-varid'>isOdd</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Maybe</span> <span class='hs-conid'>Int</span>
-<span class=hs-linenum>33: </span><span class='hs-definition'>filter</span><span class='hs-layout'>,</span> <span class='hs-varid'>filter3</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Maybe</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span>
-<span class=hs-linenum>34: </span>
-<span class=hs-linenum>35: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>measure</span> <span class='hs-varid'>elts</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-conid'>Set</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> 
-<span class=hs-linenum>36: </span>    <span class='hs-varid'>elts</span> <span class='hs-layout'>(</span><span class='hs-conid'>[]</span><span class='hs-layout'>)</span>   <span class='hs-keyglyph'>=</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span> <span class='hs-keyglyph'>|</span> <span class='hs-conid'>Set_emp</span> <span class='hs-varid'>v</span> <span class='hs-layout'>}</span>
-<span class=hs-linenum>37: </span>    <span class='hs-varid'>elts</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>v</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Set_cup</span> <span class='hs-layout'>(</span><span class='hs-conid'>Set_sng</span> <span class='hs-varid'>x</span><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><span class='hs-varid'>elts</span> <span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-layout'>}</span>
-<span class=hs-linenum>38: </span>  <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>39: </span> 
-</pre>
-</div>
-<h2 id="goal">Goal</h2>
-<p>What we’re after is a way to write a <code>filter</code> function such that:</p>
-<pre><span class=hs-linenum>50: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getPoss</span>  <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Pos</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>51: </span><a class=annot href="#"><span class=annottext>x1:[{x7 : Int | false}]
--&gt; {x2 : [{x7 : Int | false}] | ((Set_sub (elts x2) (elts x1)))}</span><span class='hs-definition'>getPoss</span></a>      <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>({x10 : Int | false} -&gt; (Maybe {x10 : Int | false}))
--&gt; x3:[{x10 : Int | false}]
--&gt; {x2 : [{x10 : Int | false}] | ((Set_sub (elts x2) (elts x3)))}</span><span class='hs-varid'>filter</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x6 : Int | (x6 == x1) &amp;&amp; (x6 == (x1  :  int)) &amp;&amp; (x6 &gt; 0) &amp;&amp; (0 &lt; x6)})</span><span class='hs-varid'>isPos</span></a>
-<span class=hs-linenum>52: </span>
-<span class=hs-linenum>53: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getEvens</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Even</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>54: </span><a class=annot href="#"><span class=annottext>x1:[{x7 : Int | false}]
--&gt; {x2 : [{x7 : Int | false}] | ((Set_sub (elts x2) (elts x1)))}</span><span class='hs-definition'>getEvens</span></a>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>({x10 : Int | false} -&gt; (Maybe {x10 : Int | false}))
--&gt; x3:[{x10 : Int | false}]
--&gt; {x2 : [{x10 : Int | false}] | ((Set_sub (elts x2) (elts x3)))}</span><span class='hs-varid'>filter</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x5 : Int | (x5 == x1) &amp;&amp; (x5 == (x1  :  int)) &amp;&amp; ((x5 mod 2) == 0)})</span><span class='hs-varid'>isEven</span></a>
-<span class=hs-linenum>55: </span>
-<span class=hs-linenum>56: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getOdds</span>  <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Odd</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>57: </span><a class=annot href="#"><span class=annottext>x1:[{x7 : Int | false}]
--&gt; {x2 : [{x7 : Int | false}] | ((Set_sub (elts x2) (elts x1)))}</span><span class='hs-definition'>getOdds</span></a>      <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>({x10 : Int | false} -&gt; (Maybe {x10 : Int | false}))
--&gt; x3:[{x10 : Int | false}]
--&gt; {x2 : [{x10 : Int | false}] | ((Set_sub (elts x2) (elts x3)))}</span><span class='hs-varid'>filter</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x6 : Int | (x6 == x1) &amp;&amp; (x6 == (x1  :  int)) &amp;&amp; ((x6 mod 2) == 1) &amp;&amp; (x6 /= 0)})</span><span class='hs-varid'>isOdd</span></a>
-</pre>
-<p>where <code>Pos</code>, <code>Even</code> and <code>Odd</code> are just subsets of <code>Int</code>:</p>
-<pre><span class=hs-linenum>63: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>type</span> <span class='hs-conid'>Pos</span>  <span class='hs-keyglyph'>=</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span><span class='hs-conop'>:</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>|</span> <span class='hs-num'>0</span> <span class='hs-varop'>&lt;</span> <span class='hs-varid'>v</span><span class='hs-layout'>}</span>        <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>64: </span>
-<span class=hs-linenum>65: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>type</span> <span class='hs-conid'>Even</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span><span class='hs-conop'>:</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>|</span> <span class='hs-varid'>v</span> <span class='hs-varid'>mod</span> <span class='hs-num'>2</span> <span class='hs-varop'>==</span> <span class='hs-num'>0</span><span class='hs-layout'>}</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>66: </span>
-<span class=hs-linenum>67: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>type</span> <span class='hs-conid'>Odd</span>  <span class='hs-keyglyph'>=</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span><span class='hs-conop'>:</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>|</span> <span class='hs-varid'>v</span> <span class='hs-varid'>mod</span> <span class='hs-num'>2</span> <span class='hs-varop'>/=</span> <span class='hs-num'>0</span><span class='hs-layout'>}</span> <span class='hs-keyword'>@-}</span>
-</pre>
-<h2 id="take-1-map-maybe">Take 1: Map, maybe?</h2>
-<p>Bowing to the anti-boolean sentiment currently in the air, lets eschew the classical approach where the predicates (<code>isPos</code> etc.) return <code>True</code> or <code>False</code> and instead implement <code>filter</code> using a map.</p>
-<pre><span class=hs-linenum>78: </span><span class='hs-definition'>filter1</span>          <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Maybe</span> <span class='hs-varid'>b</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>b</span><span class='hs-keyglyph'>]</span>
-<span class=hs-linenum>79: </span>
-<span class=hs-linenum>80: </span><a class=annot href="#"><span class=annottext>forall a b.
-(a -&gt; (Maybe b))
--&gt; x3:[a] -&gt; {VV : [b] | ((len VV) &gt;= 0) &amp;&amp; ((len VV) &lt;= (len x3))}</span><span class='hs-definition'>filter1</span></a> <a class=annot href="#"><span class=annottext>a -&gt; (Maybe b)</span><span class='hs-varid'>f</span></a> <span class='hs-conid'>[]</span>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>forall a &lt;p :: a a -&gt; Prop&gt;.
-{x5 : [a]&lt;\x6 VV -&gt; p x6&gt; | (((null x5)) &lt;=&gt; true) &amp;&amp; ((Set_emp (listElts x5))) &amp;&amp; ((Set_emp (elts x5))) &amp;&amp; ((len x5) == 0)}</span><span class='hs-conid'>[]</span></a>
-<span class=hs-linenum>81: </span><span class='hs-definition'>filter1</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>case</span> <a class=annot href="#"><span class=annottext>a -&gt; (Maybe b)</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{VV : a | (VV == x)}</span><span class='hs-varid'>x</span></a> <span class='hs-keyword'>of</span>
-<span class=hs-linenum>82: </span>                     <span class='hs-conid'>Just</span> <span class='hs-varid'>y</span>  <span class='hs-keyglyph'>-&gt;</span> <a class=annot href="#"><span class=annottext>{VV : a | (VV == y)}</span><span class='hs-varid'>y</span></a> <a class=annot href="#"><span class=annottext>x1:a
--&gt; x2:[a]
--&gt; {x5 : [a] | (((null x5)) &lt;=&gt; false) &amp;&amp; ((listElts x5) == (Set_cup (Set_sng x1) (listElts x2))) &amp;&amp; ((len x5) == (1 + (len x2))) &amp;&amp; ((elts x5) == (Set_cup (Set_sng x1) (elts x2)))}</span><span class='hs-conop'>:</span></a> <a class=annot href="#"><span class=annottext>forall a b.
-(a -&gt; (Maybe b))
--&gt; x3:[a] -&gt; {VV : [b] | ((len VV) &gt;= 0) &amp;&amp; ((len VV) &lt;= (len x3))}</span><span class='hs-varid'>filter1</span></a> <a class=annot href="#"><span class=annottext>a -&gt; (Maybe b)</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{x3 : [a] | (x3 == xs) &amp;&amp; ((len x3) &gt;= 0)}</span><span class='hs-varid'>xs</span></a> 
-<span class=hs-linenum>83: </span>                     <span class='hs-conid'>Nothing</span> <span class='hs-keyglyph'>-&gt;</span>     <a class=annot href="#"><span class=annottext>forall a b.
-(a -&gt; (Maybe b))
--&gt; x3:[a] -&gt; {VV : [b] | ((len VV) &gt;= 0) &amp;&amp; ((len VV) &lt;= (len x3))}</span><span class='hs-varid'>filter1</span></a> <a class=annot href="#"><span class=annottext>a -&gt; (Maybe b)</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{x3 : [a] | (x3 == xs) &amp;&amp; ((len x3) &gt;= 0)}</span><span class='hs-varid'>xs</span></a>
-</pre>
-<p>To complete the picture, we need just define the predicates as functions returning a <code>Maybe</code>:</p>
-<pre><span class=hs-linenum>90: </span><span class='hs-comment'>{- isPos          :: Int -&gt; Maybe Pos  @-}</span>
-<span class=hs-linenum>91: </span><a class=annot href="#"><span class=annottext>x:Int
--&gt; (Maybe {VV : Int | (VV == x) &amp;&amp; (VV == (x  :  int)) &amp;&amp; (VV &gt; 0) &amp;&amp; (0 &lt; VV)})</span><span class='hs-definition'>isPos</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>x</span></a>
-<span class=hs-linenum>92: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == x)}</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {x2 : Bool | (((Prop x2)) &lt;=&gt; (x1 &gt; x2))}</span><span class='hs-varop'>&gt;</span></a> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == (0  :  int))}</span><span class='hs-num'>0</span></a>          <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:{x13 : Int | (x13 == x) &amp;&amp; (x13 == (x  :  int)) &amp;&amp; (x13 &gt; 0) &amp;&amp; (0 &lt; x13)}
--&gt; {x3 : (Maybe {x13 : Int | (x13 == x) &amp;&amp; (x13 == (x  :  int)) &amp;&amp; (x13 &gt; 0) &amp;&amp; (0 &lt; x13)}) | (((isJust x3)) &lt;=&gt; true) &amp;&amp; ((fromJust x3) == x1)}</span><span class='hs-conid'>Just</span></a> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == x)}</span><span class='hs-varid'>x</span></a>
-<span class=hs-linenum>93: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>      <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{x2 : (Maybe {x3 : Int | false}) | (((isJust x2)) &lt;=&gt; false)}</span><span class='hs-conid'>Nothing</span></a>
-<span class=hs-linenum>94: </span>
-<span class=hs-linenum>95: </span><span class='hs-comment'>{- isEven         :: Int -&gt; Maybe Even @-}</span>
-<span class=hs-linenum>96: </span><a class=annot href="#"><span class=annottext>x:Int
--&gt; (Maybe {VV : Int | (VV == x) &amp;&amp; (VV == (x  :  int)) &amp;&amp; ((VV mod 2) == 0)})</span><span class='hs-definition'>isEven</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>x</span></a>
-<span class=hs-linenum>97: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == x)}</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; x2:Int
--&gt; {x6 : Int | (((0 &lt;= x1) &amp;&amp; (0 &lt; x2)) =&gt; ((0 &lt;= x6) &amp;&amp; (x6 &lt; x2))) &amp;&amp; (x6 == (x1 mod x2))}</span><span class='hs-varop'>`mod`</span></a> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == (2  :  int))}</span><span class='hs-num'>2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {x2 : Bool | (((Prop x2)) &lt;=&gt; (x1 == x2))}</span><span class='hs-varop'>==</span></a> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == (0  :  int))}</span><span class='hs-num'>0</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:{x11 : Int | (x11 == x) &amp;&amp; (x11 == (x  :  int)) &amp;&amp; ((x11 mod 2) == 0)}
--&gt; {x3 : (Maybe {x11 : Int | (x11 == x) &amp;&amp; (x11 == (x  :  int)) &amp;&amp; ((x11 mod 2) == 0)}) | (((isJust x3)) &lt;=&gt; true) &amp;&amp; ((fromJust x3) == x1)}</span><span class='hs-conid'>Just</span></a> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == x)}</span><span class='hs-varid'>x</span></a>
-<span class=hs-linenum>98: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>      <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{x2 : (Maybe {x3 : Int | false}) | (((isJust x2)) &lt;=&gt; false)}</span><span class='hs-conid'>Nothing</span></a>
-<span class=hs-linenum>99: </span>
-<span class=hs-linenum>100: </span><span class='hs-comment'>{- isOdd          :: Int -&gt; Maybe Odd  @-}</span>
-<span class=hs-linenum>101: </span><a class=annot href="#"><span class=annottext>x:Int
--&gt; (Maybe {VV : Int | (VV == x) &amp;&amp; (VV == (x  :  int)) &amp;&amp; ((VV mod 2) == 1) &amp;&amp; (VV /= 0)})</span><span class='hs-definition'>isOdd</span></a> <a class=annot href="#"><span class=annottext>Int</span><span class='hs-varid'>x</span></a>
-<span class=hs-linenum>102: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == x)}</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; x2:Int
--&gt; {x6 : Int | (((0 &lt;= x1) &amp;&amp; (0 &lt; x2)) =&gt; ((0 &lt;= x6) &amp;&amp; (x6 &lt; x2))) &amp;&amp; (x6 == (x1 mod x2))}</span><span class='hs-varop'>`mod`</span></a> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == (2  :  int))}</span><span class='hs-num'>2</span></a> <a class=annot href="#"><span class=annottext>x1:Int -&gt; x2:Int -&gt; {x2 : Bool | (((Prop x2)) &lt;=&gt; (x1 /= x2))}</span><span class='hs-varop'>/=</span></a> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == (0  :  int))}</span><span class='hs-num'>0</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:{x13 : Int | (x13 == x) &amp;&amp; (x13 == (x  :  int)) &amp;&amp; ((x13 mod 2) == 1) &amp;&amp; (x13 /= 0)}
--&gt; {x3 : (Maybe {x13 : Int | (x13 == x) &amp;&amp; (x13 == (x  :  int)) &amp;&amp; ((x13 mod 2) == 1) &amp;&amp; (x13 /= 0)}) | (((isJust x3)) &lt;=&gt; true) &amp;&amp; ((fromJust x3) == x1)}</span><span class='hs-conid'>Just</span></a> <a class=annot href="#"><span class=annottext>{x2 : Int | (x2 == x)}</span><span class='hs-varid'>x</span></a>
-<span class=hs-linenum>103: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>      <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{x2 : (Maybe {x3 : Int | false}) | (((isJust x2)) &lt;=&gt; false)}</span><span class='hs-conid'>Nothing</span></a>
-</pre>
-<p>and now, we can achieve our goal!</p>
-<pre><span class=hs-linenum>109: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getPoss1</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Pos</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>110: </span><a class=annot href="#"><span class=annottext>[Int] -&gt; [{v : Int | (0 &lt; v)}]</span><span class='hs-definition'>getPoss1</span></a>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>(Int -&gt; (Maybe {x14 : Int | (x14 &gt; 0) &amp;&amp; (0 &lt; x14)}))
--&gt; x3:[Int]
--&gt; {x3 : [{x14 : Int | (x14 &gt; 0) &amp;&amp; (0 &lt; x14)}] | ((len x3) &gt;= 0) &amp;&amp; ((len x3) &lt;= (len x3))}</span><span class='hs-varid'>filter1</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x6 : Int | (x6 == x1) &amp;&amp; (x6 == (x1  :  int)) &amp;&amp; (x6 &gt; 0) &amp;&amp; (0 &lt; x6)})</span><span class='hs-varid'>isPos</span></a>
-<span class=hs-linenum>111: </span>
-<span class=hs-linenum>112: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getEvens1</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Even</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>113: </span><a class=annot href="#"><span class=annottext>[Int] -&gt; [{v : Int | ((v mod 2) == 0)}]</span><span class='hs-definition'>getEvens1</span></a>    <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>(Int -&gt; (Maybe {x12 : Int | ((x12 mod 2) == 0)}))
--&gt; x3:[Int]
--&gt; {x3 : [{x12 : Int | ((x12 mod 2) == 0)}] | ((len x3) &gt;= 0) &amp;&amp; ((len x3) &lt;= (len x3))}</span><span class='hs-varid'>filter1</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x5 : Int | (x5 == x1) &amp;&amp; (x5 == (x1  :  int)) &amp;&amp; ((x5 mod 2) == 0)})</span><span class='hs-varid'>isEven</span></a>
-<span class=hs-linenum>114: </span>
-<span class=hs-linenum>115: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getOdds1</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Odd</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>116: </span><a class=annot href="#"><span class=annottext>[Int] -&gt; [{v : Int | ((v mod 2) == 1)}]</span><span class='hs-definition'>getOdds1</span></a>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>(Int -&gt; (Maybe {x14 : Int | ((x14 mod 2) == 1) &amp;&amp; (x14 /= 0)}))
--&gt; x3:[Int]
--&gt; {x3 : [{x14 : Int | ((x14 mod 2) == 1) &amp;&amp; (x14 /= 0)}] | ((len x3) &gt;= 0) &amp;&amp; ((len x3) &lt;= (len x3))}</span><span class='hs-varid'>filter1</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x6 : Int | (x6 == x1) &amp;&amp; (x6 == (x1  :  int)) &amp;&amp; ((x6 mod 2) == 1) &amp;&amp; (x6 /= 0)})</span><span class='hs-varid'>isOdd</span></a>
-</pre>
-<p><strong>The Subset Guarantee</strong></p>
-<p>Well that was easy! Or was it?</p>
-<p>I fear we’ve <em>cheated</em> a little bit.</p>
-<p>One of the nice things about the <em>classical</em> <code>filter</code> is that by eyeballing the signature:</p>
-<pre><span class=hs-linenum>129: </span><span class='hs-definition'>filter</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Bool</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span>
-</pre>
-<p>we are guaranteed, via parametricity, that the output list’s elements are a <em>subset of</em> the input list’s elements. The signature for our new-fangled</p>
-<pre><span class=hs-linenum>136: </span><span class='hs-definition'>filter1</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Maybe</span> <span class='hs-varid'>b</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>b</span><span class='hs-keyglyph'>]</span>
-</pre>
-<p>yields no such guarantee!</p>
-<p>In this case, things work out, because in each case, LiquidHaskell <em>instantiates</em> the type variables <code>a</code> and <code>b</code> in the signature of <code>filter1</code> suitably:</p>
-<ul>
-<li>In <code>getPoss</code> LH instantiates <code>a := Int</code> and <code>b := Pos</code></li>
-<li>In <code>getEvens</code> LH instantiates <code>a := Int</code> and <code>b := Even</code></li>
-<li>In <code>getOdds</code> LH instantiates <code>a := Int</code> and <code>b := Odd</code></li>
-</ul>
-<p>(Hover over the different instances of <code>filter1</code> above to confirm this.)</p>
-<p>But in general, we’d rather <em>not</em> lose the nice “subset” guarantee that the classical <code>filter</code> provides.</p>
-<h2 id="take-2-one-type-variable">Take 2: One Type Variable</h2>
-<p>Easy enough! Why do we need <em>two</em> type variables anyway?</p>
-<pre><span class=hs-linenum>160: </span><span class='hs-definition'>filter2</span>          <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Maybe</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span>
-<span class=hs-linenum>161: </span>
-<span class=hs-linenum>162: </span><a class=annot href="#"><span class=annottext>forall a.
-(x2:a -&gt; (Maybe {VV : a | (VV == x2)}))
--&gt; x3:[a]
--&gt; {VV : [a] | ((Set_sub (elts VV) (elts x3))) &amp;&amp; ((len VV) &gt;= 0) &amp;&amp; ((len VV) &lt;= (len x3))}</span><span class='hs-definition'>filter2</span></a> <a class=annot href="#"><span class=annottext>x1:a -&gt; (Maybe {VV : a | (VV == x1)})</span><span class='hs-varid'>f</span></a> <span class='hs-conid'>[]</span>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>forall a &lt;p :: a a -&gt; Prop&gt;.
-{x5 : [a]&lt;\x6 VV -&gt; p x6&gt; | (((null x5)) &lt;=&gt; true) &amp;&amp; ((Set_emp (listElts x5))) &amp;&amp; ((Set_emp (elts x5))) &amp;&amp; ((len x5) == 0)}</span><span class='hs-conid'>[]</span></a>
-<span class=hs-linenum>163: </span><span class='hs-definition'>filter2</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>case</span> <a class=annot href="#"><span class=annottext>x1:a -&gt; (Maybe {VV : a | (VV == x1)})</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{VV : a | (VV == x)}</span><span class='hs-varid'>x</span></a> <span class='hs-keyword'>of</span>
-<span class=hs-linenum>164: </span>                     <span class='hs-conid'>Just</span> <span class='hs-varid'>y</span>  <span class='hs-keyglyph'>-&gt;</span> <a class=annot href="#"><span class=annottext>{VV : a | (VV == y) &amp;&amp; (VV == x)}</span><span class='hs-varid'>y</span></a> <a class=annot href="#"><span class=annottext>x1:a
--&gt; x2:[a]
--&gt; {x5 : [a] | (((null x5)) &lt;=&gt; false) &amp;&amp; ((listElts x5) == (Set_cup (Set_sng x1) (listElts x2))) &amp;&amp; ((len x5) == (1 + (len x2))) &amp;&amp; ((elts x5) == (Set_cup (Set_sng x1) (elts x2)))}</span><span class='hs-conop'>:</span></a> <a class=annot href="#"><span class=annottext>forall a.
-(x2:a -&gt; (Maybe {VV : a | (VV == x2)}))
--&gt; x3:[a]
--&gt; {VV : [a] | ((Set_sub (elts VV) (elts x3))) &amp;&amp; ((len VV) &gt;= 0) &amp;&amp; ((len VV) &lt;= (len x3))}</span><span class='hs-varid'>filter2</span></a> <a class=annot href="#"><span class=annottext>x1:a -&gt; (Maybe {VV : a | (VV == x1)})</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{x3 : [a] | (x3 == xs) &amp;&amp; ((len x3) &gt;= 0)}</span><span class='hs-varid'>xs</span></a> 
-<span class=hs-linenum>165: </span>                     <span class='hs-conid'>Nothing</span> <span class='hs-keyglyph'>-&gt;</span>     <a class=annot href="#"><span class=annottext>forall a.
-(x2:a -&gt; (Maybe {VV : a | (VV == x2)}))
--&gt; x3:[a]
--&gt; {VV : [a] | ((Set_sub (elts VV) (elts x3))) &amp;&amp; ((len VV) &gt;= 0) &amp;&amp; ((len VV) &lt;= (len x3))}</span><span class='hs-varid'>filter2</span></a> <a class=annot href="#"><span class=annottext>x1:a -&gt; (Maybe {VV : a | (VV == x1)})</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{x3 : [a] | (x3 == xs) &amp;&amp; ((len x3) &gt;= 0)}</span><span class='hs-varid'>xs</span></a>
-</pre>
-<p>There! Now the <code>f</code> is forced to take or leave its input <code>x</code>, and so we can breathe easy knowing that <code>filter2</code> returns a subset of its inputs.</p>
-<p>But…</p>
-<pre><span class=hs-linenum>175: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getPoss2</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Pos</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>176: </span><a class=annot href="#"><span class=annottext>[Int] -&gt; [{v : Int | (0 &lt; v)}]</span><span class='hs-definition'>getPoss2</span></a>     <span class='hs-keyglyph'>=</span> <span class=hs-error><a class=annot href="#"><span class=annottext>(x2:Int -&gt; (Maybe {x13 : Int | (x13 == x2)}))
--&gt; x3:[Int]
--&gt; {x4 : [Int] | ((Set_sub (elts x4) (elts x3))) &amp;&amp; ((len x4) &gt;= 0) &amp;&amp; ((len x4) &lt;= (len x3))}</span><span class='hs-varid'>filter2</span></a></span><span class=hs-error> </span><span class=hs-error><a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x6 : Int | (x6 == x1) &amp;&amp; (x6 == (x1  :  int)) &amp;&amp; (x6 &gt; 0) &amp;&amp; (0 &lt; x6)})</span><span class='hs-varid'>isPos</span></a></span>
-<span class=hs-linenum>177: </span>
-<span class=hs-linenum>178: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getEvens2</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Even</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>179: </span><a class=annot href="#"><span class=annottext>[Int] -&gt; [{v : Int | ((v mod 2) == 0)}]</span><span class='hs-definition'>getEvens2</span></a>    <span class='hs-keyglyph'>=</span> <span class=hs-error><a class=annot href="#"><span class=annottext>(x2:Int -&gt; (Maybe {x13 : Int | (x13 == x2)}))
--&gt; x3:[Int]
--&gt; {x4 : [Int] | ((Set_sub (elts x4) (elts x3))) &amp;&amp; ((len x4) &gt;= 0) &amp;&amp; ((len x4) &lt;= (len x3))}</span><span class='hs-varid'>filter2</span></a></span><span class=hs-error> </span><span class=hs-error><a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x5 : Int | (x5 == x1) &amp;&amp; (x5 == (x1  :  int)) &amp;&amp; ((x5 mod 2) == 0)})</span><span class='hs-varid'>isEven</span></a></span>
-<span class=hs-linenum>180: </span>
-<span class=hs-linenum>181: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getOdds2</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Odd</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>182: </span><a class=annot href="#"><span class=annottext>[Int] -&gt; [{v : Int | ((v mod 2) == 1)}]</span><span class='hs-definition'>getOdds2</span></a>     <span class='hs-keyglyph'>=</span> <span class=hs-error><a class=annot href="#"><span class=annottext>(x2:Int -&gt; (Maybe {x13 : Int | (x13 == x2)}))
--&gt; x3:[Int]
--&gt; {x4 : [Int] | ((Set_sub (elts x4) (elts x3))) &amp;&amp; ((len x4) &gt;= 0) &amp;&amp; ((len x4) &lt;= (len x3))}</span><span class='hs-varid'>filter2</span></a></span><span class=hs-error> </span><span class=hs-error><a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x6 : Int | (x6 == x1) &amp;&amp; (x6 == (x1  :  int)) &amp;&amp; ((x6 mod 2) == 1) &amp;&amp; (x6 /= 0)})</span><span class='hs-varid'>isOdd</span></a></span>
-</pre>
-<p>Yikes, LH is not impressed – the red highlight indicates that LH is not convinced that the functions have the specified types.</p>
-<p>Perhaps you know why already?</p>
-<p>Since we used <strong>the same</strong> type variable <code>a</code> for <em>both</em> the input <em>and</em> output, LH must instantiate <code>a</code> with a type that matches <em>both</em> the input and output, i.e. is a <em>super-type</em> of both, which is simply <code>Int</code> in all the cases.</p>
-<p>Consequently, we get the errors above – “expected <code>Pos</code> but got <code>Int</code>”.</p>
-<h2 id="take-3-add-abstract-refinement">Take 3: Add Abstract Refinement</h2>
-<p>What we need is a generic way of specifying that the output of the predicate is not just an <code>a</code> but an <code>a</code> that <em>also</em> enjoys whatever property we are filtering for.</p>
-<p>This sounds like a job for <a href="/blog/2013/06/03/abstracting-over-refinements.lhs/">abstract refinements</a> which let us parameterize a signature over its refinements:</p>
-<pre><span class=hs-linenum>208: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>filter3</span>      <span class='hs-keyglyph'>::</span> <span class='hs-keyword'>forall</span> <span class='hs-varid'>a</span> <span class='hs-varop'>&lt;</span><span class='hs-varid'>p</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Prop</span><span class='hs-varop'>&gt;.</span>
-<span class=hs-linenum>209: </span>                      <span class='hs-layout'>(</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Maybe</span> <span class='hs-varid'>a</span><span class='hs-varop'>&lt;</span><span class='hs-varid'>p</span><span class='hs-varop'>&gt;</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-varop'>&lt;</span><span class='hs-varid'>p</span><span class='hs-varop'>&gt;</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>210: </span><a class=annot href="#"><span class=annottext>forall a &lt;p :: a -&gt; Prop&gt;.
-(a -&gt; (Maybe {VV : a&lt;p&gt; | true})) -&gt; [a] -&gt; [{VV : a&lt;p&gt; | true}]</span><span class='hs-definition'>filter3</span></a> <a class=annot href="#"><span class=annottext>a -&gt; (Maybe {VV : a | ((papp1 p VV))})</span><span class='hs-varid'>f</span></a> <span class='hs-conid'>[]</span>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>forall a &lt;p :: a a -&gt; Prop&gt;.
-{x5 : [a]&lt;\x6 VV -&gt; p x6&gt; | (((null x5)) &lt;=&gt; true) &amp;&amp; ((Set_emp (listElts x5))) &amp;&amp; ((Set_emp (elts x5))) &amp;&amp; ((len x5) == 0)}</span><span class='hs-conid'>[]</span></a>
-<span class=hs-linenum>211: </span><span class='hs-definition'>filter3</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>case</span> <a class=annot href="#"><span class=annottext>a -&gt; (Maybe {VV : a | ((papp1 p VV))})</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{VV : a | (VV == x)}</span><span class='hs-varid'>x</span></a> <span class='hs-keyword'>of</span>
-<span class=hs-linenum>212: </span>                     <span class='hs-conid'>Just</span> <span class='hs-varid'>x'</span>  <span class='hs-keyglyph'>-&gt;</span> <a class=annot href="#"><span class=annottext>{VV : a | ((papp1 p VV)) &amp;&amp; (VV == x')}</span><span class='hs-varid'>x'</span></a> <a class=annot href="#"><span class=annottext>x1:{VV : a | ((papp1 p VV))}
--&gt; x2:[{VV : a | ((papp1 p VV))}]&lt;\_ VV -&gt; ((papp1 p VV))&gt;
--&gt; {x5 : [{VV : a | ((papp1 p VV))}]&lt;\_ VV -&gt; ((papp1 p VV))&gt; | (((null x5)) &lt;=&gt; false) &amp;&amp; ((listElts x5) == (Set_cup (Set_sng x1) (listElts x2))) &amp;&amp; ((len x5) == (1 + (len x2))) &amp;&amp; ((elts x5) == (Set_cup (Set_sng x1) (elts x2)))}</span><span class='hs-conop'>:</span></a> <a class=annot href="#"><span class=annottext>forall a &lt;p :: a -&gt; Prop&gt;.
-(a -&gt; (Maybe {VV : a&lt;p&gt; | true})) -&gt; [a] -&gt; [{VV : a&lt;p&gt; | true}]</span><span class='hs-varid'>filter3</span></a> <a class=annot href="#"><span class=annottext>a -&gt; (Maybe {VV : a | ((papp1 p VV))})</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{x3 : [a] | (x3 == xs) &amp;&amp; ((len x3) &gt;= 0)}</span><span class='hs-varid'>xs</span></a> 
-<span class=hs-linenum>213: </span>                     <span class='hs-conid'>Nothing</span> <span class='hs-keyglyph'>-&gt;</span>       <a class=annot href="#"><span class=annottext>forall a &lt;p :: a -&gt; Prop&gt;.
-(a -&gt; (Maybe {VV : a&lt;p&gt; | true})) -&gt; [a] -&gt; [{VV : a&lt;p&gt; | true}]</span><span class='hs-varid'>filter3</span></a> <a class=annot href="#"><span class=annottext>a -&gt; (Maybe {VV : a | ((papp1 p VV))})</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{x3 : [a] | (x3 == xs) &amp;&amp; ((len x3) &gt;= 0)}</span><span class='hs-varid'>xs</span></a>
-</pre>
-<p>Now, we’ve <strong>decoupled</strong> the filter-property from the type variable <code>a</code>.</p>
-<p>The input still is a mere <code>a</code>, but the output is an <code>a</code> with bells on, specifically, which satisfies the (abstract) refinement <code>p</code>.</p>
-<p>Voila!</p>
-<pre><span class=hs-linenum>224: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getPoss3</span>  <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Pos</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>225: </span><a class=annot href="#"><span class=annottext>[Int] -&gt; [{v : Int | (0 &lt; v)}]</span><span class='hs-definition'>getPoss3</span></a>      <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>(Int -&gt; (Maybe {x13 : Int | (x13 &gt; 0) &amp;&amp; (0 &lt; x13)}))
--&gt; [Int] -&gt; [{x13 : Int | (x13 &gt; 0) &amp;&amp; (0 &lt; x13)}]</span><span class='hs-varid'>filter3</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x6 : Int | (x6 == x1) &amp;&amp; (x6 == (x1  :  int)) &amp;&amp; (x6 &gt; 0) &amp;&amp; (0 &lt; x6)})</span><span class='hs-varid'>isPos</span></a>
-<span class=hs-linenum>226: </span>
-<span class=hs-linenum>227: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getEvens3</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Even</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>228: </span><a class=annot href="#"><span class=annottext>[Int] -&gt; [{v : Int | ((v mod 2) == 0)}]</span><span class='hs-definition'>getEvens3</span></a>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>(Int -&gt; (Maybe {x11 : Int | ((x11 mod 2) == 0)}))
--&gt; [Int] -&gt; [{x11 : Int | ((x11 mod 2) == 0)}]</span><span class='hs-varid'>filter3</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x5 : Int | (x5 == x1) &amp;&amp; (x5 == (x1  :  int)) &amp;&amp; ((x5 mod 2) == 0)})</span><span class='hs-varid'>isEven</span></a>
-<span class=hs-linenum>229: </span>
-<span class=hs-linenum>230: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>getOdds3</span>  <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Odd</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>231: </span><a class=annot href="#"><span class=annottext>[Int] -&gt; [{v : Int | ((v mod 2) == 1)}]</span><span class='hs-definition'>getOdds3</span></a>      <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>(Int -&gt; (Maybe {x13 : Int | ((x13 mod 2) == 1) &amp;&amp; (x13 /= 0)}))
--&gt; [Int] -&gt; [{x13 : Int | ((x13 mod 2) == 1) &amp;&amp; (x13 /= 0)}]</span><span class='hs-varid'>filter3</span></a> <a class=annot href="#"><span class=annottext>x1:Int
--&gt; (Maybe {x6 : Int | (x6 == x1) &amp;&amp; (x6 == (x1  :  int)) &amp;&amp; ((x6 mod 2) == 1) &amp;&amp; (x6 /= 0)})</span><span class='hs-varid'>isOdd</span></a>
-</pre>
-<p>Now, LH happily accepts each of the above.</p>
-<p>At each <em>use</em> of <code>filter</code> LH separately <em>instantiates</em> the <code>a</code> and the <code>p</code>. In each case, the <code>a</code> is just <code>Int</code> but the <code>p</code> is instantiated as:</p>
-<ul>
-<li>In <code>getPoss</code> LH instantiates <code>p := \v -&gt; 0 &lt;= v</code></li>
-<li>In <code>getEvens</code> LH instantiates <code>p := \v -&gt; v mod 2 == 0</code></li>
-<li>In <code>getOdds</code> LH instantiates <code>p := \v -&gt; v mod 2 /= 0</code></li>
-</ul>
-<p>That is, in each case, LH instantiates <code>p</code> with the refinement that describes the output type we are looking for.</p>
-<p><strong>Edit:</strong> At this point, I was ready to go to bed, and so happily declared victory and turned in. The next morning, <a href="http://www.reddit.com/r/haskell/comments/2dozs5/liquidhaskell_a_finer_filter/cjrrx3y">mypetclone</a> graciously pointed out my folly: the signature for <code>filter3</code> makes no guarantees about the subset property. In fact,</p>
-<pre><span class=hs-linenum>252: </span><a class=annot href="#"><span class=annottext>[Integer] -&gt; [Integer]</span><span class='hs-definition'>doubles</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>(Integer -&gt; (Maybe Integer)) -&gt; [Integer] -&gt; [Integer]</span><span class='hs-varid'>filter3</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>Integer -&gt; (Maybe Integer)</span><span class='hs-keyglyph'>\</span></a><a class=annot href="#"><span class=annottext>Integer</span><span class='hs-varid'>x</span></a> <span class='hs-keyglyph'>-&gt;</span> <a class=annot href="#"><span class=annottext>x1:Integer
--&gt; {x3 : (Maybe Integer) | (((isJust x3)) &lt;=&gt; true) &amp;&amp; ((fromJust x3) == x1)}</span><span class='hs-conid'>Just</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{x2 : Integer | (x2 == x)}</span><span class='hs-varid'>x</span></a> <a class=annot href="#"><span class=annottext>x1:Integer -&gt; x2:Integer -&gt; {x4 : Integer | (x4 == (x1 + x2))}</span><span class='hs-varop'>+</span></a> <a class=annot href="#"><span class=annottext>{x2 : Integer | (x2 == x)}</span><span class='hs-varid'>x</span></a><span class='hs-layout'>)</span><span class='hs-layout'>)</span> 
-</pre>
-<p>typechecks just fine, while <code>doubles</code> clearly violates the subset property.</p>
-<h2 id="take-4">Take 4:</h2>
-<p>I suppose the moral is that it may be tricky – for me at least! – to read more into a type than what it <em>actually says</em>. Fortunately, with refinements, our types can say quite a lot.</p>
-<p>In particular, lets make the subset property explicit, by</p>
-<ol style="list-style-type: decimal">
-<li>Requiring the predicate return its input (or nothing), and,</li>
-<li>Ensuring the output is indeed a subset of the inputs.</li>
-</ol>
-<pre><span class=hs-linenum>270: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>filter</span>      <span class='hs-keyglyph'>::</span> <span class='hs-keyword'>forall</span> <span class='hs-varid'>a</span> <span class='hs-varop'>&lt;</span><span class='hs-varid'>p</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Prop</span><span class='hs-varop'>&gt;.</span>
-<span class=hs-linenum>271: </span>                       <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Maybe</span> <span class='hs-keyword'>{v:</span><span class='hs-definition'>a</span><span class='hs-varop'>&lt;</span><span class='hs-varid'>p</span><span class='hs-varop'>&gt;</span> <span class='hs-keyword'>| v = x}</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>272: </span>                    <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span>
-<span class=hs-linenum>273: </span>                    <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{v:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-varop'>&lt;</span><span class='hs-varid'>p</span><span class='hs-varop'>&gt;</span><span class='hs-keyglyph'>]</span> <span class='hs-keyword'>| Set_sub (elts v) (elts xs)}</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>274: </span>
-<span class=hs-linenum>275: </span><a class=annot href="#"><span class=annottext>forall a &lt;p :: a -&gt; Prop&gt;.
-(x2:a -&gt; (Maybe {VV : a&lt;p&gt; | (VV == x2)}))
--&gt; x3:[a]
--&gt; {v : [{VV : a&lt;p&gt; | true}] | ((Set_sub (elts v) (elts x3)))}</span><span class='hs-definition'>filter</span></a> <a class=annot href="#"><span class=annottext>x1:a -&gt; (Maybe {VV : a | ((papp1 p VV)) &amp;&amp; (VV == x1)})</span><span class='hs-varid'>f</span></a> <span class='hs-conid'>[]</span>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>forall a &lt;p :: a a -&gt; Prop&gt;.
-{x5 : [a]&lt;\x6 VV -&gt; p x6&gt; | (((null x5)) &lt;=&gt; true) &amp;&amp; ((Set_emp (listElts x5))) &amp;&amp; ((Set_emp (elts x5))) &amp;&amp; ((len x5) == 0)}</span><span class='hs-conid'>[]</span></a>
-<span class=hs-linenum>276: </span><span class='hs-definition'>filter</span> <span class='hs-varid'>f</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <span class='hs-keyword'>case</span> <a class=annot href="#"><span class=annottext>x1:a -&gt; (Maybe {VV : a | ((papp1 p VV)) &amp;&amp; (VV == x1)})</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{VV : a | (VV == x)}</span><span class='hs-varid'>x</span></a> <span class='hs-keyword'>of</span>
-<span class=hs-linenum>277: </span>                    <span class='hs-conid'>Just</span> <span class='hs-varid'>x'</span>  <span class='hs-keyglyph'>-&gt;</span> <a class=annot href="#"><span class=annottext>{VV : a | ((papp1 p VV)) &amp;&amp; (VV == x) &amp;&amp; (VV == x')}</span><span class='hs-varid'>x'</span></a> <a class=annot href="#"><span class=annottext>x1:{VV : a | ((papp1 p VV))}
--&gt; x2:[{VV : a | ((papp1 p VV))}]&lt;\_ VV -&gt; ((papp1 p VV))&gt;
--&gt; {x5 : [{VV : a | ((papp1 p VV))}]&lt;\_ VV -&gt; ((papp1 p VV))&gt; | (((null x5)) &lt;=&gt; false) &amp;&amp; ((listElts x5) == (Set_cup (Set_sng x1) (listElts x2))) &amp;&amp; ((len x5) == (1 + (len x2))) &amp;&amp; ((elts x5) == (Set_cup (Set_sng x1) (elts x2)))}</span><span class='hs-conop'>:</span></a> <a class=annot href="#"><span class=annottext>forall a &lt;p :: a -&gt; Prop&gt;.
-(x2:a -&gt; (Maybe {VV : a&lt;p&gt; | (VV == x2)}))
--&gt; x3:[a]
--&gt; {v : [{VV : a&lt;p&gt; | true}] | ((Set_sub (elts v) (elts x3)))}</span><span class='hs-varid'>filter</span></a> <a class=annot href="#"><span class=annottext>x1:a -&gt; (Maybe {VV : a | ((papp1 p VV)) &amp;&amp; (VV == x1)})</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{x3 : [a] | (x3 == xs) &amp;&amp; ((len x3) &gt;= 0)}</span><span class='hs-varid'>xs</span></a> 
-<span class=hs-linenum>278: </span>                    <span class='hs-conid'>Nothing</span> <span class='hs-keyglyph'>-&gt;</span>       <a class=annot href="#"><span class=annottext>forall a &lt;p :: a -&gt; Prop&gt;.
-(x2:a -&gt; (Maybe {VV : a&lt;p&gt; | (VV == x2)}))
--&gt; x3:[a]
--&gt; {v : [{VV : a&lt;p&gt; | true}] | ((Set_sub (elts v) (elts x3)))}</span><span class='hs-varid'>filter</span></a> <a class=annot href="#"><span class=annottext>x1:a -&gt; (Maybe {VV : a | ((papp1 p VV)) &amp;&amp; (VV == x1)})</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{x3 : [a] | (x3 == xs) &amp;&amp; ((len x3) &gt;= 0)}</span><span class='hs-varid'>xs</span></a>
-</pre>
-<p>where <code>elts</code> describes the <a href="/blog/2013/03/26/talking-about-sets.lhs/">set of elements in a list</a>.</p>
-<p><strong>Note:</strong> The <em>implementation</em> of each of the above <code>filter</code> functions are the same; they only differ in their type <em>specification</em>.</p>
-<h2 id="conclusion">Conclusion</h2>
-<p>And so, using abstract refinements, we’ve written a <code>filter</code> whose signature guarantees:</p>
-<ul>
-<li>The outputs must be a <em>subset</em> of the inputs, and</li>
-<li>The outputs indeed satisfy the property being filtered for.</li>
-</ul>
-<p>Another thing that I’ve learnt from this exercise, is that the old school <code>Boolean</code> approach has its merits. Take a look at the clever “latent predicates” technique of <a href="http://www.ccs.neu.edu/racket/pubs/popl08-thf.pdf">Tobin-Hochstadt and Felleisen</a> or this lovely new paper by <a href="http://gowthamk.github.io/docs/icfp77-kaki.pdf">Kaki and Jagannathan</a> which shows how refinements can be further generalized to make Boolean filters fine.</p>
-                <hr>
-                <ul class="pager">
-                    
-                    
-                </ul>
-
-                <div id="disqus_thread"></div>
-<script>
-    /**
-     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
-     */
-    var disqus_config = function () {
-        this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2014/08/15/a-finer-filter.lhs';  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = '/2014/08/15/a-finer-filter.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
         var d = document, s = d.createElement('script');

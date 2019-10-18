@@ -433,7 +433,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <pre><span class="hs-linenum">240: </span><span class="hs-layout">(</span><span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-varid">x1</span><span class="hs-layout">,</span> <span class="hs-varid">a1</span><span class="hs-layout">)</span> <span class="hs-varop">...</span> <span class="hs-layout">(</span><span class="hs-varid">xn</span><span class="hs-layout">,</span> <span class="hs-varid">an</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span><span class="hs-layout">,</span> <span class="hs-varid">v1</span><span class="hs-layout">)</span>
 </pre>
 <p>where</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><code>a1...an</code> are <code>AnfExpr</code>, and</li>
 <li><code>v1</code> is an immediate <code>ImmExpr</code></li>
 </ol>
@@ -2056,7 +2056,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">397: </span>    <span class="hs-varid">anf2</span> <span class="hs-varop">*</span> <span class="hs-varid">anf3</span>
 </pre>
 <p>There! The refinements make this tricky conversion quite straightforward and natural, without requiring us to duplicate types and code. As an exercise, can you use refinements to:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>Port the classic <a href="http://matt.might.net/articles/a-normalization/">continuation-based conversion ?</a></li>
 <li>Check that the conversion yields <a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial/10-case-study-associative-maps.html#/using-maps-well-scoped-expressions">well-scoped terms ?</a></li>
 </ol>

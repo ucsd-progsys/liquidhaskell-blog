@@ -312,7 +312,7 @@ Refinement Types = Types + Logical Predicates
 <span class="hs-linenum">108: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | ((VV mod 2) = 0),(VV &lt; 100),(0 &lt;= VV)}</span><span class="hs-definition">zero</span></a>     <span class="hs-keyglyph">=</span>  <a class="annot" href="#"><span class="annottext">x:(GHC.Prim.Int#) -&gt; {VV : (GHC.Types.Int) | (VV = (x  :  int))}</span><span class="hs-num">0</span></a>
 </pre>
 <p>The key points are:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>A refinement type is just a type <em>decorated</em> with logical predicates.</li>
 <li>A value can have <em>different</em> refinement types that describe different properties.</li>
 <li>If we <em>erase</em> the green bits (i.e. the logical predicates) we get back <em>exactly</em> the usual Haskell types that we know and love.</li>
@@ -346,7 +346,7 @@ Refinement Types = Types + Logical Predicates
 <pre><span class="hs-linenum">177: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">divide</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| v != 0 }</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyword">@-}</span>
 </pre>
 <p>How <em>does</em> LiquidHaskell verify the above function?</p>
-<p>The key step is that LiquidHaskell deduces that the expression <code>&quot;divide by zero&quot;</code> is not merely of type <code>String</code>, but in fact has the the refined type <code>{v:String | false}</code> <em>in the context</em> in which the call to <code>error'</code> occurs.</p>
+<p>The key step is that LiquidHaskell deduces that the expression <code>"divide by zero"</code> is not merely of type <code>String</code>, but in fact has the the refined type <code>{v:String | false}</code> <em>in the context</em> in which the call to <code>error'</code> occurs.</p>
 <p>LiquidHaskell arrives at this conclusion by using the fact that in the first equation for <code>divide</code> the <em>denominator</em> parameter is in fact <code>0 :: {v: Int | v = 0}</code> which <em>contradicts</em> the precondition (i.e. input) type.</p>
 <p>In other words, LiquidHaskell deduces by contradiction, that the first equation is <strong>dead code</strong> and hence <code>error'</code> will not be called at run-time.</p>
 <p>If you are paranoid, you can put in an explicit assertion</p>
@@ -389,7 +389,7 @@ Refinement Types = Types + Logical Predicates
 <span class="hs-linenum">249: </span>          <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">max'</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (0 &lt;= VV)}</span><span class="hs-varid">abz</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = max)}</span><span class="hs-varid">max</span></a> 
 </pre>
 <p><code>truncate i n</code> simply returns <code>i</code> if its absolute value is less the upper bound <code>max</code>, and otherwise <em>truncates</em> the value at the maximum. LiquidHaskell verifies that the use of <code>divide</code> is safe by inferring that at the call site</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><code>i' &gt; max'</code> from the branch condition.</li>
 <li><code>0 &lt;= i'</code> from the <code>abz</code> postcondition (hover mouse over <code>i'</code>).</li>
 <li><code>0 &lt;= max'</code> from the <code>abz</code> postcondition (hover mouse over <code>max'</code>).</li>
@@ -445,7 +445,7 @@ Refinement Types = Types + Logical Predicates
 <p>In fact, LiquidHaskell comes equipped with suitable refinements for standard functions and it is easy to add refinements as we shall demonstrate in subsequent articles.</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>This concludes our quick introduction to Refinement Types and LiquidHaskell. Hopefully you have some sense of how to</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><strong>Specify</strong> fine-grained properties of values by decorating their types with logical predicates.</li>
 <li><strong>Encode</strong> assertions, preconditions, and postconditions with suitable function types.</li>
 <li><strong>Verify</strong> semantic properties of code by using automatic logic engines (SMT solvers) to track and establish the key relationships between program values.</li>

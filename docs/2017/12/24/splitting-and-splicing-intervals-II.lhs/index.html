@@ -296,17 +296,17 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </div>
 <h2 id="intervals">Intervals</h2>
 <p>Recall that the key idea is to represent sets of integers like</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">{ <span class="dv">7</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">4</span>}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1">{ <span class="dv">7</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">4</span>}</a></code></pre></div>
 <p>as ordered lists of <em>intervals</em></p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[ (<span class="dv">1</span>, <span class="dv">5</span>), (<span class="dv">7</span>, <span class="dv">8</span>), (<span class="dv">9</span>, <span class="dv">13</span>) ]</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1">[ (<span class="dv">1</span>, <span class="dv">5</span>), (<span class="dv">7</span>, <span class="dv">8</span>), (<span class="dv">9</span>, <span class="dv">13</span>) ]</a></code></pre></div>
 <p>where each pair <code>(i, j)</code> represents the set <code>{i, i+1,..., j-1}</code>.</p>
 <p>To verify that the implementation correctly implements a set data type, we need a way to</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><em>Specify</em> the set of values being described,</li>
 <li><em>Establish</em> some key properties of these sets.</li>
 </ol>
 <h2 id="range-sets-semantics-of-intervals">Range-Sets: Semantics of Intervals</h2>
-<p>We can describe the set of values corresponding to (i.e. “the semantics of”) an interval <code>i, j</code> by importing the <code>Data.Set</code> library</p>
+<p>We can describe the set of values corresponding to (i.e. “the semantics of”) an interval <code>i, j</code> by importing the <code>Data.Set</code> library</p>
 <pre><span class="hs-linenum">88: </span><span class="hs-keyword">import</span> <span class="hs-keyword">qualified</span> <span class="hs-conid">Data</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-keyword">as</span> <span class="hs-conid">S</span>
 </pre>
 <p>to write a function <code>rng i j</code> that defines the <strong>range-set</strong> <code>i..j</code></p>
@@ -378,7 +378,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p>We will prove the above <a href="../../../../tags/induction.html">“by induction”</a>. A confession: I always had trouble understanding what exactly <em>proof by induction</em> really meant. Why was it it ok to “do” induction on one thing but not another?</p>
 <p><strong>Induction is Recursion</strong></p>
 <p>Fortunately, with LH, induction is just recursion. That is,</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>We can <strong>recursively</strong> use the same theorem we are trying to prove, but</p></li>
 <li><p>We must make sure that the recursive function/proof <strong>terminates</strong>.</p></li>
 </ol>
@@ -415,7 +415,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <li><p><strong>Inductive Case</strong> As <code>i &lt; j</code> we can unfold <code>rng i j</code> and then <em>recursively call</em> <code>lem_mem (i+1) j</code> to obtain the fact that <code>x</code> cannot be in <code>i+1..j</code> to complete the proof.</p></li>
 </ul>
 <p>LH automatically checks that the proof:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p><strong>Accounts for all cases</strong>, as otherwise the function is <em>not total</em> i.e. like the <code>head</code> function which is only defined on non-empty lists. (Try deleting a case at the <a href="http://goto.ucsd.edu:8090/index.html#?demo=RangeSet.hs">demo</a> to see what happens.)</p></li>
 <li><p><strong>Terminates</strong>, as otherwise the induction is bogus, or in math-speak, not <em>well-founded</em>. We use the <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/README.md#explicit-termination-metrics">explicit termination metric</a> <code>/ [j-i]</code> as a hint to tell LH that in each recursive call, the size of the interval <code>j-i</code> shrinks and is always non-negative. LH checks that is indeed the case, ensuring that we have a legit proof by induction.</p></li>
 </ol>
@@ -443,7 +443,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">319: </span>                  <span class="hs-keyword">{disjoint (rng i1 j1) (rng i2 j2)}</span> <span class="hs-varop">/</span> <span class="hs-keyglyph">[</span><span class="hs-varid">j2</span><span class="hs-comment">-</span><span class="hs-varid">i2</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">320: </span>  <span class="hs-keyword">@-}</span>
 </pre>
-<p>This proof goes “by induction” on the size of the second interval, i.e. <code>j2-i2</code>:</p>
+<p>This proof goes “by induction” on the size of the second interval, i.e. <code>j2-i2</code>:</p>
 <pre><span class="hs-linenum">327: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; x3:{i2 : Int | x2 &lt;= i2} -&gt; x4:Int -&gt; {VV : () | Set_cap (RangeSet.rng x1 x2) (RangeSet.rng x3 x4) == Set_empty 0}</span><span class="hs-definition">lem_disj</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">i1</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">j1</span></a> <a class="annot" href="#"><span class="annottext">{i2 : Int | j1 &lt;= i2}</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">j2</span></a>
 <span class="hs-linenum">328: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : Bool | v &lt;=&gt; i2 &gt;= j2}</span><span class="hs-varid">i2</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &gt;= x2}</span><span class="hs-varop">&gt;=</span></a> <span class="hs-varid">j2</span>
 <span class="hs-linenum">329: </span>      <span class="hs-comment">-- Base CASE</span>
@@ -555,7 +555,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </div>
 <p><br></p>
 <p>The pictorial proof illustrates the two cases:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p><code>i1..j1</code> encloses <code>i2..j2</code>; here the union is just <code>i1..j1</code>,</p></li>
 <li><p><code>i1..j1</code> only overlaps <code>i1..j1</code>; here the union is <code>i2..j1</code> which can be split into <code>i2..i1</code>, <code>i1..j2</code> and <code>j2..j1</code> which are exactly the union of the intervals <code>i1..j1</code> and <code>i2..j2</code>.</p></li>
 </ol>
@@ -599,14 +599,14 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </div>
 <p><br></p>
 <p>We have the same two cases as for <code>lem_union</code></p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p><code>i1..j1</code> encloses <code>i2..j2</code>; here the intersection is just <code>i2..j2</code>,</p></li>
-<li><code>i1..j1</code> only overlaps <code>i1..j1</code>; here the intersection is the <em>middle segment</em> <code>i1..j2</code>, which we obtain by</li>
-</ol>
-<ol style="list-style-type: lower-alpha">
+<li><code>i1..j1</code> only overlaps <code>i1..j1</code>; here the intersection is the <em>middle segment</em> <code>i1..j2</code>, which we obtain by
+<ol type="a">
 <li><em>splitting</em> <code>i1..j1</code> at <code>j2</code>,</li>
 <li><em>splitting</em> <code>i2..j2</code> at <code>i1</code>,</li>
 <li><em>discarding</em> the end segments which do not belong in the intersection.</li>
+</ol></li>
 </ol>
 <pre><span class="hs-linenum">517: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:{j1 : Int | x1 &lt; j1} -&gt; x3:Int -&gt; x4:{j2 : Int | x3 &lt; j2
                                                               &amp;&amp; x1 &lt;= j2
@@ -628,7 +628,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <h2 id="conclusions">Conclusions</h2>
 <p>Whew. That turned out a lot longer than I’d expected!</p>
 <p>On the bright side, we saw how to:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><em>Specify</em> the semantics of range-sets,</li>
 <li><em>Write</em> equational proofs using plain Haskell code,</li>
 <li><em>Avoid</em> boring proof steps using PLE,</li>

@@ -283,7 +283,7 @@ Let’s look at the specifications.
 <span class="hs-linenum">48: </span><span class="hs-definition">embed</span> <span class="hs-conid">Set</span> <span class="hs-keyword">as</span> <span class="hs-conid">Set_Set</span>
 </pre>
 <p>The <code>embed</code> directive tells LiquidHaskell to model the <strong>Haskell</strong> type constructor <code>Set</code> with the <strong>SMT</strong> type constructor <code>Set_Set</code>.</p>
-First, we define the logical operators (i.e. <code>measure</code>s)
+First, we define the logical operators (i.e. <code>measure</code>s)
 <pre><span class="hs-linenum">55: </span><span class="hs-definition">measure</span> <span class="hs-conid">Set_sng</span>  <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span>                    <span class="hs-comment">-- ^ singleton</span>
 <span class="hs-linenum">56: </span><span class="hs-definition">measure</span> <span class="hs-conid">Set_cup</span>  <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span>   <span class="hs-comment">-- ^ union</span>
 <span class="hs-linenum">57: </span><span class="hs-definition">measure</span> <span class="hs-conid">Set_cap</span>  <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span>   <span class="hs-comment">-- ^ intersection</span>
@@ -561,7 +561,7 @@ y:a
 <p>Let’s conclude this entry with one larger example: <code>mergeSort</code>. We’d like to verify that, well, the list that is returned contains the same set of elements as the input list.</p>
 <p>And so we will!</p>
 <p>But first, let’s remind ourselves of how <code>mergeSort</code> works:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><code>split</code> the input list into two halves,</li>
 <li><code>sort</code> each half, recursively,</li>
 <li><code>merge</code> the sorted halves to obtain the sorted list.</li>

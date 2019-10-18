@@ -296,13 +296,13 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </div>
 <h2 id="encoding-sets-as-intervals">Encoding Sets as Intervals</h2>
 <p>The key idea underlying the intervals data structure, is that we can represent sets of integers like:</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">{ <span class="dv">7</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">4</span>}</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1">{ <span class="dv">7</span>, <span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">11</span>, <span class="dv">2</span>, <span class="dv">9</span>, <span class="dv">12</span>, <span class="dv">4</span>}</a></code></pre></div>
 <p>by first <em>ordering</em> them into a list</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[ <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span> ]</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1">[ <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">7</span>, <span class="dv">9</span>, <span class="dv">10</span>, <span class="dv">11</span>, <span class="dv">12</span> ]</a></code></pre></div>
 <p>and then <em>partitioning</em> the list into compact intervals</p>
-<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell">[ (<span class="dv">1</span>, <span class="dv">5</span>), (<span class="dv">7</span>, <span class="dv">8</span>), (<span class="dv">9</span>, <span class="dv">13</span>) ]</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" title="1">[ (<span class="dv">1</span>, <span class="dv">5</span>), (<span class="dv">7</span>, <span class="dv">8</span>), (<span class="dv">9</span>, <span class="dv">13</span>) ]</a></code></pre></div>
 <p>That is,</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>Each interval <code>(from, to)</code> corresponds to the set <code>{from,from+1,...,to-1}</code>.</p></li>
 <li><p>Ordering ensures there is a canonical representation that simplifies interval operations.</p></li>
 </ol>
@@ -341,7 +341,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <pre><span class="hs-linenum">143: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">OrdItvs</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">=</span> <span class="hs-keyglyph">[</span><span class="hs-conid">LbItv</span> <span class="hs-conid">N</span><span class="hs-keyglyph">]</span><span class="hs-varop">&lt;</span><span class="hs-layout">{</span><span class="hs-keyglyph">\</span><span class="hs-varid">vHd</span> <span class="hs-varid">vTl</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">to</span> <span class="hs-varid">vHd</span> <span class="hs-varop">&lt;=</span> <span class="hs-varid">from</span> <span class="hs-varid">vTl</span><span class="hs-layout">}</span><span class="hs-varop">&gt;</span> <span class="hs-keyword">@-}</span>
 </pre>
 <p>The signature above uses an <a href="../../../../tags/abstract-refinements.html">abstract-refinement</a> to capture the legality requirements.</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>An <code>OrdInterval N</code> is a list of <code>Interval</code> that are lower-bounded by <code>N</code>, and</p></li>
 <li><p>In each sub-list, the head <code>Interval</code> <code>vHd</code> <em>precedes</em> each in the tail <code>vTl</code>.</p></li>
 </ol>

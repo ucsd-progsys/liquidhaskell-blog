@@ -281,7 +281,7 @@ Consider a function:
 </pre>
 <p>Intuitively, the type signature states that when checking the body <code>e</code> we can <strong>assume</strong> that <code>0 &lt;= n</code>.</p>
 <p>This is indeed the case with <strong>strict</strong> evaluation, as we are guaranteed that <code>n</code> will be evaluated before <code>e</code>. Thus, either:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><code>n</code> diverges and so we don’t care about <code>e</code> as we won’t evaluate it, or,</li>
 <li><code>n</code> is a non-negative value.</li>
 </ol>

@@ -300,7 +300,7 @@ In the previous post we used a measure for the elements of a list, from <a href=
 <p>These predicates were our vocabulary on specifying properties of list functions. Remember, that <code>reverse</code> returns an output list that has the same elements, i.e., <code>EqElts</code>, with the input list. We can extend these predicates and express list uniqueness. So reversing a unique list should again return an output list that has the same elements as the input list, and also it is unique.</p>
 <h1 id="describing-unique-lists">Describing Unique Lists</h1>
 <p>To describe unique lists, we follow two steps:</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li>we describe the set of duplicate values of a list; and</li>
 <li>we demand this set to be empty.</li>
 </ol>
@@ -558,7 +558,7 @@ y:a
 </pre>
 <h1 id="conclusion">Conclusion</h1>
 <p>That’s all for now! This post illustrated</p>
-<ol style="list-style-type: decimal">
+<ol type="1">
 <li><p>How we can use set theory to express properties the values of the list, such as list uniqueness.</p></li>
 <li><p>How we can use LuquidHaskell to prove that these properties are preserved through list operations.</p></li>
 <li><p>How we can embed this properties in complicated data structures that use lists, such as a zipper.</p></li>
