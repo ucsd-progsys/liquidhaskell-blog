@@ -5,4 +5,8 @@ flags: {}
 packages:
   - '.'
 
-extra-deps: []
+extra-deps: 
+- hakyll-4.12.5.2
+- lrucache-1.2.0.1
+
+
