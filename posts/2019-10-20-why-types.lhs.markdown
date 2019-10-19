@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Liquid Types vs. Floyd-Hoare Logic (Part 1)
+title: Liquid Types vs. Floyd-Hoare Logic
 date: 2019-10-21
 comments: false
 author: Ranjit Jhala
@@ -64,7 +64,7 @@ is that the *compose*. Regrettably, that statement is only
 comprehensible to believers. I prefer to think of it 
 differently: types *decompose*. To be precise:
 
-      Types _decompose_ quantified assertions into quantifier-free refinements.
+Types *decompose* quantified assertions into quantifier-free refinements.
 
 Let me make my point with some examples that show what verification 
 looks like when using Refinement Types (as implemented in [LiquidHaskell][lh]) vs 
@@ -84,24 +84,26 @@ in Dafny (left) and LH (right).
 <div class="row-fluid">
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_1.png"
-       alt="A list data type in Dafny (L) and LiquidHaskell (R)" height="200">
+       height="200">
+  <br> A list data type in Dafny (L) and LiquidHaskell (R) <br> 
   </div>
 </div>
 
 (You can see the full definitions for [Dafny][ex1-dafny] and [LiquidHaskell][ex1-lh].)
 
-### a. Accessing a list 
+### Accessing a list 
 
 The two descriptions are more or less the same except for some 
 minor issues of concrete syntax. However, next consider the 
 respective implementations of a function to access the `ith` 
-element of a `List`. We also pass in a `def`ault value that 
-is returned when the index `i` is _invalid_. 
+element of a `List`. We also pass in a `def`ault value returned
+when the index `i` is _invalid_. 
 
 <div class="row-fluid">
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_2.png"
-       alt="Accessing the i-th element of a list" height="200">
+       height="200">
+  <br>Accessing the i-th element of a list in Dafny(L) and LiquidHaskell(R)<br>
   </div>
 </div>
 
@@ -113,7 +115,7 @@ As such, we'd like to *specify** that the value returned
 by the `ith` element is indeed in the container _or_ is 
 the `def`ault.
 
-#### Floyd-Hoare Logic
+**Floyd-Hoare Logic**
 
 With classical Floyd-Hoare logic, as shown in the Dafny listing 
 on the left, we must spell out the specification quite explicitly. 
@@ -133,27 +135,27 @@ _quantified invariant_ of the form:
 ```
 
 Thanks to the ingenuity of [Greg Nelson][nelson-wiki] who invented the notion 
-of *triggers* and of Rustan Leino and many others, who devised 
+of *triggers* and of [Rustan Leino][rustan] and many others, who devised 
 ingenious heuristics for using them, Dafny handles the quantifier
 calmly to verify the above specification for `ith`. 
 However, we are not always so fortunate: it frightfully easy 
 to run into quantifier-related problems with user-defined 
 functions, as we will see in due course.
 
-#### Liquid/Refinement Types
+**Liquid/Refinement Types**
 
 In contrast, the liquid/refinement version is quite spare: 
-there _is_ no extra specification beyond the code! Surely 
+there _is_ no extra specification beyond the code. Surely 
 there must be some mistake? Look again: the _type signature_
-says everything we need!
+says everything we need:
 
-   "If you `ith` with a list of `a` values and a default `a` value
-    Then you will get back an `a` value".
+> If you call `ith` with a list of `a` values and a default `a` value
+> then you will get back an `a` value".
 
-That is _type parametricity_ lets us eschew the overhead of using an 
+That is _parametricity_ removes the overhead of using an 
 explicit `elements` function.
 
-### b. Building a list
+### Building a list
 
 Next, lets extend our example to illustrate the common 
 situation where we want some _invariant_ to be true for 
@@ -166,14 +168,15 @@ the container is indeed strictly positive.
 <div class="row-fluid">
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_3.png"
-       alt="Building and accessing a container" height="200">
+       height="200">
+  <br>Building and accessing a list in Dafny (L) and LiquidHaskell(R)<br>
   </div>
 </div>
 
 The code in Dafny and LH is more or less the same, except 
 for one crucial difference.
 
-#### Floyd-Hoare Logic
+**Floyd-Hoare Logic**
 
 Recall that the specification for `ith(pos, i, 1)` states 
 that the returned value is _some_ element of the container 
@@ -181,19 +184,17 @@ that the returned value is _some_ element of the container
 classical Floyd-Hoare logic, we need a way to specify that 
 _every_ element in `pos` is indeed strictly positive. 
 With classical program logics, the only way to do so is to 
-use a **universally quantified** post-condition, highlighted 
+use a *universally quantified* post-condition, highlighted 
 in blue: 
 
-   "**for all** `v` _if_ `v` is in the elements-of the `res`ult _then_ `v` is greater than `k`" 
+   "**for all** `v` _if_ `v` is in the elements of the `res`ult, _then_ `v` is greater than `k`" 
 
-#### Liquid/Refinement Types
+**Liquid/Refinement Types**
 
-Did I mention I don't like quantifiers? 
-
-Regardless, surely we can agree that the version on the 
-right is _simpler_ as it omits the above complication 
-entirely. Types make it unnecessary to mention `elements` 
-or `forall`. Instead, LH _infers_ 
+Regardless of my personal feelings about quantifiers, 
+we can agree that the version on the right is simpler 
+as types make it unnecessary to mention `elements` or 
+`forall`. Instead, LH _infers_ 
 
 ```haskell
 mkList :: Int -> k:Int -> List {v:Int | k < v}
@@ -207,14 +208,14 @@ allow us to _decompose_ the monolithic universally
 quantified invariant into: 
 
 1. a _quantifier-free_ refinement `k < v`, and 
-2. a type _constructor_ that implicitly "quantifies" 
+2. a type _constructor_ that implicitly "quantifies" over the container's elements.
 
-over all the elements inside the container.
+### Lesson: Decomposition Enables Inference
 
-### Lesson: Decomposition Eliminates Quantifiers and Enables Inference
+Am I cheating? After all, what prevents Dafny from 
+*inferring* the same post-condition as LH? 
 
-Am I cheating? After all, what prevents Dafny from *inferring* the same 
-post-condition as LH? Once again, those cursed quantifiers. 
+Once again, quantifiers are the villain.
 
 There have been many decades worth of papers on the 
 topic of inferring quantified invariants, but save 
@@ -226,7 +227,6 @@ away, even an extremely basic approach called
 [Monomial Predicate Abstraction][graf-saidi], 
 or more snappily, [Houdini][houdini], suffices 
 to infer the above liquid type.
-
 
 ## Example 2: Properties of Structures
 
@@ -246,18 +246,19 @@ of a list. The definitions are mostly identical, except for the green
 <div class="row-fluid">
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_2_1.png"
-       alt="A list data type in Dafny (L) and LiquidHaskell (R)" height="200">
+       height="200">
+  <br>A function defining the size of a list in Dafny (L) and LiquidHaskell (R)<br>
   </div>
 </div>
 
-#### Floyd-Hoare Logic
+**Floyd-Hoare Logic**
 
 SMT solvers are restricted to a set of _ground_ theories and hence,
-do not "natively" understand user-defined functions. Thus, the verifer 
-must _teach_ them how to reason about formulas (VCs) containing uses 
-of user-defined functions like `size`. In the classical Floyd-Hoare 
-approach, this is done by converting the definition of `size` into 
-a universally quantified _axiom_ like:
+do not "natively" understand user-defined functions. Instead, the 
+verifer must _teach_ the SMT solver how to reason about formulas (VCs) 
+containing uses of user-defined functions like `size`. 
+In the classical Floyd-Hoare approach, this is done by converting 
+the definition of `size` into a universally quantified _axiom_ like:
 
 ```
 size Nil == 0  && forall h, t :: size (Cons h t) = 1 + size t
@@ -265,7 +266,7 @@ size Nil == 0  && forall h, t :: size (Cons h t) = 1 + size t
 
 A quantifier! By the pricking of my thumbs, something wicked this way comes...
 
-#### Liquid/Refinement Types
+**Liquid/Refinement Types**
 
 With a more _type-centric_ view, we can think of the recursive 
 function `size` as a way to _decorate_ or _refine_ the types of 
@@ -299,11 +300,12 @@ is indeed `2`:
 <div class="row-fluid">
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_2_2.png"
-       alt="A list data type in Dafny (L) and LiquidHaskell (R)" height="200">
+       height="200">
+  <br>Verifying the size of a list in Dafny (L) and LiquidHaskell (R)<br>
   </div>
 </div>
 
-#### Floyd-Hoare Logic
+**Floyd-Hoare Logic**
 
 To get Dafny to verifier to sign off on the `assert (size(pos) == 2)` 
 we have to add a mysterious _extra assertion_ that checks the size of 
@@ -318,7 +320,7 @@ guessing this intermediate assertion, which effectively "adds" the
 fact that the size of the intermediate list is 1, thereby letting 
 the SMT solver prove the second assertion.
 
-#### Liquid/Refinement Types
+**Liquid/Refinement Types**
 
 In contrast, with types, the solver is able to verify the code without 
 batting an eyelid. But how could it possibly do so even though we kept 
@@ -333,9 +335,9 @@ for all sub-expressions:
 
 ```
 test x1 = 
-   let t0  = Nil                
-       t1  = Cons x1 t0 
-       pos = Cons  0 t1
+   let tmp0 = Nil                
+       tmp1 = Cons x1 tmp0 
+       pos  = Cons  0 tmp1
    in 
       assert (size pos == 2)
 ```
@@ -344,26 +346,29 @@ And now, just by the rules of type checking, and applying the types
 of the constructors, it deduces that:
 
 ```
-   t0 :: {size t0 == 0}
-   t1 :: {size t1 == 1 + size t0}
-   t2 :: {size t2 == 1 + size t1}
+   tmp0 :: {size tmp0 == 0}
+   tmp1 :: {size tmp1 == 1 + size tmp0}
+   pos  :: {size pos  == 1 + size tmp1}
 ```
 
-which lets the SMT solver prove that `size t2 == 2` without even 
-requiring any axiomatic description of `size`. It turns out that 
-this simple `measure` method goes a very long way in specifying 
-and verifying a [large class of properties][haskell14].
+which lets the SMT solver prove that `size pos == 2` without 
+requiring any axiomatic description of `size`. This simple 
+`measure` method goes a very long way in specifying and 
+verifying [lots of properties][haskell14].
 
-### Lesson: Decomposition Eliminates Axioms Enables Type-Directed Instantiation 
+### Lesson: Decomposition Enables Type-Directed Instantiation 
 
 I'd like to emphasize again that this trick was enabled 
-simply by taking a type-centric view: encode the function 
-semantics in _data constructors_, and let the type checking 
-do the *instantiation*. It could easily by incorporated 
-inside and work together with axioms in Floyd-Hoare based 
-systems like Dafny. Of course, the trick is limited to 
-a restricted class of functions, but one can generalize 
-the method quite a bit using the idea of [logical evaluation][popl18].
+by the type-centric view: encode the function semantics 
+in _data constructors_, and let the type checking (or VC 
+generation) do the *instantiation*. 
+
+It could easily by incorporated inside and work together 
+with axioms in Floyd-Hoare based systems like Dafny. 
+Of course, this approach is limited to a restricted class 
+of functions -- roughly, case-splits over a single data type's 
+constructors --  but we can generalize the method quite 
+a bit using the idea of [logical evaluation][popl18].
 
 ## Summary
 
@@ -385,19 +390,21 @@ reasoning about quantifiers into the type system.
   to instantiate them. 
 
 As you might imagine, the benefits are even more pronounced when
-working with higher-order functions, e.g. iterating over containers...
+working with higher-order functions, e.g. `map`-ing or `fold`-ing 
+over containers...
 
 ### Acknowledgments
 
 Huge thanks to
-[Rustan Leino](http://leino.science/)
-[Nadia Polikarpova](https://cseweb.ucsd.edu/~npolikarpova/)
-[Daniel Ricketts](http://cseweb.ucsd.edu/~daricket/)
-[Hillel Wayne](https://twitter.com/hillelogram) 
-[Zizz Vonnegut](https://twitter.com/zizzivon)
+[Rustan Leino][rustan],
+[Nadia Polikarpova](https://cseweb.ucsd.edu/~npolikarpova/),
+[Daniel Ricketts](http://cseweb.ucsd.edu/~daricket/),
+[Hillel Wayne](https://twitter.com/hillelogram), and
+[Zizz Vonnegut](https://twitter.com/zizzivon) 
 for patiently answering my many questions about Dafny! 
 
 
+[rustan]:  http://leino.science/
 [lh]: https://github.com/ucsd-progsys/liquidhaskell
 [dafny]: https://github.com/dafny-lang/dafny
 [nelson-wiki]: https://en.wikipedia.org/wiki/Greg_Nelson_(computer_scientist)
