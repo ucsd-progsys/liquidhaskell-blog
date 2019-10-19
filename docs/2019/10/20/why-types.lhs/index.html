@@ -422,12 +422,12 @@ Verifying the size of a list in Dafny (L) and LiquidHaskell (R)
 <li><p>In the first case, when reasoning about <em>data</em> in containers, the polymorphic type constructor <code>List</code> provided an natural way to reason about the fact that <em>all</em> elements in a container satisfied some property.</p></li>
 <li><p>In the second case, when reasoning about the <em>structure</em> of the container via a recursive function, the types of the data constructors allowed us to factor the instantiation of properties of <code>size</code> at places where the list was constructed (and dually, not shown, destructed) without burdening the SMT solver with any axioms and the pressure of figuring out where to instantiate them.</p></li>
 </ul>
-<p>To conclude I’d like to reiterate that the point is <em>not</em> that types and program logics are at odds with each other. Instead, the lesson is that while classical Floyd-Hoare logic associates invariants with <em>program</em> positions, Liquid/Refinement types are a <em>generalization</em> that additionally let you associate invariants with <em>type</em> positions. This generalization lets us exploit</p>
+<p>To conclude I’d like to reiterate that the point is <em>not</em> that types and program logics are at odds with each other. Instead, the lesson is that while classical Floyd-Hoare logic associates invariants with <em>program</em> positions, Liquid/Refinement types are a <em>generalization</em> that additionally let you associate invariants with <em>type</em> positions, which lets us exploit</p>
 <ul>
-<li>types as program logic, and</li>
+<li>types as a program logic, and</li>
 <li>syntax-directed typing rules as a decision procedure,</li>
 </ul>
-<p>that, in many common situations, simplify verification by decomposing proof obligations (VCs) into simple, quantifier-free, SMT-friendly formulas. As you might imagine, the benefits are even more pronounced when working with higher-order functions, e.g. <code>map</code>-ing or <code>fold</code>-ing over containers…</p>
+<p>that, in many common situations, simplify verification by decomposing proof obligations (VCs) into simple, quantifier-free, SMT-friendly formulas. As you might imagine, the benefits are magnified when working with higher-order functions, e.g. <code>map</code>-ing or <code>fold</code>-ing over containers…</p>
 <h3 id="acknowledgments">Acknowledgments</h3>
 <p>Huge thanks to <a href="http://leino.science/">Rustan Leino</a>, <a href="https://cseweb.ucsd.edu/~npolikarpova/">Nadia Polikarpova</a>, <a href="http://cseweb.ucsd.edu/~daricket/">Daniel Ricketts</a>, <a href="https://twitter.com/hillelogram">Hillel Wayne</a>, and <a href="https://twitter.com/zizzivon">Zizz Vonnegut</a> for patiently answering my many questions about Dafny!</p>
                 <hr>

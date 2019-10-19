@@ -419,16 +419,16 @@ Instead, the lesson is that while classical
 Floyd-Hoare logic associates invariants with *program* 
 positions, Liquid/Refinement types are a *generalization* 
 that additionally let you associate invariants with 
-*type* positions. This generalization lets us exploit
+*type* positions, which lets us exploit
 
-* types as program logic, and
+* types as a program logic, and
 * syntax-directed typing rules as a decision procedure,
 
 that, in many common situations, simplify verification by 
 decomposing proof obligations (VCs) into simple, quantifier-free, 
 SMT-friendly formulas. As you might imagine, the benefits 
-are even more pronounced when working with higher-order 
-functions, e.g. `map`-ing or `fold`-ing over containers...
+are magnified when working with higher-order functions, 
+e.g. `map`-ing or `fold`-ing over containers...
 
 ### Acknowledgments
 
