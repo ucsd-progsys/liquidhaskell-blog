@@ -76,8 +76,13 @@
 <p>Consider the following standard definition of a <code>List</code> datatype in Dafny (left) and LH (right).</p>
 <div class="row-fluid">
 <div class="span12 pagination-centered">
+<figure>
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_1.png"
-       height="200"> <br><b>Fig 1: </b>A list data type in Dafny (L) and LiquidHaskell (R) <br>
+         height="200">
+<figcaption>
+A list data type in Dafny (L) and LiquidHaskell (R)
+</figcaption>
+</figure>
 </div>
 </div>
 <p>(You can see the full definitions for <a href="https://rise4fun.com/Dafny/tkfQ">Dafny</a> and <a href="FIXME">LiquidHaskell</a>.)</p>
@@ -85,8 +90,13 @@
 <p>The two descriptions are more or less the same except for some minor issues of concrete syntax. However, next consider the respective implementations of a function to access the <code>ith</code> element of a <code>List</code>. We also pass in a <code>def</code>ault value returned when the index <code>i</code> is <em>invalid</em>.</p>
 <div class="row-fluid">
 <div class="span12 pagination-centered">
+<figure>
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_2.png"
-       height="200"> <br><b>Fig 2: </b>Accessing the i-th element of a list in Dafny(L) and LiquidHaskell(R)<br>
+       height="200">
+<figcaption>
+Accessing the i-th element of a list in Dafny(L) and LiquidHaskell(R)
+</figcaption>
+</figure>
 </div>
 </div>
 <p>It is (usually) silly to access lists in this fashion. I use this example merely to illustrate the common case of defining a <em>container</em> structure (here, <code>List</code>) and then <em>accessing</em> its contents (here, <code>ith</code>). As such, we’d like to <em>specify</em> that the value returned by the <code>ith</code> element is indeed in the container <em>or</em> is the <code>def</code>ault.</p>
@@ -106,8 +116,13 @@
 <p>Next, lets extend our example to illustrate the common situation where we want some <em>invariant</em> to be true for <em>all</em> the values in a container. To this end, let us write a function <code>mkList</code> that <em>builds</em> a container with values <code>k+1</code>,…,<code>k+n</code> and then <em>test</em> that when <code>k</code> is non-negative, any arbitrarily chosen value from the container is indeed strictly positive.</p>
 <div class="row-fluid">
 <div class="span12 pagination-centered">
+<figure>
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_3.png"
-       height="200"> <br><b>Fig 3: </b>Building and accessing a list in Dafny (L) and LiquidHaskell(R)<br>
+       height="200">
+<figcaption>
+Building and accessing a list in Dafny (L) and LiquidHaskell(R)
+</figcaption>
+</figure>
 </div>
 </div>
 <p>The code in Dafny and LH is more or less the same, except for one crucial difference.</p>
@@ -133,8 +148,13 @@
 <p>Lets write the usual <em>recursive</em> function that computes the <code>size</code> of a list. The definitions are mostly identical, except for the green <code>measure</code> highlight that we will discuss below.</p>
 <div class="row-fluid">
 <div class="span12 pagination-centered">
+<figure>
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_2_1.png"
-       height="200"> <br><b>Fig 4: </b>A function defining the size of a list in Dafny (L) and LiquidHaskell (R)<br>
+       height="200">
+<figcaption>
+A function defining the size of a list in Dafny (L) and LiquidHaskell (R)
+</figcaption>
+</figure>
 </div>
 </div>
 <p><strong>Floyd-Hoare Logic</strong></p>
@@ -151,8 +171,13 @@
 <p>Next, lets see what happens when we write a simple test that builds a small list with two elements and <code>assert</code>s that the lists <code>size</code> is indeed <code>2</code>:</p>
 <div class="row-fluid">
 <div class="span12 pagination-centered">
+<figure>
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_2_2.png"
-       height="200"> <br><b>Fig 5: </b>Verifying the size of a list in Dafny (L) and LiquidHaskell (R)<br>
+       height="200">
+<figcaption>
+Verifying the size of a list in Dafny (L) and LiquidHaskell (R)
+</figcaption>
+</figure>
 </div>
 </div>
 <p><strong>Floyd-Hoare Logic</strong></p>
