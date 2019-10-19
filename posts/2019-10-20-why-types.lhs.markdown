@@ -293,7 +293,7 @@ versions for the types of the constructors `Nil` and `Cons`,
 so its as if we had defined the list type as two constructor 
 functions
 
-```
+```haskell
 data List a where
   Cons :: h:a -> t:List a -> {v:List a | size v == 1 + size t}
   Nil  :: {v:List a | size v == 0} 
@@ -353,7 +353,7 @@ In particular, LH internally views the code for `test` in A-Normal Form
 which is a fancy way of saying, by introducing temporary variables 
 for all sub-expressions: 
 
-```
+```haskell
 test x1 = 
    let tmp0 = Nil                
        tmp1 = Cons x1 tmp0 
@@ -365,7 +365,7 @@ test x1 = 
 And now, just by the rules of type checking, and applying the types 
 of the constructors, it deduces that:
 
-```
+```haskell
    tmp0 :: {size tmp0 == 0}
    tmp1 :: {size tmp1 == 1 + size tmp0}
    pos  :: {size pos  == 1 + size tmp1}

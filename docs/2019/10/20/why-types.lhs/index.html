@@ -374,9 +374,9 @@ A function defining the size of a list in Dafny (L) and LiquidHaskell (R)
 <p>A quantifier! By the pricking of my thumbs, something wicked this way comes…</p>
 <p><strong>Liquid/Refinement Types</strong></p>
 <p>With a more <em>type-centric</em> view, we can think of the recursive function <code>size</code> as a way to <em>decorate</em> or <em>refine</em> the types of the <em>data constructors</em>. So, when you write the definition in the green box above, specifically when you add the <code>measure</code> annotation, the function is converted to <em>strengthened</em> versions for the types of the constructors <code>Nil</code> and <code>Cons</code>, so its as if we had defined the list type as two constructor functions</p>
-<pre><code>data List a where
-  Cons :: h:a -&gt; t:List a -&gt; {v:List a | size v == 1 + size t}
-  Nil  :: {v:List a | size v == 0} </code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb5-1" title="1"><span class="kw">data</span> <span class="dt">List</span> a <span class="kw">where</span></a>
+<a class="sourceLine" id="cb5-2" title="2">  <span class="dt">Cons</span><span class="ot"> ::</span> h<span class="op">:</span>a <span class="ot">-&gt;</span> t<span class="op">:</span><span class="dt">List</span> a <span class="ot">-&gt;</span> {v<span class="op">:</span><span class="dt">List</span> a <span class="op">|</span> size v <span class="op">==</span> <span class="dv">1</span> <span class="op">+</span> size t}</a>
+<a class="sourceLine" id="cb5-3" title="3">  <span class="dt">Nil</span><span class="ot">  ::</span> {v<span class="op">:</span><span class="dt">List</span> a <span class="op">|</span> size v <span class="op">==</span> <span class="dv">0</span>} </a></code></pre></div>
 <p>That is, the bodies of the measures get translated to refinements on the output types of the corresponding constructors. After this, the SMT solver “knows nothing” about the semantics of <code>size</code>, except that it is a function. In logic-speak, <code>size</code> is <strong>uninterpreted</strong> in the refinement, and there are no quantified axioms. That is, we choose to keep SMT solver blissfully ignorant about the semantics of <code>size</code>. How could this possibly be a good thing?</p>
 <h3 id="verifying-the-size-of-a-list">Verifying the <code>size</code> of a List</h3>
 <p>Next, lets see what happens when we write a simple test that builds a small list with two elements and <code>assert</code>s that the lists <code>size</code> is indeed <code>2</code>:</p>
@@ -398,16 +398,16 @@ Verifying the size of a list in Dafny (L) and LiquidHaskell (R)
 <p>In contrast, with types, the solver is able to verify the code without batting an eyelid. But how could it possibly do so even though we kept it ignorant of the semantics of <code>size</code>?</p>
 <p>Because types decompose reasoning. In particular, here, the measure and constructor trick lets us <em>factor reasoning about <code>size</code> into the type system</em>.</p>
 <p>In particular, LH internally views the code for <code>test</code> in A-Normal Form which is a fancy way of saying, by introducing temporary variables for all sub-expressions:</p>
-<pre><code>test x1 = 
-   let tmp0 = Nil                
-       tmp1 = Cons x1 tmp0 
-       pos  = Cons  0 tmp1
-   in 
-      assert (size pos == 2)</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1">test x1 <span class="ot">=</span> </a>
+<a class="sourceLine" id="cb6-2" title="2">   <span class="kw">let</span> tmp0 <span class="ot">=</span> <span class="dt">Nil</span>                </a>
+<a class="sourceLine" id="cb6-3" title="3">       tmp1 <span class="ot">=</span> <span class="dt">Cons</span> x1 tmp0 </a>
+<a class="sourceLine" id="cb6-4" title="4">       pos  <span class="ot">=</span> <span class="dt">Cons</span>  0 tmp1</a>
+<a class="sourceLine" id="cb6-5" title="5">   <span class="kw">in</span> </a>
+<a class="sourceLine" id="cb6-6" title="6">      assert (size pos <span class="op">==</span> <span class="dv">2</span>)</a></code></pre></div>
 <p>And now, just by the rules of type checking, and applying the types of the constructors, it deduces that:</p>
-<pre><code>   tmp0 :: {size tmp0 == 0}
-   tmp1 :: {size tmp1 == 1 + size tmp0}
-   pos  :: {size pos  == 1 + size tmp1}</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb7-1" title="1"><span class="ot">   tmp0 ::</span> {size tmp0 <span class="op">==</span> <span class="dv">0</span>}</a>
+<a class="sourceLine" id="cb7-2" title="2"><span class="ot">   tmp1 ::</span> {size tmp1 <span class="op">==</span> <span class="dv">1</span> <span class="op">+</span> size tmp0}</a>
+<a class="sourceLine" id="cb7-3" title="3"><span class="ot">   pos  ::</span> {size pos  <span class="op">==</span> <span class="dv">1</span> <span class="op">+</span> size tmp1}</a></code></pre></div>
 <p>which lets the SMT solver prove that <code>size pos == 2</code> without requiring any axiomatic description of <code>size</code>. This simple <code>measure</code> method goes a very long way in specifying and verifying <a href="http://goto.ucsd.edu/~rjhala/papers/real_world_liquid.pdf">lots of properties</a>.</p>
 <h3 id="lesson-decomposition-enables-type-directed-instantiation">Lesson: Decomposition Enables Type-Directed Instantiation</h3>
 <p>I’d like to emphasize again that this trick was enabled by the type-centric view: encode the function semantics in <em>data constructors</em>, and let the type checking (or VC generation) do the <em>instantiation</em>.</p>
