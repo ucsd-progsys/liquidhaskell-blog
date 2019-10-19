@@ -150,7 +150,7 @@ there must be some mistake? Look again: the _type signature_
 says everything we need:
 
 > If you call `ith` with a list of `a` values and a default `a` value
-> then you will get back an `a` value".
+> then you get an `a` value".
 
 That is _parametricity_ removes the overhead of using an 
 explicit `elements` function.

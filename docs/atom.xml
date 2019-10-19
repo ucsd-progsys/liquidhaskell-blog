@@ -99,7 +99,7 @@
 <p><strong>Liquid/Refinement Types</strong></p>
 <p>In contrast, the liquid/refinement version is quite spare: there <em>is</em> no extra specification beyond the code. Surely there must be some mistake? Look again: the <em>type signature</em> says everything we need:</p>
 <blockquote>
-<p>If you call <code>ith</code> with a list of <code>a</code> values and a default <code>a</code> value then you will get back an <code>a</code> value".</p>
+<p>If you call <code>ith</code> with a list of <code>a</code> values and a default <code>a</code> value then you get an <code>a</code> value".</p>
 </blockquote>
 <p>That is <em>parametricity</em> removes the overhead of using an explicit <code>elements</code> function.</p>
 <h3 id="building-a-list">Building a list</h3>
