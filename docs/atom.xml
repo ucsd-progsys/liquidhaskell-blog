@@ -51,13 +51,13 @@
 
             <br>
 			            <p>Several folks who are experts in the program verification literature have asked me some variant of the following question:</p>
-<pre><code>  How are *Liquid/Refinement* types different from *Floyd-Hoare logics*?</code></pre>
+<blockquote>
+<p>How are <em>Liquid/Refinement</em> types different from <em>Floyd-Hoare logics</em>?</p>
+</blockquote>
 <p>This question always reminds me of <a href="https://yanniss.github.io/">Yannis Smaragdakis’</a> clever limerick:</p>
-<pre><code>  No idea is too obvious or dreary, 
-  If appropriately expressed in type theory, 
-  It&#39;s a research advance, 
-  That no one understands, 
-  But they are all too impressed to be leery.</code></pre>
+<blockquote>
+<p>No idea is too obvious or dreary, If appropriately expressed in type theory, It’s a research advance, That no one understands, But they are all too impressed to be leery.</p>
+</blockquote>
 <p>That is, the above question can be rephrased as: why bother with the hassle of encoding properties in <em>types</em> when good old-fashioned <em>assertions</em>, <em>pre</em>- and <em>post</em>-conditions would do? Is it just a marketing gimmick to make readers too impressed to be leery?</p>
 <h2 id="the-problem-quantifiers">The Problem: Quantifiers</h2>
 <p>The main <em>algorithmic</em> problem with classical Floyd-Hoare logic is that to do useful things, you need to use <strong>universally quantified</strong> logical formulas inside invariants, pre- and post-conditions.</p>
@@ -67,7 +67,9 @@
 <p>the solver doesn’t know which particular terms <code>e1</code>, <code>e2</code> or <code>e3</code> to <strong>instantiate</strong> the fact at. That is, the solver doesn’t know which <code>P(e1)</code> or <code>P(e2)</code> or <code>P(e3)</code> it should work with to prove some given goal. At best, it can make some educated guesses, or use hints from the user, but these heuristics can turn out to be <a href="https://www.semanticscholar.org/paper/Trigger-Selection-Strategies-to-Stabilize-Program-Leino-Pit-Claudel/ca873df7c3172ab96dfc0d808e1654077c92064d">quite brittle</a> as the underlying logics are undecidable in general. To make verification predictable, we really want to ensure that the VCs remain decidable, and to do so, we must steer clear of the precipice of quantification.</p>
 <h2 id="the-solution-types">The Solution: Types</h2>
 <p>The great thing about types, as any devotee will tell you, is that the <em>compose</em>. Regrettably, that statement is only comprehensible to believers. I prefer to think of it differently: types <em>decompose</em>. To be precise:</p>
-<p>Types <em>decompose</em> quantified assertions into quantifier-free refinements.</p>
+<blockquote>
+<p><strong>Types <em>decompose</em> quantified assertions into quantifier-free refinements.</strong></p>
+</blockquote>
 <p>Let me make my point with some examples that show what verification looks like when using Refinement Types (as implemented in <a href="https://github.com/ucsd-progsys/liquidhaskell">LiquidHaskell</a>) vs Floyd-Hoare style contracts (as implemented in <a href="https://github.com/dafny-lang/dafny">Dafny</a>).</p>
 <p>The goal of this exercise is to illustrate how types help with verification, not to compare the tools LH and Dafny. In particular, Dafny could profit from refinement types, and LH could benefit from the many clever ideas embodied within Dafny.</p>
 <h2 id="example-1-properties-of-data">Example 1: Properties of Data</h2>
@@ -75,7 +77,7 @@
 <div class="row-fluid">
 <div class="span12 pagination-centered">
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_1.png"
-       height="200"> <br> A list data type in Dafny (L) and LiquidHaskell (R) <br>
+       height="200"> <br><b>Fig 1: </b>A list data type in Dafny (L) and LiquidHaskell (R) <br>
 </div>
 </div>
 <p>(You can see the full definitions for <a href="https://rise4fun.com/Dafny/tkfQ">Dafny</a> and <a href="FIXME">LiquidHaskell</a>.)</p>
@@ -84,10 +86,10 @@
 <div class="row-fluid">
 <div class="span12 pagination-centered">
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_2.png"
-       height="200"> <br>Accessing the i-th element of a list in Dafny(L) and LiquidHaskell(R)<br>
+       height="200"> <br><b>Fig 2: </b>Accessing the i-th element of a list in Dafny(L) and LiquidHaskell(R)<br>
 </div>
 </div>
-<p>It is (usually) silly to access lists in this fashion. I use this example merely to illustrate the common case of defining a <em>container</em> structure (here, <code>List</code>) and then <em>accessing</em> its contents (here, <code>ith</code>). As such, we’d like to *specify** that the value returned by the <code>ith</code> element is indeed in the container <em>or</em> is the <code>def</code>ault.</p>
+<p>It is (usually) silly to access lists in this fashion. I use this example merely to illustrate the common case of defining a <em>container</em> structure (here, <code>List</code>) and then <em>accessing</em> its contents (here, <code>ith</code>). As such, we’d like to <em>specify</em> that the value returned by the <code>ith</code> element is indeed in the container <em>or</em> is the <code>def</code>ault.</p>
 <p><strong>Floyd-Hoare Logic</strong></p>
 <p>With classical Floyd-Hoare logic, as shown in the Dafny listing on the left, we must spell out the specification quite explicitly. The programmer must write an <code>elements</code> function that describes the <em>set</em> of values in the container, and then the <em>post-condition</em> of <code>ith</code> states that the <code>res</code> is either in that set or the default.</p>
 <p>While this specification seems simple enough, we are already on dicey terrain: how are we to encode the semantics of the user-defined function <code>elements</code> to the SMT solver? In the classical Floyd-Hoare approach, we must use a <em>quantified invariant</em> of the form:</p>
@@ -105,7 +107,7 @@
 <div class="row-fluid">
 <div class="span12 pagination-centered">
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_3.png"
-       height="200"> <br>Building and accessing a list in Dafny (L) and LiquidHaskell(R)<br>
+       height="200"> <br><b>Fig 3: </b>Building and accessing a list in Dafny (L) and LiquidHaskell(R)<br>
 </div>
 </div>
 <p>The code in Dafny and LH is more or less the same, except for one crucial difference.</p>
@@ -114,7 +116,7 @@
 <p>“<strong>for all</strong> <code>v</code> <em>if</em> <code>v</code> is in the elements of the <code>res</code>ult, <em>then</em> <code>v</code> is greater than <code>k</code>”</p>
 <p><strong>Liquid/Refinement Types</strong></p>
 <p>Regardless of my personal feelings about quantifiers, we can agree that the version on the right is simpler as types make it unnecessary to mention <code>elements</code> or <code>forall</code>. Instead, LH <em>infers</em></p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb5-1" title="1">mkList <span class="ot">::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> k<span class="op">:</span><span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">List</span> {v<span class="op">:</span><span class="dt">Int</span> <span class="op">|</span> k <span class="op">&lt;</span> v}</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" title="1">mkList <span class="ot">::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> k<span class="op">:</span><span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">List</span> {v<span class="op">:</span><span class="dt">Int</span> <span class="op">|</span> k <span class="op">&lt;</span> v}</a></code></pre></div>
 <p>That is, that the output type of <code>mkList</code> is a list of values <code>v</code> that are all greater than <code>k</code>. The scary <em>forall</em> has been replaced by the friendly <em>type constructor</em> <code>List</code>. In other words, types allow us to <em>decompose</em> the monolithic universally quantified invariant into:</p>
 <ol type="1">
 <li>a <em>quantifier-free</em> refinement <code>k &lt; v</code>, and</li>
@@ -132,7 +134,7 @@
 <div class="row-fluid">
 <div class="span12 pagination-centered">
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_2_1.png"
-       height="200"> <br>A function defining the size of a list in Dafny (L) and LiquidHaskell (R)<br>
+       height="200"> <br><b>Fig 4: </b>A function defining the size of a list in Dafny (L) and LiquidHaskell (R)<br>
 </div>
 </div>
 <p><strong>Floyd-Hoare Logic</strong></p>
@@ -150,7 +152,7 @@
 <div class="row-fluid">
 <div class="span12 pagination-centered">
 <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_2_2.png"
-       height="200"> <br>Verifying the size of a list in Dafny (L) and LiquidHaskell (R)<br>
+       height="200"> <br><b>Fig 5: </b>Verifying the size of a list in Dafny (L) and LiquidHaskell (R)<br>
 </div>
 </div>
 <p><strong>Floyd-Hoare Logic</strong></p>

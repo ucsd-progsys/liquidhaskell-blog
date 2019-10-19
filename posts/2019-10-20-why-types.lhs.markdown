@@ -12,15 +12,15 @@ demo: TypesVLogic.hs
 Several folks who are experts in the program verification 
 literature have asked me some variant of the following question: 
 
-      How are *Liquid/Refinement* types different from *Floyd-Hoare logics*?
+> How are *Liquid/Refinement* types different from *Floyd-Hoare logics*?
 
 This question always reminds me of [Yannis Smaragdakis'](https://yanniss.github.io/) clever limerick:
 
-      No idea is too obvious or dreary, 
-      If appropriately expressed in type theory, 
-      It's a research advance, 
-      That no one understands, 
-      But they are all too impressed to be leery.
+> No idea is too obvious or dreary, 
+> If appropriately expressed in type theory, 
+> It's a research advance, 
+> That no one understands, 
+> But they are all too impressed to be leery.
 
 That is, the above question can be rephrased as: why bother with 
 the hassle of encoding properties in *types* when good old-fashioned 
@@ -64,7 +64,7 @@ is that the *compose*. Regrettably, that statement is only
 comprehensible to believers. I prefer to think of it 
 differently: types *decompose*. To be precise:
 
-Types *decompose* quantified assertions into quantifier-free refinements.
+> **Types *decompose* quantified assertions into quantifier-free refinements.**
 
 Let me make my point with some examples that show what verification 
 looks like when using Refinement Types (as implemented in [LiquidHaskell][lh]) vs 
@@ -85,7 +85,7 @@ in Dafny (left) and LH (right).
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_1.png"
        height="200">
-  <br> A list data type in Dafny (L) and LiquidHaskell (R) <br> 
+  <br><b>Fig 1: </b>A list data type in Dafny (L) and LiquidHaskell (R) <br> 
   </div>
 </div>
 
@@ -103,7 +103,7 @@ when the index `i` is _invalid_.
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_2.png"
        height="200">
-  <br>Accessing the i-th element of a list in Dafny(L) and LiquidHaskell(R)<br>
+  <br><b>Fig 2: </b>Accessing the i-th element of a list in Dafny(L) and LiquidHaskell(R)<br>
   </div>
 </div>
 
@@ -111,7 +111,7 @@ It is (usually) silly to access lists in this fashion.
 I use this example merely to illustrate the common case
 of defining a _container_ structure (here, `List`) and 
 then _accessing_ its contents (here, `ith`). 
-As such, we'd like to *specify** that the value returned 
+As such, we'd like to *specify* that the value returned 
 by the `ith` element is indeed in the container _or_ is 
 the `def`ault.
 
@@ -169,7 +169,7 @@ the container is indeed strictly positive.
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_1_3.png"
        height="200">
-  <br>Building and accessing a list in Dafny (L) and LiquidHaskell(R)<br>
+  <br><b>Fig 3: </b>Building and accessing a list in Dafny (L) and LiquidHaskell(R)<br>
   </div>
 </div>
 
@@ -247,7 +247,7 @@ of a list. The definitions are mostly identical, except for the green
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_2_1.png"
        height="200">
-  <br>A function defining the size of a list in Dafny (L) and LiquidHaskell (R)<br>
+  <br><b>Fig 4: </b>A function defining the size of a list in Dafny (L) and LiquidHaskell (R)<br>
   </div>
 </div>
 
@@ -301,7 +301,7 @@ is indeed `2`:
   <div class="span12 pagination-centered">
   <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/why_types_2_2.png"
        height="200">
-  <br>Verifying the size of a list in Dafny (L) and LiquidHaskell (R)<br>
+  <br><b>Fig 5: </b>Verifying the size of a list in Dafny (L) and LiquidHaskell (R)<br>
   </div>
 </div>
 
