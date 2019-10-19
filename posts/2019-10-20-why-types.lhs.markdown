@@ -17,9 +17,13 @@ literature have asked me some variant of the following question:
 This question always reminds me of [Yannis Smaragdakis'](https://yanniss.github.io/) clever limerick:
 
 > No idea is too obvious or dreary, 
+>
 > If appropriately expressed in type theory, 
+>
 > It's a research advance, 
+>
 > That no one understands, 
+>
 > But they are all too impressed to be leery.
 
 That is, the above question can be rephrased as: why bother with 
