@@ -413,24 +413,22 @@ reasoning about quantifiers into the type system.
   solver with any axioms and the pressure of figuring out where 
   to instantiate them. 
 
-Stepping back from these examples, I'd like to reiterate that 
-the point is *not* that types and program logics are at odds 
-with each other. Instead, the lesson is that classical 
-Floyd-Hoare logic, associates invariants with *program* 
-positions, and that Liquid/Refinement types are a 
-*generalization* that _also_ let you associate 
-invariants with *type* positions. This generalization 
-lets us exploit and profit from the fact that 
+To conclude I'd like to reiterate that the point is *not* 
+that types and program logics are at odds with each other. 
+Instead, the lesson is that while classical 
+Floyd-Hoare logic associates invariants with *program* 
+positions, Liquid/Refinement types are a *generalization* 
+that additionally let you associate invariants with 
+*type* positions. This generalization lets us exploit
 
-* types are a kind of program logic, and
-* syntax-directed typing rules are a kind of decision procedure,
+* types as program logic, and
+* syntax-directed typing rules as a decision procedure,
 
-that, in many common situations, allow decomposing verification 
-into simple, quantifier-free, SMT-friendly formulas. 
-
-As you might imagine, the benefits are even more pronounced when
-working with higher-order functions, e.g. `map`-ing or `fold`-ing 
-over containers...
+that, in many common situations, simplify verification by 
+decomposing proof obligations (VCs) into simple, quantifier-free, 
+SMT-friendly formulas. As you might imagine, the benefits 
+are even more pronounced when working with higher-order 
+functions, e.g. `map`-ing or `fold`-ing over containers...
 
 ### Acknowledgments
 
