@@ -8,8 +8,198 @@
         <name>Ranjit Jhala</name>
         <email>rjhala@eng.ucsd.edu</email>
     </author>
-    <updated>2019-10-21T00:00:00Z</updated>
+    <updated>2020-04-12T00:00:00Z</updated>
     <entry>
+    <title>Polymorphic Perplexion</title>
+    <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2020/04/12/polymorphic-perplexion.lhs" />
+    <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2020/04/12/polymorphic-perplexion.lhs</id>
+    <published>true</published>
+    <updated>2020-04-12T00:00:00Z</updated>
+    <summary type="html"><![CDATA[<!-- Post Header -->
+<header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Polymorphic Perplexion</h1>
+                    
+                    <span class="meta">
+		    
+			Posted by Ranjit Jhala
+		    
+			Apr 12, 2020
+		    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="/tags/basic.html">basic</a>
+              
+            </div>
+
+            <br>
+			            <p>Polymorphism plays a vital role in automating verification in LH. However, thanks to its ubiquity, we often take it for granted, and it can be quite baffling to figure out why verification fails with monomorphic signatures. Let me explain why, using a simple example that has puzzled me and other users several times.</p>
+<!-- more -->
+<div class="hidden">
+<pre><span class=hs-linenum>22: </span>
+<span class=hs-linenum>23: </span><span class='hs-keyword'>module</span> <span class='hs-conid'>PolymorphicPerplexion</span> <span class='hs-keyword'>where</span>
+</pre>
+</div>
+<h2 id="a-type-for-ordered-lists">A Type for Ordered Lists</h2>
+<p><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/2013/07/29/putting-things-in-order.lhs/">Previously</a> we have seen how you can use LH to define a type of lists whose values are in increasing (ok, non-decreasing!) order.</p>
+<p>First, we define an <code>IncList a</code> type, with <code>Emp</code> (“empty”) and <code>:&lt;</code> (“cons”) constructors.</p>
+<pre><span class=hs-linenum>38: </span><span class='hs-keyword'>data</span> <span class='hs-conid'>IncList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Emp</span>
+<span class=hs-linenum>39: </span>               <span class='hs-keyglyph'>|</span> <span class='hs-layout'>(</span><span class='hs-conop'>:&lt;</span><span class='hs-layout'>)</span> <span class='hs-layout'>{</span> <span class='hs-varid'>hd</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>a</span><span class='hs-layout'>,</span> <span class='hs-varid'>tl</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IncList</span> <span class='hs-varid'>a</span> <span class='hs-layout'>}</span>
+<span class=hs-linenum>40: </span>
+<span class=hs-linenum>41: </span><span class='hs-keyword'>infixr</span> <span class='hs-num'>9</span> <span class='hs-conop'>:&lt;</span>
+</pre>
+<p>Next, we refine the type to specify that each “cons” <code>:&lt;</code> constructor takes as input a <code>hd</code> and a <code>tl</code> which must be an <code>IncList a</code> of values <code>v</code> each of which is greater than <code>hd</code>.</p>
+<pre><span class=hs-linenum>50: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>data</span> <span class='hs-conid'>IncList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Emp</span> 
+<span class=hs-linenum>51: </span>                   <span class='hs-keyglyph'>|</span> <span class='hs-layout'>(</span><span class='hs-conop'>:&lt;</span><span class='hs-layout'>)</span> <span class='hs-layout'>{</span> <span class='hs-varid'>hd</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>a</span><span class='hs-layout'>,</span> <span class='hs-varid'>tl</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IncList</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span><span class='hs-conop'>:</span><span class='hs-varid'>a</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>hd</span> <span class='hs-varop'>&lt;=</span> <span class='hs-varid'>v</span><span class='hs-layout'>}</span><span class='hs-layout'>}</span>  
+<span class=hs-linenum>52: </span>  <span class='hs-keyword'>@-}</span>
+</pre>
+<p>We can confirm that the above definition ensures that the only <em>legal</em> values are increasingly ordered lists, as LH accepts the first list below, but rejects the second where the elements are out of order.</p>
+<pre><span class=hs-linenum>61: </span><span class='hs-definition'>legalList</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IncList</span> <span class='hs-conid'>Int</span>
+<span class=hs-linenum>62: </span><a class=annot href="#"><span class=annottext>(PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class='hs-definition'>legalList</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-num'>0</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-num'>1</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-num'>2</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-num'>3</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class='hs-conid'>Emp</span></a>
+<span class=hs-linenum>63: </span>
+<span class=hs-linenum>64: </span><span class='hs-definition'>illegalList</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>IncList</span> <span class='hs-conid'>Int</span> 
+<span class=hs-linenum>65: </span><a class=annot href="#"><span class=annottext>(PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class='hs-definition'>illegalList</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-num'>0</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-num'>1</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-num'>3</span></a> <span class='hs-conop'>:&lt;</span> <span class=hs-error><a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-num'>2</span></a></span><span class=hs-error> </span><span class=hs-error><span class='hs-conop'>:&lt;</span></span><span class=hs-error> </span><span class=hs-error><a class=annot href="#"><span class=annottext>{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class='hs-conid'>Emp</span></a></span>
+</pre>
+<h2 id="a-polymorphic-insertion-sort">A Polymorphic Insertion Sort</h2>
+<p>Next, lets write a simple <em>insertion-sort</em> function that takes a plain unordered list of <code>[a]</code> and returns the elements in increasing order:</p>
+<pre><span class=hs-linenum>76: </span><span class='hs-definition'>insertSortP</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ord</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-varid'>a</span>
+<span class=hs-linenum>77: </span><a class=annot href="#"><span class=annottext>forall a##xo .
+(GHC.Classes.Ord&lt;[]&gt; a##xo) =&gt;
+[a##xo] -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class='hs-definition'>insertSortP</span></a> <a class=annot href="#"><span class=annottext>[a##xo]</span><span class='hs-varid'>xs</span></a> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>foldr</span> <a class=annot href="#"><span class=annottext>a##xo -&gt; (PolymorphicPerplexion.IncList a##xo) -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class='hs-varid'>insertP</span></a> <a class=annot href="#"><span class=annottext>{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class='hs-conid'>Emp</span></a> <a class=annot href="#"><span class=annottext>{v : [a##xo] | len v &gt;= 0
+               &amp;&amp; v == xs}</span><span class='hs-varid'>xs</span></a>
+<span class=hs-linenum>78: </span>
+<span class=hs-linenum>79: </span><span class='hs-definition'>insertP</span>             <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ord</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-varid'>a</span>
+<span class=hs-linenum>80: </span><a class=annot href="#"><span class=annottext>forall a##xo .
+(GHC.Classes.Ord&lt;[]&gt; a##xo) =&gt;
+a##xo -&gt; (PolymorphicPerplexion.IncList a##xo) -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class='hs-definition'>insertP</span></a> <a class=annot href="#"><span class=annottext>a##xo</span><span class='hs-varid'>y</span></a> <span class='hs-conid'>Emp</span>       <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == y}</span><span class='hs-varid'>y</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class='hs-conid'>Emp</span></a>
+<span class=hs-linenum>81: </span><span class='hs-definition'>insertP</span> <span class='hs-varid'>y</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span> <span class='hs-conop'>:&lt;</span> <span class='hs-varid'>xs</span><span class='hs-layout'>)</span>
+<span class=hs-linenum>82: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == y}</span><span class='hs-varid'>y</span></a> <span class='hs-varop'>&lt;=</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == x}</span><span class='hs-varid'>x</span></a>         <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == y}</span><span class='hs-varid'>y</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == x}</span><span class='hs-varid'>x</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>{v : (PolymorphicPerplexion.IncList {VV : a##xo | x &lt;= VV}) | v == xs}</span><span class='hs-varid'>xs</span></a>
+<span class=hs-linenum>83: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>      <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == x}</span><span class='hs-varid'>x</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>(PolymorphicPerplexion.IncList a##xo)</span><span class='hs-varid'>insertP</span></a> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == y}</span><span class='hs-varid'>y</span></a> <a class=annot href="#"><span class=annottext>{v : (PolymorphicPerplexion.IncList {VV : a##xo | x &lt;= VV}) | v == xs}</span><span class='hs-varid'>xs</span></a>
+</pre>
+<p>Happily, LH is able to verify the above code without any trouble! (If that seemed too easy, don’t worry: if you mess up the comparison, e.g. change the guard to <code>x &lt;= y</code> LH will complain about it.)</p>
+<h2 id="a-monomorphic-insertion-sort">A Monomorphic Insertion Sort</h2>
+<p>However, lets take the <em>exact</em> same code as above <em>but</em> change the type signatures to make the functions <em>monomorphic</em>, here, specialized to <code>Int</code> lists.</p>
+<pre><span class=hs-linenum>99: </span><span class='hs-definition'>insertSortM</span> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-conid'>Int</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-conid'>Int</span> 
+<span class=hs-linenum>100: </span><a class=annot href="#"><span class=annottext>[GHC.Types.Int] -&gt; (PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class='hs-definition'>insertSortM</span></a> <a class=annot href="#"><span class=annottext>[GHC.Types.Int]</span><span class='hs-varid'>xs</span></a> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>foldr</span> <a class=annot href="#"><span class=annottext>GHC.Types.Int -&gt; (PolymorphicPerplexion.IncList GHC.Types.Int) -&gt; (PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class='hs-varid'>insertM</span></a> <a class=annot href="#"><span class=annottext>{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class='hs-conid'>Emp</span></a> <a class=annot href="#"><span class=annottext>{v : [GHC.Types.Int] | len v &gt;= 0
+                       &amp;&amp; v == xs}</span><span class='hs-varid'>xs</span></a>
+<span class=hs-linenum>101: </span>
+<span class=hs-linenum>102: </span><span class='hs-definition'>insertM</span>            <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-conid'>Int</span> 
+<span class=hs-linenum>103: </span><a class=annot href="#"><span class=annottext>GHC.Types.Int -&gt; (PolymorphicPerplexion.IncList GHC.Types.Int) -&gt; (PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class='hs-definition'>insertM</span></a> <a class=annot href="#"><span class=annottext>GHC.Types.Int</span><span class='hs-varid'>y</span></a> <span class='hs-conid'>Emp</span>      <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == y}</span><span class='hs-varid'>y</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class='hs-conid'>Emp</span></a>
+<span class=hs-linenum>104: </span><span class='hs-definition'>insertM</span> <span class='hs-varid'>y</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span> <span class='hs-conop'>:&lt;</span> <span class='hs-varid'>xs</span><span class='hs-layout'>)</span>
+<span class=hs-linenum>105: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == y}</span><span class='hs-varid'>y</span></a> <span class='hs-varop'>&lt;=</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == x}</span><span class='hs-varid'>x</span></a>         <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == y}</span><span class='hs-varid'>y</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == x}</span><span class='hs-varid'>x</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>{v : (PolymorphicPerplexion.IncList {v : GHC.Types.Int | x &lt;= v}) | v == xs}</span><span class='hs-varid'>xs</span></a>
+<span class=hs-linenum>106: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>      <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == x}</span><span class='hs-varid'>x</span></a> <span class='hs-conop'>:&lt;</span> <span class=hs-error><a class=annot href="#"><span class=annottext>(PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class='hs-varid'>insertM</span></a></span><span class=hs-error> </span><span class=hs-error><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == y}</span><span class='hs-varid'>y</span></a></span><span class=hs-error> </span><span class=hs-error><a class=annot href="#"><span class=annottext>{v : (PolymorphicPerplexion.IncList {v : GHC.Types.Int | x &lt;= v}) | v == xs}</span><span class='hs-varid'>xs</span></a></span>
+</pre>
+<p>Huh? Now LH appears to be unhappy with the code! How is this possible?</p>
+<p>Lets look at the type error:</p>
+<pre><span class=hs-linenum>114: </span> <span class='hs-varop'>/</span><span class='hs-conid'>Users</span><span class='hs-varop'>/</span><span class='hs-varid'>rjhala</span><span class='hs-varop'>/</span><span class='hs-conid'>PerplexingPolymorphicProperties.lhs</span><span class='hs-conop'>:</span><span class='hs-num'>80</span><span class='hs-conop'>:</span><span class='hs-num'>27</span><span class='hs-comment'>-</span><span class='hs-num'>38</span><span class='hs-conop'>:</span> <span class='hs-conid'>Error</span><span class='hs-conop'>:</span> <span class='hs-conid'>Liquid</span> <span class='hs-conid'>Type</span> <span class='hs-conid'>Mismatch</span>
+<span class=hs-linenum>115: </span>  
+<span class=hs-linenum>116: </span> <span class='hs-num'>80</span> <span class='hs-keyglyph'>|</span>   <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>      <span class='hs-keyglyph'>=</span> <span class='hs-varid'>x</span> <span class='hs-conop'>:&lt;</span> <span class='hs-varid'>insertM</span> <span class='hs-varid'>y</span> <span class='hs-varid'>xs</span>
+<span class=hs-linenum>117: </span>                                <span class='hs-varop'>^^^^^^^^^^^^</span>
+<span class=hs-linenum>118: </span>   <span class='hs-conid'>Inferred</span> <span class='hs-keyword'>type</span>
+<span class=hs-linenum>119: </span>     <span class='hs-conid'>VV</span> <span class='hs-conop'>:</span> <span class='hs-conid'>Int</span>
+<span class=hs-linenum>120: </span>  
+<span class=hs-linenum>121: </span>   <span class='hs-varid'>not</span> <span class='hs-varid'>a</span> <span class='hs-varid'>subtype</span> <span class='hs-keyword'>of</span> <span class='hs-conid'>Required</span> <span class='hs-keyword'>type</span>
+<span class=hs-linenum>122: </span>     <span class='hs-conid'>VV</span> <span class='hs-conop'>:</span> <span class='hs-layout'>{</span><span class='hs-conid'>VV</span> <span class='hs-conop'>:</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>x</span> <span class='hs-varop'>&lt;=</span> <span class='hs-conid'>VV</span><span class='hs-layout'>}</span>
+<span class=hs-linenum>123: </span>  
+<span class=hs-linenum>124: </span>   <span class='hs-conid'>In</span> <span class='hs-conid'>Context</span>
+<span class=hs-linenum>125: </span>     <span class='hs-varid'>x</span> <span class='hs-conop'>:</span> <span class='hs-conid'>Int</span>
+</pre>
+<p>LH <em>expects</em> that since we’re using the “cons” operator <code>:&lt;</code> the “tail” value <code>insertM y xs</code> must contain values <code>VV</code> that are greater than the “head” <code>x</code>. The error says that, LH cannot prove this requirement of <em>actual</em> list <code>insertM y xs</code>.</p>
+<p>Hmm, well thats a puzzler. Two questions that should come to mind.</p>
+<ol type="1">
+<li><p><em>Why</em> does the above fact hold in the first place?</p></li>
+<li><p><em>How</em> is LH able to deduce this fact with the <em>polymorphic</em> signature but not the monomorphic one?</p></li>
+</ol>
+<p>Lets ponder the first question first: why <em>is</em> every element of <code>insert y xs</code> in fact larger than <code>x</code>? For two reasons:</p>
+<ol type="a">
+<li><p>every element in <code>xs</code> is larger than <code>x</code>, as the list <code>x :&lt; xs</code> was ordered,</p></li>
+<li><p><code>y</code> is larger than <code>x</code> as established by the <code>otherwise</code> and crucially</p></li>
+<li><p>the elements returned by <code>insert y xs</code> are either <code>y</code> or from <code>xs</code>!</p></li>
+</ol>
+<p>Now onto the second question: how does LH verify the polymorphic code, but not the monomorphic one? The reason is the fact (c)! LH is a <em>modular</em> verifier, meaning that the <em>only</em> information that it has about the behavior of <code>insert</code> at a call-site is the information captured in the (refinement) <em>type specification</em> for <code>insert</code>. The <em>polymorphic</em> signature:</p>
+<pre><span class=hs-linenum>156: </span><span class='hs-definition'>insertP</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ord</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-varid'>a</span>
+</pre>
+<p>via <em>parametricity</em>, implicitly states fact (c). That is, if at a call-site <code>insertP y xs</code> we pass in a value that is greater an <code>x</code> and a list of values greater than <code>x</code> then via <em>polymorphic instantiation</em> at the call-site, LH infers that the returned value must also be a list of elements greater than <code>x</code>!</p>
+<p>However, the <em>monomorphic</em> signature</p>
+<pre><span class=hs-linenum>167: </span><span class='hs-definition'>insertM</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-conid'>Int</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-conid'>Int</span> 
+</pre>
+<p>offers no such insight. It simply says the function takes in an <code>Int</code> and another ordered list of <code>Int</code> and returns another ordered list, whose actual elements could be arbitrary <code>Int</code>. Specifically, at the call-site <code>insertP y xs</code> LH has no way to conclude the the returned elements are indeed greater than <code>x</code> and hence rejects the monomorphic code.</p>
+<h2 id="perplexity">Perplexity</h2>
+<p>While parametricity is all very nice, and LH’s polymorphic instanatiation is very clever and useful, it can also be quite mysterious. For example, q curious user Oisín [pointed out](https://github.com/ucsd-progsys/liquidhaskell-tutorial/issues/91] that while the code below is <em>rejected</em> that if you <em>uncomment</em> the type signature for <code>go</code> then it is <em>accepted</em> by LH!</p>
+<pre><span class=hs-linenum>187: </span><span class='hs-definition'>insertSortP'</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>(</span><span class='hs-conid'>Ord</span> <span class='hs-varid'>a</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=&gt;</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>IncList</span> <span class='hs-varid'>a</span> 
+<span class=hs-linenum>188: </span><a class=annot href="#"><span class=annottext>forall a##xo .
+(GHC.Classes.Ord&lt;[]&gt; a##xo) =&gt;
+[a##xo] -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class='hs-definition'>insertSortP'</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>(PolymorphicPerplexion.IncList a##xo)</span><span class='hs-varid'>foldr</span></a> <a class=annot href="#"><span class=annottext>a##xo -&gt; (PolymorphicPerplexion.IncList a##xo) -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class='hs-varid'>go</span></a> <a class=annot href="#"><span class=annottext>{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class='hs-conid'>Emp</span></a> 
+<span class=hs-linenum>189: </span>  <span class='hs-keyword'>where</span>
+<span class=hs-linenum>190: </span>    <span class='hs-comment'>-- go :: (Ord a) =&gt; a -&gt; IncList a -&gt; IncList a</span>
+<span class=hs-linenum>191: </span>    <a class=annot href="#"><span class=annottext>a##xo -&gt; (PolymorphicPerplexion.IncList a##xo) -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class='hs-varid'>go</span></a> <a class=annot href="#"><span class=annottext>a##xo</span><span class='hs-varid'>y</span></a> <span class='hs-conid'>Emp</span>       <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == y}</span><span class='hs-varid'>y</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class='hs-conid'>Emp</span></a>
+<span class=hs-linenum>192: </span>    <span class='hs-varid'>go</span> <span class='hs-varid'>y</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span> <span class='hs-conop'>:&lt;</span> <span class='hs-varid'>xs</span><span class='hs-layout'>)</span>
+<span class=hs-linenum>193: </span>      <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == y}</span><span class='hs-varid'>y</span></a> <span class='hs-varop'>&lt;=</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == x}</span><span class='hs-varid'>x</span></a>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == y}</span><span class='hs-varid'>y</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == x}</span><span class='hs-varid'>x</span></a> <span class='hs-conop'>:&lt;</span> <a class=annot href="#"><span class=annottext>{v : (PolymorphicPerplexion.IncList {VV : a##xo | x &lt;= VV}) | v == xs}</span><span class='hs-varid'>xs</span></a>
+<span class=hs-linenum>194: </span>      <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>  <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{VV : a##xo | VV == x}</span><span class='hs-varid'>x</span></a> <span class='hs-conop'>:&lt;</span> <span class=hs-error><a class=annot href="#"><span class=annottext>(PolymorphicPerplexion.IncList a##xo)</span><span class='hs-varid'>go</span></a></span><span class=hs-error> </span><span class=hs-error><a class=annot href="#"><span class=annottext>{VV : a##xo | VV == y}</span><span class='hs-varid'>y</span></a></span><span class=hs-error> </span><span class=hs-error><a class=annot href="#"><span class=annottext>{v : (PolymorphicPerplexion.IncList {VV : a##xo | x &lt;= VV}) | v == xs}</span><span class='hs-varid'>xs</span></a></span>
+</pre>
+<p>This is thoroughly perplexing, but again, is explained by the absence of parametricity. When we <em>remove</em> the type signature, GHC defaults to giving <code>go</code> a <em>monomorphic</em> signature where the <code>a</code> is not universally quantified, and which roughly captures the same specification as the monomorphic <code>insertM</code> above causing verification to fail! Restoring the signature, provides LH with the polymorphic signature, which can be instantiated at the call-site to recover fact <code>(c)</code> that is crucial for verification.</p>
+<h2 id="moral">Moral</h2>
+<p>I hope that example illustrates two points.</p>
+<p>First, <em>parametric polymorphism</em> lets type specifications say a lot more than they immediately let on: so do write polymorphic signatures whenever possible.</p>
+<p>Second, on a less happy note, <em>explaining</em> why fancy type checkers fail remains a vexing problem, whose difficulty is compounded by increasing the cleverness of the type system. We’d love to hear any ideas you might have in this direction!</p>
+                <hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+                <div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    var disqus_config = function () {
+        this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2020/04/12/polymorphic-perplexion.lhs';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = '/2020/04/12/polymorphic-perplexion.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+        var d = document, s = d.createElement('script');
+        s.src = '//liquidhaskell.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+            </div>
+        </div>
+    </div>
+</article>
+]]></summary>
+</entry>
+<entry>
     <title>Liquid Types vs. Floyd-Hoare Logic</title>
     <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2019/10/20/why-types.lhs" />
     <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2019/10/20/why-types.lhs</id>
@@ -4207,336 +4397,6 @@ x2:a -&gt; x3:a -&gt; {VV : a | VV == RangeSet.max x2 x3
     var disqus_config = function () {
         this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2016/09/01/normal-forms.lhs';  // Replace PAGE_URL with your page's canonical URL variable
         this.page.identifier = '/2016/09/01/normal-forms.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
-    };
-    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
-        var d = document, s = d.createElement('script');
-        s.src = '//liquidhaskell.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-    })();
-</script>
-<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
-
-
-            </div>
-        </div>
-    </div>
-</article>
-]]></summary>
-</entry>
-<entry>
-    <title>Okasaki's Lazy Queues</title>
-    <link href="https://ucsd-progsys.github.io/liquidhaskell-blog/2015/01/30/okasakis-lazy-queue.lhs" />
-    <id>https://ucsd-progsys.github.io/liquidhaskell-blog/2015/01/30/okasakis-lazy-queue.lhs</id>
-    <published>true</published>
-    <updated>2015-01-28T00:00:00Z</updated>
-    <summary type="html"><![CDATA[<!-- Post Header -->
-<header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt="" title="">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-                <div class="post-heading">
-                    <h1>Okasaki's Lazy Queues</h1>
-                    
-                    <span class="meta">
-		    
-			Posted by Ranjit Jhala
-		    
-			Jan 28, 2015
-		    </span>
-                </div>
-            </div>
-        </div>
-    </div>
-</header>
-
-<!-- Post Content -->
-<article>
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-
-            <br>
-
-            <div class="info">
-              
-                Tags: <a href="/tags/measures.html">measures</a>
-              
-            </div>
-
-            <br>
-			            <p>The “Hello World!” example for fancy type systems is probably the sized vector or list <code>append</code> function (“The output has size equal to the <em>sum</em> of the inputs!”). One the one hand, it is perfect: simple enough to explain without pages of code, yet complex enough to show off whats cool about dependency. On the other hand, like the sweater I’m sporting right now, it’s a bit well-worn and worse, was never wholly convincing (“Why do I <em>care</em> what the <em>size</em> of the output list is anyway?”)</p>
-<p>Recently, I came across a nice example that is almost as simple, but is also well motivated: Okasaki’s beautiful <a href="http://www.westpoint.edu/eecs/SiteAssets/SitePages/Faculty%20Publication%20Documents/Okasaki/jfp95queue.pdf">Lazy Amortized Queues</a>. This structure leans heavily on an invariant to provide fast <em>insertion</em> and <em>deletion</em>. Let’s see how to enforce that invariant with LiquidHaskell.</p>
-<!-- more -->
-<div class="hidden">
-<pre><span class=hs-linenum>30: </span><span class='hs-keyword'>{-@</span> <span class='hs-conid'>LIQUID</span> <span class='hs-str'>"--no-termination"</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>31: </span><span class='hs-keyword'>{-@</span> <span class='hs-conid'>LIQUID</span> <span class='hs-str'>"--total"</span>          <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>32: </span><span class='hs-keyword'>{-@</span> <span class='hs-conid'>LIQUID</span> <span class='hs-str'>"--maxparams=3"</span>    <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>33: </span>
-<span class=hs-linenum>34: </span><span class='hs-keyword'>module</span> <span class='hs-conid'>LazyQueue</span> <span class='hs-layout'>(</span><span class='hs-conid'>Queue</span><span class='hs-layout'>,</span> <span class='hs-varid'>insert</span><span class='hs-layout'>,</span> <span class='hs-varid'>remove</span><span class='hs-layout'>,</span> <span class='hs-varid'>emp</span><span class='hs-layout'>)</span> <span class='hs-keyword'>where</span>
-<span class=hs-linenum>35: </span>
-<span class=hs-linenum>36: </span><span class='hs-keyword'>import</span> <span class='hs-conid'>Prelude</span> <span class='hs-varid'>hiding</span> <span class='hs-layout'>(</span><span class='hs-varid'>length</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>37: </span>
-<span class=hs-linenum>38: </span><span class='hs-comment'>-- | Size function actually returns the size: (Duh!)</span>
-<span class=hs-linenum>39: </span>
-<span class=hs-linenum>40: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>size</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>q</span><span class='hs-conop'>:</span><span class='hs-conid'>SList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-keyword'>{v:</span><span class='hs-conid'>Nat</span> <span class='hs-keyword'>| v = size q}</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>41: </span><span class='hs-keyword'>data</span> <span class='hs-conid'>Queue</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Q</span>  <span class='hs-layout'>{</span> <a class=annot href="#"><span class=annottext>forall a. (LazyQueue.Queue a) -&gt; (LazyQueue.SList a)</span><span class='hs-varid'>front</span></a> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>SList</span> <span class='hs-varid'>a</span>
-<span class=hs-linenum>42: </span>                  <span class='hs-layout'>,</span> <a class=annot href="#"><span class=annottext>forall a. (LazyQueue.Queue a) -&gt; (LazyQueue.SList a)</span><span class='hs-varid'>back</span></a>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>SList</span> <span class='hs-varid'>a</span>
-<span class=hs-linenum>43: </span>                  <span class='hs-layout'>}</span>
-<span class=hs-linenum>44: </span>
-<span class=hs-linenum>45: </span><span class='hs-comment'>-- Source: Okasaki, JFP 1995</span>
-<span class=hs-linenum>46: </span><span class='hs-comment'>-- <a href="http://www.westpoint.edu/eecs/SiteAssets/SitePages/Faculty%20Publication%20Documents/Okasaki/jfp95queue.pdf">http://www.westpoint.edu/eecs/SiteAssets/SitePages/Faculty%20Publication%20Documents/Okasaki/jfp95queue.pdf</a></span>
-<span class=hs-linenum>47: </span>
-</pre>
-</div>
-<h2 id="queues">Queues</h2>
-<p>A <a href="http://en.wikipedia.org/wiki/Queue_%28abstract_data_type%29">queue</a> is a structure into which we can <code>insert</code> and <code>remove</code> data such that the order in which the data is removed is the same as the order in which it was inserted.</p>
-<figure>
-<img src="/static/img/queue.png" alt="A Queue" /><figcaption>A Queue</figcaption>
-</figure>
-<p>To implement a queue <em>efficiently</em> one needs to have rapid access to both the “head” as well as the “tail” because we <code>remove</code> elements from former and <code>insert</code> elements into the latter. This is quite straightforward with explicit pointers and mutation – one uses an old school linked list and maintains pointers to the head and the tail. But can we implement the structure efficiently without having stoop so low?</p>
-<h2 id="queues-pair-of-lists">Queues = Pair of Lists</h2>
-<p>Almost two decades ago, Chris Okasaki came up with a very cunning way to implement queues using a <em>pair</em> of lists – let’s call them <code>front</code> and <code>back</code> which represent the corresponding parts of the Queue.</p>
-<ul>
-<li>To <code>insert</code> elements, we just <em>cons</em> them onto the <code>back</code> list,</li>
-<li>To <code>remove</code> elements, we just <em>un-cons</em> them from the <code>front</code> list.</li>
-</ul>
-<figure>
-<img src="/static/img/queue-lists.png" alt="A Queue is Two Lists" /><figcaption>A Queue is Two Lists</figcaption>
-</figure>
-<p>The catch is that we need to shunt elements from the back to the front every so often, e.g. when</p>
-<ol type="1">
-<li>a <code>remove</code> call is triggered, and</li>
-<li>the <code>front</code> list is empty,</li>
-</ol>
-<p>We can transfer the elements from the <code>back</code> to the <code>front</code>.</p>
-<figure>
-<img src="/static/img/queue-rotate.png" alt="Transferring Elements from Back to Front" /><figcaption>Transferring Elements from Back to Front</figcaption>
-</figure>
-<p>Okasaki observed that every element is only moved <em>once</em> from the front to the back; hence, the time for <code>insert</code> and <code>lookup</code> could be <code>O(1)</code> when <em>amortized</em> over all the operations. Awesome, right?!</p>
-<p>Almost. Some set of unlucky <code>remove</code> calls (which occur when the <code>front</code> is empty) are stuck paying the bill. They have a rather high latency up to <code>O(n)</code> where <code>n</code> is the total number of operations. Oops.</p>
-<h2 id="queue-balanced-lazy-lists">Queue = Balanced Lazy Lists</h2>
-<p>This is where Okasaki’s beautiful insights kick in. Okasaki observed that all we need to do is to enforce a simple invariant:</p>
-<p><strong>Invariant:</strong> Size of <code>front</code> &gt;= Size of <code>back</code></p>
-<p>Now, if the lists are <em>lazy</em> i.e. only constructed as the head value is demanded, then a single <code>remove</code> needs only a tiny <code>O(log n)</code> in the worst case, and so no single <code>remove</code> is stuck paying the bill.</p>
-<p>Let’s see how to represent these Queues and ensure the crucial invariant(s) with LiquidHaskell. What we need are the following ingredients:</p>
-<ol type="1">
-<li><p>A type for <code>List</code>s, and a way to track their <code>size</code>,</p></li>
-<li><p>A type for <code>Queue</code>s which encodes the <em>balance</em> invariant – ``front longer than back",</p></li>
-<li><p>A way to implement the <code>insert</code>, <code>remove</code> and <code>transfer</code> operations.</p></li>
-</ol>
-<h2 id="sized-lists">Sized Lists</h2>
-<p>The first part is super easy. Let’s define a type:</p>
-<pre><span class=hs-linenum>127: </span><span class='hs-keyword'>data</span> <span class='hs-conid'>SList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SL</span> <span class='hs-layout'>{</span> <a class=annot href="#"><span class=annottext>forall a.
-x1:(LazyQueue.SList a)
--&gt; {v : GHC.Types.Int | v == size x1 &amp;&amp; v &gt;= 0}</span><span class='hs-varid'>size</span></a> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Int</span><span class='hs-layout'>,</span> <a class=annot href="#"><span class=annottext>forall a. (LazyQueue.SList a) -&gt; [a]</span><span class='hs-varid'>elems</span></a> <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span><span class='hs-layout'>}</span>
-</pre>
-<p>We have a special field that saves the <code>size</code> because otherwise, we have a linear time computation that wrecks Okasaki’s careful analysis. (Actually, he presents a variant which does <em>not</em> require saving the size as well, but that’s for another day.)</p>
-<p>But how can we be sure that <code>size</code> is indeed the <em>real size</em> of <code>elems</code>?</p>
-<p>Let’s write a function to <em>measure</em> the real size:</p>
-<pre><span class=hs-linenum>140: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>measure</span> <span class='hs-varid'>realSize</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>141: </span><span class='hs-definition'>realSize</span>      <span class='hs-keyglyph'>::</span> <span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
-<span class=hs-linenum>142: </span><a class=annot href="#"><span class=annottext>forall a. x1:[a] -&gt; {VV : GHC.Types.Int | VV == realSize x1}</span><span class='hs-definition'>realSize</span></a> <span class='hs-conid'>[]</span>     <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:GHC.Prim.Int# -&gt; {v : GHC.Types.Int | v == (x1  :  int)}</span><span class='hs-num'>0</span></a>
-<span class=hs-linenum>143: </span><span class='hs-definition'>realSize</span> <span class='hs-layout'>(</span><span class='hs-keyword'>_</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == (1  :  int)}</span><span class='hs-num'>1</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int
--&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a> <a class=annot href="#"><span class=annottext>forall a. x1:[a] -&gt; {VV : GHC.Types.Int | VV == realSize x1}</span><span class='hs-varid'>realSize</span></a> <a class=annot href="#"><span class=annottext>{v : [a] | v == xs &amp;&amp; len v &gt;= 0}</span><span class='hs-varid'>xs</span></a>
-</pre>
-<p>and now, we can simply specify a <em>refined</em> type for <code>SList</code> that ensures that the <em>real</em> size is saved in the <code>size</code> field:</p>
-<pre><span class=hs-linenum>150: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>data</span> <span class='hs-conid'>SList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>SL</span> <span class='hs-layout'>{</span>
-<span class=hs-linenum>151: </span>       <span class='hs-varid'>size</span>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Nat</span> 
-<span class=hs-linenum>152: </span>     <span class='hs-layout'>,</span> <span class='hs-varid'>elems</span> <span class='hs-keyglyph'>::</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span><span class='hs-conop'>:</span><span class='hs-keyglyph'>[</span><span class='hs-varid'>a</span><span class='hs-keyglyph'>]</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>realSize</span> <span class='hs-varid'>v</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>size</span><span class='hs-layout'>}</span>
-<span class=hs-linenum>153: </span>     <span class='hs-layout'>}</span>
-<span class=hs-linenum>154: </span>  <span class='hs-keyword'>@-}</span>
-</pre>
-<p>As a sanity check, consider this:</p>
-<pre><span class=hs-linenum>160: </span><a class=annot href="#"><span class=annottext>{VV : (LazyQueue.SList {VV : [GHC.Types.Char] | len VV &gt;= 0}) | size VV &gt; 0}</span><span class='hs-definition'>okList</span></a>  <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:{v : GHC.Types.Int | v &gt;= 0}
--&gt; x2:{v : [{v : [GHC.Types.Char] | len v &gt;= 0}] | realSize v == x1}
--&gt; {v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | elems v == x2 &amp;&amp; size v == x1}</span><span class='hs-conid'>SL</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == (1  :  int)}</span><span class='hs-num'>1</span></a> <a class=annot href="#"><span class=annottext>{v : [{v : [GHC.Types.Char] | len v &gt;= 0}]&lt;\_ VV -&gt; false&gt; | null v &lt;=&gt; false &amp;&amp; len v &gt;= 0}</span><span class='hs-keyglyph'>[</span></a><a class=annot href="#"><span class=annottext>{v : [GHC.Types.Char] | len v &gt;= 0}</span><span class='hs-str'>"cat"</span></a><span class='hs-keyglyph'>]</span>    <span class='hs-comment'>-- accepted</span>
-<span class=hs-linenum>161: </span>
-<span class=hs-linenum>162: </span><a class=annot href="#"><span class=annottext>forall a. (LazyQueue.SList a)</span><span class='hs-definition'>badList</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:{v : GHC.Types.Int | v &gt;= 0}
--&gt; x2:{v : [a] | realSize v == x1}
--&gt; {v : (LazyQueue.SList a) | elems v == x2 &amp;&amp; size v == x1}</span><span class='hs-conid'>SL</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == (1  :  int)}</span><span class='hs-num'>1</span></a> <span class=hs-error><a class=annot href="#"><span class=annottext>{v : [a] | null v &lt;=&gt; true &amp;&amp; realSize v == 0 &amp;&amp; len v == 0 &amp;&amp; len v &gt;= 0}</span><span class='hs-conid'>[]</span></a></span>         <span class='hs-comment'>-- rejected</span>
-</pre>
-<p>It is helpful to define a few aliases for <code>SList</code>s of a size <code>N</code> and non-empty <code>SList</code>s:</p>
-<pre><span class=hs-linenum>169: </span><span class='hs-comment'>-- | SList of size N</span>
-<span class=hs-linenum>170: </span>
-<span class=hs-linenum>171: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>type</span> <span class='hs-conid'>SListN</span> <span class='hs-varid'>a</span> <span class='hs-conid'>N</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span><span class='hs-conop'>:</span><span class='hs-conid'>SList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>size</span> <span class='hs-varid'>v</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>N</span><span class='hs-layout'>}</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>172: </span>
-<span class=hs-linenum>173: </span><span class='hs-comment'>-- | Non-Empty SLists:</span>
-<span class=hs-linenum>174: </span>
-<span class=hs-linenum>175: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>type</span> <span class='hs-conid'>NEList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span><span class='hs-conop'>:</span><span class='hs-conid'>SList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>size</span> <span class='hs-varid'>v</span> <span class='hs-varop'>&gt;</span> <span class='hs-num'>0</span><span class='hs-layout'>}</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>176: </span>
-</pre>
-<p>Finally, we can define a basic API for <code>SList</code>.</p>
-<p><strong>To Construct</strong> lists, we use <code>nil</code> and <code>cons</code>:</p>
-<pre><span class=hs-linenum>184: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>nil</span>          <span class='hs-keyglyph'>::</span> <span class='hs-conid'>SListN</span> <span class='hs-varid'>a</span> <span class='hs-num'>0</span>  <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>185: </span><a class=annot href="#"><span class=annottext>forall a. {v : (LazyQueue.SList a) | size v == 0}</span><span class='hs-definition'>nil</span></a>              <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:{v : GHC.Types.Int | v &gt;= 0}
--&gt; x2:{v : [a] | realSize v == x1}
--&gt; {v : (LazyQueue.SList a) | elems v == x2 &amp;&amp; size v == x1}</span><span class='hs-conid'>SL</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == (0  :  int)}</span><span class='hs-num'>0</span></a> <a class=annot href="#"><span class=annottext>{v : [a] | null v &lt;=&gt; true &amp;&amp; realSize v == 0 &amp;&amp; len v == 0 &amp;&amp; len v &gt;= 0}</span><span class='hs-conid'>[]</span></a>
-<span class=hs-linenum>186: </span>
-<span class=hs-linenum>187: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>cons</span>         <span class='hs-keyglyph'>::</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-conid'>SList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SListN</span> <span class='hs-varid'>a</span> <span class='hs-keyword'>{size xs + 1}</span>   <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>188: </span><a class=annot href="#"><span class=annottext>forall a.
-a
--&gt; x2:(LazyQueue.SList a)
--&gt; {v : (LazyQueue.SList a) | size v == size x2 + 1}</span><span class='hs-definition'>cons</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>x</span></a> <span class='hs-layout'>(</span><span class='hs-conid'>SL</span> <span class='hs-varid'>n</span> <span class='hs-varid'>xs</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:{v : GHC.Types.Int | v &gt;= 0}
--&gt; x2:{v : [a] | realSize v == x1}
--&gt; {v : (LazyQueue.SList a) | elems v == x2 &amp;&amp; size v == x1}</span><span class='hs-conid'>SL</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == n &amp;&amp; v &gt;= 0}</span><span class='hs-varid'>n</span></a><a class=annot href="#"><span class=annottext>x1:GHC.Types.Int
--&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == (1  :  int)}</span><span class='hs-num'>1</span></a><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{VV : a | VV == x}</span><span class='hs-varid'>x</span></a><a class=annot href="#"><span class=annottext>x1:a
--&gt; x2:[a]
--&gt; {v : [a] | null v &lt;=&gt; false &amp;&amp; xListSelector v == x1 &amp;&amp; realSize v == 1 + realSize x2 &amp;&amp; xsListSelector v == x2 &amp;&amp; len v == 1 + len x2}</span><span class='hs-conop'>:</span></a><a class=annot href="#"><span class=annottext>{v : [a] | v == xs &amp;&amp; realSize v == n &amp;&amp; len v &gt;= 0}</span><span class='hs-varid'>xs</span></a><span class='hs-layout'>)</span>
-</pre>
-<p><strong>To Destruct</strong> lists, we have <code>hd</code> and <code>tl</code>.</p>
-<pre><span class=hs-linenum>194: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>tl</span>           <span class='hs-keyglyph'>::</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-conid'>NEList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SListN</span> <span class='hs-varid'>a</span> <span class='hs-keyword'>{size xs - 1}</span>  <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>195: </span><a class=annot href="#"><span class=annottext>forall a.
-x1:{v : (LazyQueue.SList a) | size v &gt; 0}
--&gt; {v : (LazyQueue.SList a) | size v == size x1 - 1}</span><span class='hs-definition'>tl</span></a> <span class='hs-layout'>(</span><span class='hs-conid'>SL</span> <span class='hs-varid'>n</span> <span class='hs-layout'>(</span><span class='hs-keyword'>_</span><span class='hs-conop'>:</span><span class='hs-varid'>xs</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:{v : GHC.Types.Int | v &gt;= 0}
--&gt; x2:{v : [a] | realSize v == x1}
--&gt; {v : (LazyQueue.SList a) | elems v == x2 &amp;&amp; size v == x1}</span><span class='hs-conid'>SL</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == n &amp;&amp; v &gt;= 0}</span><span class='hs-varid'>n</span></a><a class=annot href="#"><span class=annottext>x1:GHC.Types.Int
--&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class='hs-comment'>-</span></a><a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == (1  :  int)}</span><span class='hs-num'>1</span></a><span class='hs-layout'>)</span> <a class=annot href="#"><span class=annottext>{v : [a] | v == xs &amp;&amp; len v &gt;= 0}</span><span class='hs-varid'>xs</span></a>
-<span class=hs-linenum>196: </span>
-<span class=hs-linenum>197: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>hd</span>           <span class='hs-keyglyph'>::</span> <span class='hs-varid'>xs</span><span class='hs-conop'>:</span><span class='hs-conid'>NEList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>198: </span><a class=annot href="#"><span class=annottext>forall a. {v : (LazyQueue.SList a) | size v &gt; 0} -&gt; a</span><span class='hs-definition'>hd</span></a> <span class='hs-layout'>(</span><span class='hs-conid'>SL</span> <span class='hs-keyword'>_</span> <span class='hs-layout'>(</span><span class='hs-varid'>x</span><span class='hs-conop'>:</span><span class='hs-keyword'>_</span><span class='hs-layout'>)</span><span class='hs-layout'>)</span>  <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{VV : a | VV == x}</span><span class='hs-varid'>x</span></a> 
-</pre>
-<p>Don’t worry, they are perfectly <em>safe</em> as LiquidHaskell will make sure we <em>only</em> call these operators on non-empty <code>SList</code>s. For example,</p>
-<pre><span class=hs-linenum>205: </span><a class=annot href="#"><span class=annottext>{v : [GHC.Types.Char] | len v &gt;= 0}</span><span class='hs-definition'>okHd</span></a>  <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | size v &gt; 0}
--&gt; {v : [GHC.Types.Char] | len v &gt;= 0}</span><span class='hs-varid'>hd</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | v == LazyQueue.okList &amp;&amp; size v &gt; 0}</span><span class='hs-varid'>okList</span></a>       <span class='hs-comment'>-- accepted</span>
-<span class=hs-linenum>206: </span>
-<span class=hs-linenum>207: </span><a class=annot href="#"><span class=annottext>{VV : [GHC.Types.Char] | len VV &gt;= 0}</span><span class='hs-definition'>badHd</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | size v &gt; 0}
--&gt; {v : [GHC.Types.Char] | len v &gt;= 0}</span><span class='hs-varid'>hd</span></a> <span class='hs-layout'>(</span><span class=hs-error><a class=annot href="#"><span class=annottext>x1:{v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | size v &gt; 0}
--&gt; {v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | size v == size x1 - 1}</span><span class='hs-varid'>tl</span></a></span><span class=hs-error> </span><span class=hs-error><a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | v == LazyQueue.okList &amp;&amp; size v &gt; 0}</span><span class='hs-varid'>okList</span></a></span><span class='hs-layout'>)</span>  <span class='hs-comment'>-- rejected</span>
-</pre>
-<h2 id="queue-type">Queue Type</h2>
-<p>Now, it is quite straightforward to define the <code>Queue</code> type, as a pair of lists, <code>front</code> and <code>back</code>, such that the latter is always smaller than the former:</p>
-<pre><span class=hs-linenum>218: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>data</span> <span class='hs-conid'>Queue</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>=</span> <span class='hs-conid'>Q</span> <span class='hs-layout'>{</span>
-<span class=hs-linenum>219: </span>       <span class='hs-varid'>front</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>SList</span> <span class='hs-varid'>a</span> 
-<span class=hs-linenum>220: </span>     <span class='hs-layout'>,</span> <span class='hs-varid'>back</span>  <span class='hs-keyglyph'>::</span> <span class='hs-conid'>SListLE</span> <span class='hs-varid'>a</span> <span class='hs-layout'>(</span><span class='hs-varid'>size</span> <span class='hs-varid'>front</span><span class='hs-layout'>)</span>
-<span class=hs-linenum>221: </span>     <span class='hs-layout'>}</span>
-<span class=hs-linenum>222: </span>  <span class='hs-keyword'>@-}</span>
-</pre>
-<p>Where the alias <code>SListLE a L</code> corresponds to lists with less than <code>N</code> elements:</p>
-<pre><span class=hs-linenum>228: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>type</span> <span class='hs-conid'>SListLE</span> <span class='hs-varid'>a</span> <span class='hs-conid'>N</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span><span class='hs-conop'>:</span><span class='hs-conid'>SList</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>|</span> <span class='hs-varid'>size</span> <span class='hs-varid'>v</span> <span class='hs-varop'>&lt;=</span> <span class='hs-conid'>N</span><span class='hs-layout'>}</span> <span class='hs-keyword'>@-}</span>
-</pre>
-<p>As a quick check, notice that we <em>cannot represent illegal Queues</em>:</p>
-<pre><span class=hs-linenum>234: </span><a class=annot href="#"><span class=annottext>{VV : (LazyQueue.Queue [GHC.Types.Char]) | 0 &lt; qsize VV}</span><span class='hs-definition'>okQ</span></a>  <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList [GHC.Types.Char])
--&gt; x2:{v : (LazyQueue.SList [GHC.Types.Char]) | size v &lt;= size x1}
--&gt; {v : (LazyQueue.Queue [GHC.Types.Char]) | qsize v == size x1 + size x2 &amp;&amp; front v == x1 &amp;&amp; back v == x2}</span><span class='hs-conid'>Q</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | v == LazyQueue.okList &amp;&amp; size v &gt; 0}</span><span class='hs-varid'>okList</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList [GHC.Types.Char]) | size v == 0}</span><span class='hs-varid'>nil</span></a>  <span class='hs-comment'>-- accepted, |front| &gt; |back| </span>
-<span class=hs-linenum>235: </span>
-<span class=hs-linenum>236: </span><a class=annot href="#"><span class=annottext>{VV : (LazyQueue.Queue [GHC.Types.Char]) | 0 &lt; qsize VV}</span><span class='hs-definition'>badQ</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList [GHC.Types.Char])
--&gt; x2:{v : (LazyQueue.SList [GHC.Types.Char]) | size v &lt;= size x1}
--&gt; {v : (LazyQueue.Queue [GHC.Types.Char]) | qsize v == size x1 + size x2 &amp;&amp; front v == x1 &amp;&amp; back v == x2}</span><span class='hs-conid'>Q</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList [GHC.Types.Char]) | size v == 0}</span><span class='hs-varid'>nil</span></a> <span class=hs-error><a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | v == LazyQueue.okList &amp;&amp; size v &gt; 0}</span><span class='hs-varid'>okList</span></a></span>  <span class='hs-comment'>-- rejected, |front| &lt; |back|</span>
-</pre>
-<p><strong>To Measure Queue Size</strong> let us define a function</p>
-<pre><span class=hs-linenum>242: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>measure</span> <span class='hs-varid'>qsize</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>243: </span><span class='hs-definition'>qsize</span>         <span class='hs-keyglyph'>::</span> <span class='hs-conid'>Queue</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>Int</span>
-<span class=hs-linenum>244: </span><a class=annot href="#"><span class=annottext>forall a.
-x1:(LazyQueue.Queue a) -&gt; {VV : GHC.Types.Int | VV == qsize x1}</span><span class='hs-definition'>qsize</span></a> <span class='hs-layout'>(</span><span class='hs-conid'>Q</span> <span class='hs-varid'>l</span> <span class='hs-varid'>r</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList a)
--&gt; {v : GHC.Types.Int | v == size x1 &amp;&amp; v &gt;= 0}</span><span class='hs-varid'>size</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == l}</span><span class='hs-varid'>l</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int
--&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 + x2}</span><span class='hs-varop'>+</span></a> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList a)
--&gt; {v : GHC.Types.Int | v == size x1 &amp;&amp; v &gt;= 0}</span><span class='hs-varid'>size</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == r &amp;&amp; size v &lt;= size l}</span><span class='hs-varid'>r</span></a>
-</pre>
-<p>This will prove helpful to define <code>Queue</code>s of a given size <code>N</code> and non-empty <code>Queue</code>s (from which values can be safely removed.)</p>
-<pre><span class=hs-linenum>251: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>type</span> <span class='hs-conid'>QueueN</span> <span class='hs-varid'>a</span> <span class='hs-conid'>N</span> <span class='hs-keyglyph'>=</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span><span class='hs-conop'>:</span><span class='hs-conid'>Queue</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>|</span> <span class='hs-conid'>N</span> <span class='hs-keyglyph'>=</span> <span class='hs-varid'>qsize</span> <span class='hs-varid'>v</span><span class='hs-layout'>}</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>252: </span><span class='hs-keyword'>{-@</span> <span class='hs-keyword'>type</span> <span class='hs-conid'>NEQueue</span> <span class='hs-varid'>a</span>  <span class='hs-keyglyph'>=</span> <span class='hs-layout'>{</span><span class='hs-varid'>v</span><span class='hs-conop'>:</span><span class='hs-conid'>Queue</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>|</span> <span class='hs-num'>0</span> <span class='hs-varop'>&lt;</span> <span class='hs-varid'>qsize</span> <span class='hs-varid'>v</span><span class='hs-layout'>}</span> <span class='hs-keyword'>@-}</span>
-</pre>
-<h2 id="queue-operations">Queue Operations</h2>
-<p>Almost there! Now all that remains is to define the <code>Queue</code> API. The code below is more or less identical to Okasaki’s (I prefer <code>front</code> and <code>back</code> to his <code>left</code> and <code>right</code>.)</p>
-<p><strong>The Empty Queue</strong> is simply one where both <code>front</code> and <code>back</code> are <code>nil</code>.</p>
-<pre><span class=hs-linenum>267: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>emp</span> <span class='hs-keyglyph'>::</span> <span class='hs-conid'>QueueN</span> <span class='hs-varid'>a</span> <span class='hs-num'>0</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>268: </span><a class=annot href="#"><span class=annottext>forall a. {v : (LazyQueue.Queue a) | 0 == qsize v}</span><span class='hs-definition'>emp</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList a)
--&gt; x2:{v : (LazyQueue.SList a) | size v &lt;= size x1}
--&gt; {v : (LazyQueue.Queue a) | qsize v == size x1 + size x2 &amp;&amp; front v == x1 &amp;&amp; back v == x2}</span><span class='hs-conid'>Q</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | size v == 0}</span><span class='hs-varid'>nil</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | size v == 0}</span><span class='hs-varid'>nil</span></a>
-</pre>
-<p><strong>To Insert</strong> an element we just <code>cons</code> it to the <code>back</code> list, and call the <em>smart constructor</em> <code>makeq</code> to ensure that the balance invariant holds:</p>
-<pre><span class=hs-linenum>275: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>insert</span>       <span class='hs-keyglyph'>::</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>q</span><span class='hs-conop'>:</span><span class='hs-conid'>Queue</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>QueueN</span> <span class='hs-varid'>a</span> <span class='hs-keyword'>{qsize q + 1}</span>   <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>276: </span><a class=annot href="#"><span class=annottext>forall a.
-a
--&gt; x2:(LazyQueue.Queue a)
--&gt; {v : (LazyQueue.Queue a) | qsize x2 + 1 == qsize v}</span><span class='hs-definition'>insert</span></a> <a class=annot href="#"><span class=annottext>a</span><span class='hs-varid'>e</span></a> <span class='hs-layout'>(</span><span class='hs-conid'>Q</span> <span class='hs-varid'>f</span> <span class='hs-varid'>b</span><span class='hs-layout'>)</span> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList a)
--&gt; x2:{v : (LazyQueue.SList a) | size v &lt;= size x1 + 1}
--&gt; {v : (LazyQueue.Queue a) | size x1 + size v == qsize v}</span><span class='hs-varid'>makeq</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == f}</span><span class='hs-varid'>f</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{VV : a | VV == e}</span><span class='hs-varid'>e</span></a> <a class=annot href="#"><span class=annottext>a
--&gt; x2:(LazyQueue.SList a)
--&gt; {v : (LazyQueue.SList a) | size v == size v + 1}</span><span class='hs-varop'>`cons`</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == b &amp;&amp; size v &lt;= size f}</span><span class='hs-varid'>b</span></a><span class='hs-layout'>)</span>
-</pre>
-<p><strong>To Remove</strong> an element we pop it off the <code>front</code> by using <code>hd</code> and <code>tl</code>. Notice that the <code>remove</code> is only called on non-empty <code>Queue</code>s, which together with the key balance invariant, ensures that the calls to <code>hd</code> and <code>tl</code> are safe.</p>
-<pre><span class=hs-linenum>284: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>remove</span>       <span class='hs-keyglyph'>::</span> <span class='hs-varid'>q</span><span class='hs-conop'>:</span><span class='hs-conid'>NEQueue</span> <span class='hs-varid'>a</span> <span class='hs-keyglyph'>-&gt;</span> <span class='hs-layout'>(</span><span class='hs-varid'>a</span><span class='hs-layout'>,</span> <span class='hs-conid'>QueueN</span> <span class='hs-varid'>a</span> <span class='hs-keyword'>{qsize q - 1}</span><span class='hs-layout'>)</span> <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>285: </span><a class=annot href="#"><span class=annottext>forall a.
-x1:{v : (LazyQueue.Queue a) | 0 &lt; qsize v}
--&gt; (a, {v : (LazyQueue.Queue a) | qsize x1 - 1 == qsize v})</span><span class='hs-definition'>remove</span></a> <span class='hs-layout'>(</span><span class='hs-conid'>Q</span> <span class='hs-varid'>f</span> <span class='hs-varid'>b</span><span class='hs-layout'>)</span>   <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>forall a b &lt;p2 :: a b -&gt; Prop&gt;.
-x1:a
--&gt; x2:{VV : b&lt;p2 x1&gt; | true}
--&gt; {v : (a, b)&lt;\x6 VV -&gt; p2 x6&gt; | fst v == x1 &amp;&amp; x_Tuple22 v == x2 &amp;&amp; snd v == x2 &amp;&amp; x_Tuple21 v == x1}</span><span class='hs-layout'>(</span></a><a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | size v &gt; 0} -&gt; a</span><span class='hs-varid'>hd</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == f}</span><span class='hs-varid'>f</span></a><span class='hs-layout'>,</span> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList a)
--&gt; x2:{v : (LazyQueue.SList a) | size v &lt;= size x1 + 1}
--&gt; {v : (LazyQueue.Queue a) | size x1 + size v == qsize v}</span><span class='hs-varid'>makeq</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:{v : (LazyQueue.SList a) | size v &gt; 0}
--&gt; {v : (LazyQueue.SList a) | size v == size x1 - 1}</span><span class='hs-varid'>tl</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == f}</span><span class='hs-varid'>f</span></a><span class='hs-layout'>)</span> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == b &amp;&amp; size v &lt;= size f}</span><span class='hs-varid'>b</span></a><span class='hs-layout'>)</span>
-</pre>
-<p><em>Aside:</em> Why didn’t we (or Okasaki) use a pattern match here?</p>
-<p><strong>To Ensure the Invariant</strong> we use the smart constructor <code>makeq</code>, which is where the heavy lifting, such as it is, happens. The constructor takes two lists, the front <code>f</code> and back <code>b</code> and if they are balanced, directly returns the <code>Queue</code>, and otherwise transfers the elements from <code>b</code> over using <code>rot</code>ate.</p>
-<pre><span class=hs-linenum>297: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>makeq</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>f</span><span class='hs-conop'>:</span><span class='hs-conid'>SList</span> <span class='hs-varid'>a</span>
-<span class=hs-linenum>298: </span>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>b</span><span class='hs-conop'>:</span><span class='hs-conid'>SListLE</span> <span class='hs-varid'>a</span> <span class='hs-keyword'>{size f + 1 }</span>
-<span class=hs-linenum>299: </span>          <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>QueueN</span> <span class='hs-varid'>a</span> <span class='hs-keyword'>{size f + size b}</span>
-<span class=hs-linenum>300: </span>  <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>301: </span><a class=annot href="#"><span class=annottext>forall a.
-x1:(LazyQueue.SList a)
--&gt; x2:{v : (LazyQueue.SList a) | size v &lt;= size x1 + 1}
--&gt; {v : (LazyQueue.Queue a) | size x1 + size x2 == qsize v}</span><span class='hs-definition'>makeq</span></a> <a class=annot href="#"><span class=annottext>(LazyQueue.SList a)</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | size v &lt;= size f + 1}</span><span class='hs-varid'>b</span></a> 
-<span class=hs-linenum>302: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList a)
--&gt; {v : GHC.Types.Int | v == size x1 &amp;&amp; v &gt;= 0}</span><span class='hs-varid'>size</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == b &amp;&amp; size v &lt;= size f + 1}</span><span class='hs-varid'>b</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int
--&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | Prop v &lt;=&gt; x1 &lt;= v}</span><span class='hs-varop'>&lt;=</span></a> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList a)
--&gt; {v : GHC.Types.Int | v == size x1 &amp;&amp; v &gt;= 0}</span><span class='hs-varid'>size</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == f}</span><span class='hs-varid'>f</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList a)
--&gt; x2:{v : (LazyQueue.SList a) | size v &lt;= size x1}
--&gt; {v : (LazyQueue.Queue a) | qsize v == size x1 + size x2 &amp;&amp; front v == x1 &amp;&amp; back v == x2}</span><span class='hs-conid'>Q</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == f}</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == b &amp;&amp; size v &lt;= size f + 1}</span><span class='hs-varid'>b</span></a>
-<span class=hs-linenum>303: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>        <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList a)
--&gt; x2:{v : (LazyQueue.SList a) | size v &lt;= size x1}
--&gt; {v : (LazyQueue.Queue a) | qsize v == size x1 + size x2 &amp;&amp; front v == x1 &amp;&amp; back v == x2}</span><span class='hs-conid'>Q</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>forall a.
-x1:(LazyQueue.SList a)
--&gt; x2:{v : (LazyQueue.SList a) | size v == 1 + size x1}
--&gt; x3:(LazyQueue.SList a)
--&gt; {v : (LazyQueue.SList a) | size v == size x1 + size x2 + size x3}</span><span class='hs-varid'>rot</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == f}</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == b &amp;&amp; size v &lt;= size f + 1}</span><span class='hs-varid'>b</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | size v == 0}</span><span class='hs-varid'>nil</span></a><span class='hs-layout'>)</span> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | size v == 0}</span><span class='hs-varid'>nil</span></a>
-</pre>
-<p><strong>The Rotate</strong> function is only called when the <code>back</code> is one larger than the <code>front</code> (we never let things drift beyond that). It is arranged so that it the <code>hd</code> is built up fast, before the entire computation finishes; which, combined with laziness provides the efficient worst-case guarantee.</p>
-<pre><span class=hs-linenum>313: </span><span class='hs-keyword'>{-@</span> <span class='hs-varid'>rot</span> <span class='hs-keyglyph'>::</span> <span class='hs-varid'>f</span><span class='hs-conop'>:</span><span class='hs-conid'>SList</span> <span class='hs-varid'>a</span>
-<span class=hs-linenum>314: </span>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>b</span><span class='hs-conop'>:</span><span class='hs-conid'>SListN</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>{1 + size f}</span>
-<span class=hs-linenum>315: </span>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-varid'>a</span><span class='hs-conop'>:</span><span class='hs-conid'>SList</span> <span class='hs-keyword'>_</span>
-<span class=hs-linenum>316: </span>        <span class='hs-keyglyph'>-&gt;</span> <span class='hs-conid'>SListN</span> <span class='hs-keyword'>_</span> <span class='hs-keyword'>{size f + size b + size a}</span>
-<span class=hs-linenum>317: </span>  <span class='hs-keyword'>@-}</span>
-<span class=hs-linenum>318: </span><a class=annot href="#"><span class=annottext>forall a.
-x1:(LazyQueue.SList a)
--&gt; x2:{v : (LazyQueue.SList a) | size v == 1 + size x1}
--&gt; x3:(LazyQueue.SList a)
--&gt; {v : (LazyQueue.SList a) | size v == size x1 + size x2 + size x3}</span><span class='hs-definition'>rot</span></a> <a class=annot href="#"><span class=annottext>(LazyQueue.SList a)</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | size v == 1 + size f}</span><span class='hs-varid'>b</span></a> <a class=annot href="#"><span class=annottext>(LazyQueue.SList a)</span><span class='hs-varid'>a</span></a>
-<span class=hs-linenum>319: </span>  <span class='hs-keyglyph'>|</span> <a class=annot href="#"><span class=annottext>x1:(LazyQueue.SList a)
--&gt; {v : GHC.Types.Int | v == size x1 &amp;&amp; v &gt;= 0}</span><span class='hs-varid'>size</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == f}</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>x1:GHC.Types.Int
--&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | Prop v &lt;=&gt; x1 == v}</span><span class='hs-varop'>==</span></a> <a class=annot href="#"><span class=annottext>{v : GHC.Types.Int | v == (0  :  int)}</span><span class='hs-num'>0</span></a> <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | size v &gt; 0} -&gt; a</span><span class='hs-varid'>hd</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == b &amp;&amp; size v == 1 + size f}</span><span class='hs-varid'>b</span></a> <a class=annot href="#"><span class=annottext>a
--&gt; x2:(LazyQueue.SList a)
--&gt; {v : (LazyQueue.SList a) | size v == size v + 1}</span><span class='hs-varop'>`cons`</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == a}</span><span class='hs-varid'>a</span></a>
-<span class=hs-linenum>320: </span>  <span class='hs-keyglyph'>|</span> <span class='hs-varid'>otherwise</span>   <span class='hs-keyglyph'>=</span> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | size v &gt; 0} -&gt; a</span><span class='hs-varid'>hd</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == f}</span><span class='hs-varid'>f</span></a> <a class=annot href="#"><span class=annottext>a
--&gt; x2:(LazyQueue.SList a)
--&gt; {v : (LazyQueue.SList a) | size v == size v + 1}</span><span class='hs-varop'>`cons`</span></a> <a class=annot href="#"><span class=annottext>forall a.
-x1:(LazyQueue.SList a)
--&gt; x2:{v : (LazyQueue.SList a) | size v == 1 + size x1}
--&gt; x3:(LazyQueue.SList a)
--&gt; {v : (LazyQueue.SList a) | size v == size x1 + size x2 + size x3}</span><span class='hs-varid'>rot</span></a> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:{v : (LazyQueue.SList a) | size v &gt; 0}
--&gt; {v : (LazyQueue.SList a) | size v == size x1 - 1}</span><span class='hs-varid'>tl</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == f}</span><span class='hs-varid'>f</span></a><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>x1:{v : (LazyQueue.SList a) | size v &gt; 0}
--&gt; {v : (LazyQueue.SList a) | size v == size x1 - 1}</span><span class='hs-varid'>tl</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == b &amp;&amp; size v == 1 + size f}</span><span class='hs-varid'>b</span></a><span class='hs-layout'>)</span> <span class='hs-layout'>(</span><a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | size v &gt; 0} -&gt; a</span><span class='hs-varid'>hd</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == b &amp;&amp; size v == 1 + size f}</span><span class='hs-varid'>b</span></a> <a class=annot href="#"><span class=annottext>a
--&gt; x2:(LazyQueue.SList a)
--&gt; {v : (LazyQueue.SList a) | size v == size v + 1}</span><span class='hs-varop'>`cons`</span></a> <a class=annot href="#"><span class=annottext>{v : (LazyQueue.SList a) | v == a}</span><span class='hs-varid'>a</span></a><span class='hs-layout'>)</span>
-</pre>
-<h2 id="conclusion">Conclusion</h2>
-<p>Well there you have it; Okasaki’s beautiful lazy Queue, with the invariants easily expressed and checked with LiquidHaskell. I find this example particularly interesting because the refinements express invariants that are critical for efficiency, and furthermore the code introspects on the <code>size</code> in order to guarantee the invariants. Plus, it’s just marginally more complicated than <code>append</code> and so, (I hope!) was easy to follow.</p>
-                <hr>
-                <ul class="pager">
-                    
-                    
-                </ul>
-
-                <div id="disqus_thread"></div>
-<script>
-    /**
-     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
-     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
-     */
-    var disqus_config = function () {
-        this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2015/01/30/okasakis-lazy-queue.lhs';  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = '/2015/01/30/okasakis-lazy-queue.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
     };
     (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
         var d = document, s = d.createElement('script');

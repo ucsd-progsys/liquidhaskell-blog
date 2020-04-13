@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+   <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106786912-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments)};
+      gtag('js', new Date());
+      gtag('config', 'UA-106786912-1');
+    </script>
+
+
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ <!--
+      loads the http over https ssl -
+      welcome to my website!
+
+	this theme is based off the Ice & Fire theme created by Lucas Gatsas
+      https://www.twitter.com/LucasGatsas
+      www.lucasgatsas.ch - switzerland.
+  -->
+
+
+<!-- Microsoft Internet Explorer documentMode compatMode setting IE Modus -->
+<script type="text/javascript">
+var IE = null;
+if (window.navigator.appName == "Microsoft Internet Explorer") {
+  if (document.documentMode) {
+
+    IE = document.documentMode;
+    } else {
+
+        IE = 5;
+          if (document.compatMode) {
+      if (document.compatMode == "CSS1Compat")
+      IE = 11;
+      }
+    }
+  }
+</script>
+
+    <meta charset="utf-8">
+    <!-- X-UA -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <link rel="author" title="Ranjit Jhala" href="http://ranjitjhala.github.io" />
+
+    <meta name="google" content="notranslate" />
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- index ROBOTS follow -->
+    <meta name="robots" content="index, follow" />
+    <!-- Site Desciption -->
+    <meta name="description" content="LiquidHaskell Blog">
+    <!-- Site Desciption -->
+    <meta name="keywords" content="haskell, refinement types, liquid types, formal methods, type systems">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ico.png" type="image/x-icon" />
+    <!-- Blog Title -->
+    <title>LiquidHaskell</title>
+
+    <!--     <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+-->
+    <!-- Property Metas -->
+    <meta property="og:image" content="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ix.png" />
+    <meta property="og:title" content="LiquidHaskell Blog" />
+    <meta property="og:site_name" content="LiquidHaskell Blog" />
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseUrl | prepend: site.url }}">
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/spaceg.stylesheets.css"> -->
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/ronacher.css" type="text/css">
+
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/syntax.css">
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/liquid-light.css">
+
+    <!-- Fonts
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+    -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+	#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:url("/static/img/preloader.gif"); /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	ul, ol {margin-top: 0;margin-bottom: 10px;}
+	.navbar-inverse {background-color: #FFF;border-color: #FFFFFF;}
+</style>
+<!--link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/prettify.css"-->
+<style>
+  /* HEADER IMAGE */
+  header.intro-header {background: #6f5499;background: no-repeat center center;background-attachment: scroll;-webkit-background-size: cover;-moz-background-size: cover;background-size: cover;-o-background-size: cover;}
+
+	/* Preloader */#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:; /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	li {list-style: none;}
+            body.modal-open
+            {overflow: hidden;padding-right: 0px;
+        }
+	article li {list-style: inherit;}
+	article .figure {text-align: center}
+    </style>
+    <!-- end Loading front stylesheet here -->
+
+    <link href="atom.xml" type="application/atom+xml" rel="alternate" title="LiquidHaskell-Blog ATOM Feed" />
+    </head>
+
+    <body>
+	    
+	<!-- 	
+        <div id="preloader">
+	    <div id="status">
+	    </div>
+	</div>  
+	-->
+	<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://ucsd-progsys.github.io/liquidhaskell-blog" id="blog-title-left-top">LiquidHaskell</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <!-- <li class="dropdown">
+                    <a href="#portfolioModal2" data-toggle="modal"><i class="fa fa-random" id="icon-top"></i></a>
+                <ul class="dropdown-menu"></ul>
+                </li>-->
+                
+                <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/blog.html">Blog</a></li>
+                <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=Insert.hs" target="_blank">Demo</a></li>
+                <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
+                <li><a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial" target="_blank">Book</a></li>
+                <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html" target="_blank">About</a></li>
+                <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
+                <!--
+                <li><a href="https://www.twitter.com/ranjitjhala" id="roundbutton" target="_blank"><i class="fa fa-twitter"></i>RanjitJhala</a></li>
+                -->
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<!-- Portfolio Modals -->
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ico.png" class="img-responsive img-centered" alt title>
+                            <p class="font-style-inline-small">
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow me</a>. <br>
+                                <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                                <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>
+                            </p>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Menu Modals Add New Sa.21.Feb.2015 03:22:25 -->
+    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <p class="font-style-inline-small">
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow</a>. <br>
+                        <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>  <br>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/index.html">Home</a></li>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html">About</a></li>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/blog.html">Blog</a></li>
+                    <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=Insert.hs" target="_blank">Demo</a></li>
+                    <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
+                    <li><a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial" target="_blank">Book</a></li>
+                    <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
+                            </p>
+
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <div id="content">
+            <!-- Post Header -->
+<header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt title>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>Polymorphic Perplexion</h1>
+                    
+                    <span class="meta">
+		    
+			Posted by Ranjit Jhala
+		    
+			Apr 12, 2020
+		    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/basic.html">basic</a>
+              
+            </div>
+
+            <br>
+			            <p>Polymorphism plays a vital role in automating verification in LH. However, thanks to its ubiquity, we often take it for granted, and it can be quite baffling to figure out why verification fails with monomorphic signatures. Let me explain why, using a simple example that has puzzled me and other users several times.</p>
+<!-- more -->
+<div class="hidden">
+<pre><span class="hs-linenum">22: </span>
+<span class="hs-linenum">23: </span><span class="hs-keyword">module</span> <span class="hs-conid">PolymorphicPerplexion</span> <span class="hs-keyword">where</span>
+</pre>
+</div>
+<h2 id="a-type-for-ordered-lists">A Type for Ordered Lists</h2>
+<p><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/2013/07/29/putting-things-in-order.lhs/">Previously</a> we have seen how you can use LH to define a type of lists whose values are in increasing (ok, non-decreasing!) order.</p>
+<p>First, we define an <code>IncList a</code> type, with <code>Emp</code> (“empty”) and <code>:&lt;</code> (“cons”) constructors.</p>
+<pre><span class="hs-linenum">38: </span><span class="hs-keyword">data</span> <span class="hs-conid">IncList</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">Emp</span>
+<span class="hs-linenum">39: </span>               <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-conop">:&lt;</span><span class="hs-layout">)</span> <span class="hs-layout">{</span> <span class="hs-varid">hd</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span><span class="hs-layout">,</span> <span class="hs-varid">tl</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">IncList</span> <span class="hs-varid">a</span> <span class="hs-layout">}</span>
+<span class="hs-linenum">40: </span>
+<span class="hs-linenum">41: </span><span class="hs-keyword">infixr</span> <span class="hs-num">9</span> <span class="hs-conop">:&lt;</span>
+</pre>
+<p>Next, we refine the type to specify that each “cons” <code>:&lt;</code> constructor takes as input a <code>hd</code> and a <code>tl</code> which must be an <code>IncList a</code> of values <code>v</code> each of which is greater than <code>hd</code>.</p>
+<pre><span class="hs-linenum">50: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">data</span> <span class="hs-conid">IncList</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">Emp</span> 
+<span class="hs-linenum">51: </span>                   <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-conop">:&lt;</span><span class="hs-layout">)</span> <span class="hs-layout">{</span> <span class="hs-varid">hd</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span><span class="hs-layout">,</span> <span class="hs-varid">tl</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">IncList</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-varid">a</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">hd</span> <span class="hs-varop">&lt;=</span> <span class="hs-varid">v</span><span class="hs-layout">}</span><span class="hs-layout">}</span>  
+<span class="hs-linenum">52: </span>  <span class="hs-keyword">@-}</span>
+</pre>
+<p>We can confirm that the above definition ensures that the only <em>legal</em> values are increasingly ordered lists, as LH accepts the first list below, but rejects the second where the elements are out of order.</p>
+<pre><span class="hs-linenum">61: </span><span class="hs-definition">legalList</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">IncList</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">62: </span><a class="annot" href="#"><span class="annottext">(PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class="hs-definition">legalList</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-num">0</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-num">1</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-num">2</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-num">3</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class="hs-conid">Emp</span></a>
+<span class="hs-linenum">63: </span>
+<span class="hs-linenum">64: </span><span class="hs-definition">illegalList</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">IncList</span> <span class="hs-conid">Int</span> 
+<span class="hs-linenum">65: </span><a class="annot" href="#"><span class="annottext">(PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class="hs-definition">illegalList</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-num">0</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-num">1</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-num">3</span></a> <span class="hs-conop">:&lt;</span> <span class="hs-error"><a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-num">2</span></a></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-conop">:&lt;</span></span><span class="hs-error"> </span><span class="hs-error"><a class="annot" href="#"><span class="annottext">{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class="hs-conid">Emp</span></a></span>
+</pre>
+<h2 id="a-polymorphic-insertion-sort">A Polymorphic Insertion Sort</h2>
+<p>Next, lets write a simple <em>insertion-sort</em> function that takes a plain unordered list of <code>[a]</code> and returns the elements in increasing order:</p>
+<pre><span class="hs-linenum">76: </span><span class="hs-definition">insertSortP</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-varid">a</span>
+<span class="hs-linenum">77: </span><a class="annot" href="#"><span class="annottext">forall a##xo .
+(GHC.Classes.Ord&lt;[]&gt; a##xo) =&gt;
+[a##xo] -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class="hs-definition">insertSortP</span></a> <a class="annot" href="#"><span class="annottext">[a##xo]</span><span class="hs-varid">xs</span></a> <span class="hs-keyglyph">=</span> <span class="hs-varid">foldr</span> <a class="annot" href="#"><span class="annottext">a##xo -&gt; (PolymorphicPerplexion.IncList a##xo) -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class="hs-varid">insertP</span></a> <a class="annot" href="#"><span class="annottext">{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class="hs-conid">Emp</span></a> <a class="annot" href="#"><span class="annottext">{v : [a##xo] | len v &gt;= 0
+               &amp;&amp; v == xs}</span><span class="hs-varid">xs</span></a>
+<span class="hs-linenum">78: </span>
+<span class="hs-linenum">79: </span><span class="hs-definition">insertP</span>             <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-varid">a</span>
+<span class="hs-linenum">80: </span><a class="annot" href="#"><span class="annottext">forall a##xo .
+(GHC.Classes.Ord&lt;[]&gt; a##xo) =&gt;
+a##xo -&gt; (PolymorphicPerplexion.IncList a##xo) -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class="hs-definition">insertP</span></a> <a class="annot" href="#"><span class="annottext">a##xo</span><span class="hs-varid">y</span></a> <span class="hs-conid">Emp</span>       <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == y}</span><span class="hs-varid">y</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class="hs-conid">Emp</span></a>
+<span class="hs-linenum">81: </span><span class="hs-definition">insertP</span> <span class="hs-varid">y</span> <span class="hs-layout">(</span><span class="hs-varid">x</span> <span class="hs-conop">:&lt;</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span>
+<span class="hs-linenum">82: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == y}</span><span class="hs-varid">y</span></a> <span class="hs-varop">&lt;=</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == x}</span><span class="hs-varid">x</span></a>         <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == y}</span><span class="hs-varid">y</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == x}</span><span class="hs-varid">x</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">{v : (PolymorphicPerplexion.IncList {VV : a##xo | x &lt;= VV}) | v == xs}</span><span class="hs-varid">xs</span></a>
+<span class="hs-linenum">83: </span>  <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span>      <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == x}</span><span class="hs-varid">x</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">(PolymorphicPerplexion.IncList a##xo)</span><span class="hs-varid">insertP</span></a> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == y}</span><span class="hs-varid">y</span></a> <a class="annot" href="#"><span class="annottext">{v : (PolymorphicPerplexion.IncList {VV : a##xo | x &lt;= VV}) | v == xs}</span><span class="hs-varid">xs</span></a>
+</pre>
+<p>Happily, LH is able to verify the above code without any trouble! (If that seemed too easy, don’t worry: if you mess up the comparison, e.g. change the guard to <code>x &lt;= y</code> LH will complain about it.)</p>
+<h2 id="a-monomorphic-insertion-sort">A Monomorphic Insertion Sort</h2>
+<p>However, lets take the <em>exact</em> same code as above <em>but</em> change the type signatures to make the functions <em>monomorphic</em>, here, specialized to <code>Int</code> lists.</p>
+<pre><span class="hs-linenum">99: </span><span class="hs-definition">insertSortM</span> <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-conid">Int</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-conid">Int</span> 
+<span class="hs-linenum">100: </span><a class="annot" href="#"><span class="annottext">[GHC.Types.Int] -&gt; (PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class="hs-definition">insertSortM</span></a> <a class="annot" href="#"><span class="annottext">[GHC.Types.Int]</span><span class="hs-varid">xs</span></a> <span class="hs-keyglyph">=</span> <span class="hs-varid">foldr</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Int -&gt; (PolymorphicPerplexion.IncList GHC.Types.Int) -&gt; (PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class="hs-varid">insertM</span></a> <a class="annot" href="#"><span class="annottext">{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class="hs-conid">Emp</span></a> <a class="annot" href="#"><span class="annottext">{v : [GHC.Types.Int] | len v &gt;= 0
+                       &amp;&amp; v == xs}</span><span class="hs-varid">xs</span></a>
+<span class="hs-linenum">101: </span>
+<span class="hs-linenum">102: </span><span class="hs-definition">insertM</span>            <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-conid">Int</span> 
+<span class="hs-linenum">103: </span><a class="annot" href="#"><span class="annottext">GHC.Types.Int -&gt; (PolymorphicPerplexion.IncList GHC.Types.Int) -&gt; (PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class="hs-definition">insertM</span></a> <a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-varid">y</span></a> <span class="hs-conid">Emp</span>      <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v == y}</span><span class="hs-varid">y</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class="hs-conid">Emp</span></a>
+<span class="hs-linenum">104: </span><span class="hs-definition">insertM</span> <span class="hs-varid">y</span> <span class="hs-layout">(</span><span class="hs-varid">x</span> <span class="hs-conop">:&lt;</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span>
+<span class="hs-linenum">105: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v == y}</span><span class="hs-varid">y</span></a> <span class="hs-varop">&lt;=</span> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v == x}</span><span class="hs-varid">x</span></a>         <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v == y}</span><span class="hs-varid">y</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v == x}</span><span class="hs-varid">x</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">{v : (PolymorphicPerplexion.IncList {v : GHC.Types.Int | x &lt;= v}) | v == xs}</span><span class="hs-varid">xs</span></a>
+<span class="hs-linenum">106: </span>  <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span>      <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v == x}</span><span class="hs-varid">x</span></a> <span class="hs-conop">:&lt;</span> <span class="hs-error"><a class="annot" href="#"><span class="annottext">(PolymorphicPerplexion.IncList GHC.Types.Int)</span><span class="hs-varid">insertM</span></a></span><span class="hs-error"> </span><span class="hs-error"><a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v == y}</span><span class="hs-varid">y</span></a></span><span class="hs-error"> </span><span class="hs-error"><a class="annot" href="#"><span class="annottext">{v : (PolymorphicPerplexion.IncList {v : GHC.Types.Int | x &lt;= v}) | v == xs}</span><span class="hs-varid">xs</span></a></span>
+</pre>
+<p>Huh? Now LH appears to be unhappy with the code! How is this possible?</p>
+<p>Lets look at the type error:</p>
+<pre><span class="hs-linenum">114: </span> <span class="hs-varop">/</span><span class="hs-conid">Users</span><span class="hs-varop">/</span><span class="hs-varid">rjhala</span><span class="hs-varop">/</span><span class="hs-conid">PerplexingPolymorphicProperties.lhs</span><span class="hs-conop">:</span><span class="hs-num">80</span><span class="hs-conop">:</span><span class="hs-num">27</span><span class="hs-comment">-</span><span class="hs-num">38</span><span class="hs-conop">:</span> <span class="hs-conid">Error</span><span class="hs-conop">:</span> <span class="hs-conid">Liquid</span> <span class="hs-conid">Type</span> <span class="hs-conid">Mismatch</span>
+<span class="hs-linenum">115: </span>  
+<span class="hs-linenum">116: </span> <span class="hs-num">80</span> <span class="hs-keyglyph">|</span>   <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span>      <span class="hs-keyglyph">=</span> <span class="hs-varid">x</span> <span class="hs-conop">:&lt;</span> <span class="hs-varid">insertM</span> <span class="hs-varid">y</span> <span class="hs-varid">xs</span>
+<span class="hs-linenum">117: </span>                                <span class="hs-varop">^^^^^^^^^^^^</span>
+<span class="hs-linenum">118: </span>   <span class="hs-conid">Inferred</span> <span class="hs-keyword">type</span>
+<span class="hs-linenum">119: </span>     <span class="hs-conid">VV</span> <span class="hs-conop">:</span> <span class="hs-conid">Int</span>
+<span class="hs-linenum">120: </span>  
+<span class="hs-linenum">121: </span>   <span class="hs-varid">not</span> <span class="hs-varid">a</span> <span class="hs-varid">subtype</span> <span class="hs-keyword">of</span> <span class="hs-conid">Required</span> <span class="hs-keyword">type</span>
+<span class="hs-linenum">122: </span>     <span class="hs-conid">VV</span> <span class="hs-conop">:</span> <span class="hs-layout">{</span><span class="hs-conid">VV</span> <span class="hs-conop">:</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">x</span> <span class="hs-varop">&lt;=</span> <span class="hs-conid">VV</span><span class="hs-layout">}</span>
+<span class="hs-linenum">123: </span>  
+<span class="hs-linenum">124: </span>   <span class="hs-conid">In</span> <span class="hs-conid">Context</span>
+<span class="hs-linenum">125: </span>     <span class="hs-varid">x</span> <span class="hs-conop">:</span> <span class="hs-conid">Int</span>
+</pre>
+<p>LH <em>expects</em> that since we’re using the “cons” operator <code>:&lt;</code> the “tail” value <code>insertM y xs</code> must contain values <code>VV</code> that are greater than the “head” <code>x</code>. The error says that, LH cannot prove this requirement of <em>actual</em> list <code>insertM y xs</code>.</p>
+<p>Hmm, well thats a puzzler. Two questions that should come to mind.</p>
+<ol type="1">
+<li><p><em>Why</em> does the above fact hold in the first place?</p></li>
+<li><p><em>How</em> is LH able to deduce this fact with the <em>polymorphic</em> signature but not the monomorphic one?</p></li>
+</ol>
+<p>Lets ponder the first question first: why <em>is</em> every element of <code>insert y xs</code> in fact larger than <code>x</code>? For two reasons:</p>
+<ol type="a">
+<li><p>every element in <code>xs</code> is larger than <code>x</code>, as the list <code>x :&lt; xs</code> was ordered,</p></li>
+<li><p><code>y</code> is larger than <code>x</code> as established by the <code>otherwise</code> and crucially</p></li>
+<li><p>the elements returned by <code>insert y xs</code> are either <code>y</code> or from <code>xs</code>!</p></li>
+</ol>
+<p>Now onto the second question: how does LH verify the polymorphic code, but not the monomorphic one? The reason is the fact (c)! LH is a <em>modular</em> verifier, meaning that the <em>only</em> information that it has about the behavior of <code>insert</code> at a call-site is the information captured in the (refinement) <em>type specification</em> for <code>insert</code>. The <em>polymorphic</em> signature:</p>
+<pre><span class="hs-linenum">156: </span><span class="hs-definition">insertP</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-varid">a</span>
+</pre>
+<p>via <em>parametricity</em>, implicitly states fact (c). That is, if at a call-site <code>insertP y xs</code> we pass in a value that is greater an <code>x</code> and a list of values greater than <code>x</code> then via <em>polymorphic instantiation</em> at the call-site, LH infers that the returned value must also be a list of elements greater than <code>x</code>!</p>
+<p>However, the <em>monomorphic</em> signature</p>
+<pre><span class="hs-linenum">167: </span><span class="hs-definition">insertM</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-conid">Int</span> 
+</pre>
+<p>offers no such insight. It simply says the function takes in an <code>Int</code> and another ordered list of <code>Int</code> and returns another ordered list, whose actual elements could be arbitrary <code>Int</code>. Specifically, at the call-site <code>insertP y xs</code> LH has no way to conclude the the returned elements are indeed greater than <code>x</code> and hence rejects the monomorphic code.</p>
+<h2 id="perplexity">Perplexity</h2>
+<p>While parametricity is all very nice, and LH’s polymorphic instanatiation is very clever and useful, it can also be quite mysterious. For example, q curious user Oisín [pointed out](https://github.com/ucsd-progsys/liquidhaskell-tutorial/issues/91] that while the code below is <em>rejected</em> that if you <em>uncomment</em> the type signature for <code>go</code> then it is <em>accepted</em> by LH!</p>
+<pre><span class="hs-linenum">187: </span><span class="hs-definition">insertSortP'</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">IncList</span> <span class="hs-varid">a</span> 
+<span class="hs-linenum">188: </span><a class="annot" href="#"><span class="annottext">forall a##xo .
+(GHC.Classes.Ord&lt;[]&gt; a##xo) =&gt;
+[a##xo] -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class="hs-definition">insertSortP'</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(PolymorphicPerplexion.IncList a##xo)</span><span class="hs-varid">foldr</span></a> <a class="annot" href="#"><span class="annottext">a##xo -&gt; (PolymorphicPerplexion.IncList a##xo) -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class="hs-varid">go</span></a> <a class="annot" href="#"><span class="annottext">{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class="hs-conid">Emp</span></a> 
+<span class="hs-linenum">189: </span>  <span class="hs-keyword">where</span>
+<span class="hs-linenum">190: </span>    <span class="hs-comment">-- go :: (Ord a) =&gt; a -&gt; IncList a -&gt; IncList a</span>
+<span class="hs-linenum">191: </span>    <a class="annot" href="#"><span class="annottext">a##xo -&gt; (PolymorphicPerplexion.IncList a##xo) -&gt; (PolymorphicPerplexion.IncList a##xo)</span><span class="hs-varid">go</span></a> <a class="annot" href="#"><span class="annottext">a##xo</span><span class="hs-varid">y</span></a> <span class="hs-conid">Emp</span>       <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == y}</span><span class="hs-varid">y</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">{VV : forall a##xo .
+      (PolymorphicPerplexion.IncList a##xo) | VV == Emp}</span><span class="hs-conid">Emp</span></a>
+<span class="hs-linenum">192: </span>    <span class="hs-varid">go</span> <span class="hs-varid">y</span> <span class="hs-layout">(</span><span class="hs-varid">x</span> <span class="hs-conop">:&lt;</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span>
+<span class="hs-linenum">193: </span>      <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == y}</span><span class="hs-varid">y</span></a> <span class="hs-varop">&lt;=</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == x}</span><span class="hs-varid">x</span></a>     <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == y}</span><span class="hs-varid">y</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == x}</span><span class="hs-varid">x</span></a> <span class="hs-conop">:&lt;</span> <a class="annot" href="#"><span class="annottext">{v : (PolymorphicPerplexion.IncList {VV : a##xo | x &lt;= VV}) | v == xs}</span><span class="hs-varid">xs</span></a>
+<span class="hs-linenum">194: </span>      <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == x}</span><span class="hs-varid">x</span></a> <span class="hs-conop">:&lt;</span> <span class="hs-error"><a class="annot" href="#"><span class="annottext">(PolymorphicPerplexion.IncList a##xo)</span><span class="hs-varid">go</span></a></span><span class="hs-error"> </span><span class="hs-error"><a class="annot" href="#"><span class="annottext">{VV : a##xo | VV == y}</span><span class="hs-varid">y</span></a></span><span class="hs-error"> </span><span class="hs-error"><a class="annot" href="#"><span class="annottext">{v : (PolymorphicPerplexion.IncList {VV : a##xo | x &lt;= VV}) | v == xs}</span><span class="hs-varid">xs</span></a></span>
+</pre>
+<p>This is thoroughly perplexing, but again, is explained by the absence of parametricity. When we <em>remove</em> the type signature, GHC defaults to giving <code>go</code> a <em>monomorphic</em> signature where the <code>a</code> is not universally quantified, and which roughly captures the same specification as the monomorphic <code>insertM</code> above causing verification to fail! Restoring the signature, provides LH with the polymorphic signature, which can be instantiated at the call-site to recover fact <code>(c)</code> that is crucial for verification.</p>
+<h2 id="moral">Moral</h2>
+<p>I hope that example illustrates two points.</p>
+<p>First, <em>parametric polymorphism</em> lets type specifications say a lot more than they immediately let on: so do write polymorphic signatures whenever possible.</p>
+<p>Second, on a less happy note, <em>explaining</em> why fancy type checkers fail remains a vexing problem, whose difficulty is compounded by increasing the cleverness of the type system. We’d love to hear any ideas you might have in this direction!</p>
+                <hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+                <div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    var disqus_config = function () {
+        this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2020/04/12/polymorphic-perplexion.lhs';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = '/2020/04/12/polymorphic-perplexion.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+        var d = document, s = d.createElement('script');
+        s.src = '//liquidhaskell.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+            </div>
+        </div>
+    </div>
+</article>
+
+        </div>
+        <div id="footer">
+        </div>
+      <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="https://ucsd-progsys.github.io/liquidhaskell-blog/feed.xml" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/ranjitjhala" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/ucsd-progsys" target="_blank">
+                            <span class="fa-stack fa-lg">
+
+                              <i class="fa fa-arrow-circle-o-down"></i>
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+		    
+                </ul>
+                <p class="copyright text-muted">
+                
+                  Copyright &copy; Ranjit Jhala 2016-17.
+                
+                  Generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>,
+                  template by <a href="http://lucumr.pocoo.org">Armin Ronacher</a>,
+                  suggest improvements <a href="https://github.com/ucsd-progsys/liquidhaskell-blog/">here</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<!-- jQuery -->
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/jquery.min.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/spaceg.stylesheets.min.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/bootstrap.min.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/anim.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/scripts.js"></script>
+
+    </body>
+</html>
