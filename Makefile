@@ -1,5 +1,5 @@
 site:
-	stack build
+	stack build --fast
 	stack exec -- blog rebuild
 
 upload: site 
