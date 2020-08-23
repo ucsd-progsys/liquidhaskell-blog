@@ -106,9 +106,9 @@ To "check" this code with LH we need only tell GHC to use it as a plugin, in two
 ```
 
 That's it. Now, everytime you (re-)build the code, GHC will _automatically_ 
-run LH on the changed modules! (If you use `stack` you may have to specify 
+run LH on the changed modules! If you use `stack` you may have to specify 
 a few more dependencies, as shown in the `stack.yaml`; there are none needed 
-if you use `cabal-v2`.) If you clone the repo and run, e.g. `cabal v2-build` 
+if you use `cabal-v2`. If you clone the repo and run, e.g. `cabal v2-build` 
 or `stack build` you'll get the following result, after the relevant dependencies 
 are downloaded and built of course...
 
@@ -127,7 +127,7 @@ Building library for lh-plugin-demo-0.1.0.0..
 
 **** LIQUID: UNSAFE ***************************************************
 
-/Users/rjhala/lh-plugin-demolh-plugin-demo/src/Demo/Client.hs:6:15: error:
+/Users/rjhala/lh-plugin-demo/src/Demo/Client.hs:6:15: error:
     Liquid Type Mismatch
     .
     The inferred type
@@ -230,7 +230,7 @@ Building library for lh-plugin-demo-client-0.1.0.0..
 
 **** LIQUID: UNSAFE ****************************************************
 
-/Users/rjhala/research/lh-plugin-demo-client/src/Demo/ExternalClient.hs:8:22: error:
+/Users/rjhala/lh-plugin-demo-client/src/Demo/ExternalClient.hs:8:22: error:
     Liquid Type Mismatch
     .
     The inferred type
@@ -283,14 +283,14 @@ manner, which made these specifications very difficult to extend.
 
 Moving forward, all the refinement specifications e.g. for `GHC.List` or `Data.Vector` 
 or `Data.Set` or `Data.Bytestring` simply live in packages that *mirror* the original 
-versions, e.g. `liquid-base`,  `liquid-vector`, `liquid-containers`, `liquid-bytestring.
-Each `liquid-X` package directly _re-exports_ the contents of the corresponding `X` package,
+versions, e.g. `liquid-base`,  `liquid-vector`, `liquid-containers`, `liquid-bytestring`.
+Each `liquid-X` package directly _re-exports_ all the contents of the corresponding `X` package,
 but with any additional refinement type specifications. 
 
 So if you want to verify that _your_ code has no `vector`-index overflow errors, you simply 
-build with `liquid-vector` instead of `vector`! (Of course, in an ideal, and hopefully 
+build with `liquid-vector` instead of `vector`! Of course, in an ideal, and hopefully 
 not too distant future, we'd get the refinement types directly inside `vector`, `containers` 
-or `bytestring`.)
+or `bytestring`.
 
 ### Benefits
 
