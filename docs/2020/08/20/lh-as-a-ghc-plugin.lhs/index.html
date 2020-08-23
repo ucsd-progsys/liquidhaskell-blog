@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    
+    <head>
+   <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-106786912-1">
+    </script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments)};
+      gtag('js', new Date());
+      gtag('config', 'UA-106786912-1');
+    </script>
+
+
+     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ <!--
+      loads the http over https ssl -
+      welcome to my website!
+
+	this theme is based off the Ice & Fire theme created by Lucas Gatsas
+      https://www.twitter.com/LucasGatsas
+      www.lucasgatsas.ch - switzerland.
+  -->
+
+
+<!-- Microsoft Internet Explorer documentMode compatMode setting IE Modus -->
+<script type="text/javascript">
+var IE = null;
+if (window.navigator.appName == "Microsoft Internet Explorer") {
+  if (document.documentMode) {
+
+    IE = document.documentMode;
+    } else {
+
+        IE = 5;
+          if (document.compatMode) {
+      if (document.compatMode == "CSS1Compat")
+      IE = 11;
+      }
+    }
+  }
+</script>
+
+    <meta charset="utf-8">
+    <!-- X-UA -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=11" />
+    <link rel="author" title="Ranjit Jhala" href="http://ranjitjhala.github.io" />
+
+    <meta name="google" content="notranslate" />
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- index ROBOTS follow -->
+    <meta name="robots" content="index, follow" />
+    <!-- Site Desciption -->
+    <meta name="description" content="LiquidHaskell Blog">
+    <!-- Site Desciption -->
+    <meta name="keywords" content="haskell, refinement types, liquid types, formal methods, type systems">
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ico.png" type="image/x-icon" />
+    <!-- Blog Title -->
+    <title>LiquidHaskell</title>
+
+    <!--     <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+-->
+    <!-- Property Metas -->
+    <meta property="og:image" content="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ix.png" />
+    <meta property="og:title" content="LiquidHaskell Blog" />
+    <meta property="og:site_name" content="LiquidHaskell Blog" />
+    <!-- Canonical -->
+    <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseUrl | prepend: site.url }}">
+    <!-- StyleSheet -->
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/spaceg.stylesheets.css"> -->
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/ronacher.css" type="text/css">
+
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/syntax.css">
+    <link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/liquid-light.css">
+
+    <!-- Fonts
+    <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic' rel='stylesheet' type='text/css'>
+    -->
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <style>
+	#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:url("/static/img/preloader.gif"); /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	ul, ol {margin-top: 0;margin-bottom: 10px;}
+	.navbar-inverse {background-color: #FFF;border-color: #FFFFFF;}
+</style>
+<!--link rel="stylesheet" href="https://ucsd-progsys.github.io/liquidhaskell-blog/static/css/prettify.css"-->
+<style>
+  /* HEADER IMAGE */
+  header.intro-header {background: #6f5499;background: no-repeat center center;background-attachment: scroll;-webkit-background-size: cover;-moz-background-size: cover;background-size: cover;-o-background-size: cover;}
+
+	/* Preloader */#preloader {position:fixed;top:0;left:0;right:0;bottom:0;background-color:#fff; /* change if the mask should have another color then white */z-index:99; /* makes sure it stays on top */}
+	#status {width:200px;height:200px;position:absolute;left:50%; /* centers the loading animation horizontally one the screen */top:50%; /* centers the loading animation vertically one the screen */background-image:; /* path to your loading animation */background-repeat:no-repeat;background-position:center;margin:-100px 0 0 -100px; /* is width and height divided by two */}
+	li {list-style: none;}
+            body.modal-open
+            {overflow: hidden;padding-right: 0px;
+        }
+	article li {list-style: inherit;}
+	article .figure {text-align: center}
+    </style>
+    <!-- end Loading front stylesheet here -->
+
+    <link href="atom.xml" type="application/atom+xml" rel="alternate" title="LiquidHaskell-Blog ATOM Feed" />
+    </head>
+
+    <body>
+	    
+	<!-- 	
+        <div id="preloader">
+	    <div id="status">
+	    </div>
+	</div>  
+	-->
+	<!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="https://ucsd-progsys.github.io/liquidhaskell-blog" id="blog-title-left-top">LiquidHaskell</a>
+        </div>
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav navbar-right">
+                <!-- <li class="dropdown">
+                    <a href="#portfolioModal2" data-toggle="modal"><i class="fa fa-random" id="icon-top"></i></a>
+                <ul class="dropdown-menu"></ul>
+                </li>-->
+                
+                <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/blog.html">Blog</a></li>
+                <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=refinements101.hs" target="_blank">Demo</a></li>
+                <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
+                <li><a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial" target="_blank">Book</a></li>
+                <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html" target="_blank">About</a></li>
+                <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
+                <!--
+                <li><a href="https://www.twitter.com/ranjitjhala" id="roundbutton" target="_blank"><i class="fa fa-twitter"></i>RanjitJhala</a></li>
+                -->
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<!-- Portfolio Modals -->
+    <div class="portfolio-modal modal fade" id="portfolioModal1" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <img src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/ico.png" class="img-responsive img-centered" alt title>
+                            <p class="font-style-inline-small">
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow me</a>. <br>
+                                <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                                <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                                <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>
+                            </p>
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<!-- Menu Modals Add New Sa.21.Feb.2015 03:22:25 -->
+    <div class="portfolio-modal modal fade" id="portfolioModal2" tabindex="-1" role="dialog" aria-hidden="true" style="padding-right:0px; overflow: hidden;">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-lg-offset-2">
+                        <div class="modal-body">
+                            <h1 class="font-style-inline-small-h1">Ranjit Jhala</h1>
+                            <hr class="star-primary">
+                            <p class="font-style-inline-small">
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank">follow</a>. <br>
+                        <a href="https://www.github.com/ucsd-progsys" target="_blank">    <i class="fa fa-github" id="spaceg-social-modal"></i> </a>
+                        <a href="https://www.twitter.com/ranjitjhala" target="_blank"><i class="fa fa-twitter" id="spaceg-social-modal"></i> </a>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" target="_blank"> <i class="fa fa-google-plus" id="spaceg-social-modal"></i></a>  <br>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/index.html">Home</a></li>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/about.html">About</a></li>
+                    <li><a href="https://ucsd-progsys.github.io/liquidhaskell-blog/blog.html">Blog</a></li>
+                    <li><a href="http://goto.ucsd.edu:8090/index.html#?demo=refinements101.hs" target="_blank">Demo</a></li>
+                    <li><a href="http://ucsd-progsys.github.io/lh-workshop" target="_blank">Tutorial</a></li>
+                    <li><a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial" target="_blank">Book</a></li>
+                    <li><a href="http://www.github.com/ucsd-progsys/liquidhaskell" target="_blank"><i class="fa fa-twitter"></i>Download</a></li>
+                            </p>
+
+                            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+        <div id="content">
+            <!-- Post Header -->
+<header class="intro-header" style="background-image: url('https://ucsd-progsys.github.io/liquidhaskell-blog/static/img/sea.jpg')" alt title>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <h1>LiquidHaskell is a GHC Plugin</h1>
+                    
+                    <span class="meta">
+		    
+			Posted by Ranjit Jhala
+		    
+			Aug 20, 2020
+		    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+
+            <br>
+
+            <div class="info">
+              
+                Tags: <a href="../../../../tags/basic.html">basic</a>
+              
+            </div>
+
+            <br>
+			            <div class="hidden">
+
+</div>
+<p>I enjoy working with LH. However, I’d be the very first to confess that it has been incredibly tedious to get to work on <em>existing</em> code bases, for various reasons.</p>
+<ol type="1">
+<li><p>LH ran <em>one file at a time</em>; it was a hassle to get <strong>systematically analyze</strong> all the modules in a single package.</p></li>
+<li><p>LH had <em>no notion of packages</em>; it was impossible to <strong>import specifications</strong> across packages.</p></li>
+<li><p>LH had <em>no integration</em> with the standard compilation cycle; it was difficult to get robust, <strong>development-time feedback</strong> using <code>ghci</code> based tools.</p></li>
+</ol>
+<p>I’m delighted to announce the release of <a href="http://ucsd-progsys.github.io/liquidhaskell/">LH version 0.8.10.2</a>.</p>
+<p>Thanks to the ingenuity and tireless efforts of our friends <a href="http://www.alfredodinapoli.com/">Alfredo Di Napoli</a> and <a href="https://www.andres-loeh.de/">Andres Loh</a> at <a href="http://www.well-typed.com/">Well-Typed</a>, this new version solves all three of the above problems in a single stroke, making it vastly simpler (dare I say, quite straightforward!) to run LH on your Haskell code.</p>
+<!-- more -->
+<p>Alfredo and Andres’ key insight was that all the above problems could be solved if LH could be re-engineered as a <strong>GHC Compiler Plugin</strong> using some cool new features in GHC 8.10 that allows the integration of external checkers during compilation. I strongly encourage you to check out Alfredo’s talk at the <a href="https://icfp20.sigplan.org/details/hiw-2020-papers/1/Liquid-Haskell-as-a-GHC-Plugin">Haskell Implementor’s Workshop</a> if you want to learn more about the rather non-trivial mechanics of how this plugin was engineered. However, in this post, lets look at <em>how</em> and <em>why</em> to use the plugin, in particular, how the plugin lets us</p>
+<ol type="1">
+<li><p>Use GHC’s dependency resolution to analyze entire packages with minimal recompilation;</p></li>
+<li><p>Ship refined type specifications for old or new packages, and have them be verified at client code;</p></li>
+<li><p>Use tools like <code>ghci</code> based IDE tooling (e.g. <code>ghcid</code> or <code>ghcide</code> to get interactive feedback),</p></li>
+</ol>
+<p>all of which ultimately, I hope, make Liquid Haskell easier to use.</p>
+<h2 id="analyzing-packages">1. Analyzing Packages</h2>
+<p>First, lets see a small “demo” of how to <em>use</em> the plugin to compile a small <a href="https://github.com/ucsd-progsys/lh-plugin-demo"><code>lh-plugin-demo</code></a> package with two modules</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">module</span> <span class="dt">Demo.Lib</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb1-2" title="2"></a>
+<a class="sourceLine" id="cb1-3" title="3"><span class="co">{-@ type Pos = {v:Int | 0 &lt; v} @-}</span></a>
+<a class="sourceLine" id="cb1-4" title="4"></a>
+<a class="sourceLine" id="cb1-5" title="5"><span class="co">{-@ incr :: Pos -&gt; Pos @-}</span></a>
+<a class="sourceLine" id="cb1-6" title="6"><span class="ot">incr ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb1-7" title="7">incr x <span class="ot">=</span> x <span class="op">-</span> <span class="dv">1</span></a></code></pre></div>
+<p>which defines a function <code>incr</code> that consumes and returns positive integers, and</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">module</span> <span class="dt">Demo.Client</span> <span class="kw">where</span></a>
+<a class="sourceLine" id="cb2-2" title="2"></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="kw">import</span> <span class="dt">Demo.Lib</span></a>
+<a class="sourceLine" id="cb2-4" title="4"></a>
+<a class="sourceLine" id="cb2-5" title="5"><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb2-6" title="6">bump n <span class="ot">=</span> incr n</a></code></pre></div>
+<p>which imports <code>Demo.Lib</code> and uses <code>incr</code>.</p>
+<h3 id="updating-.cabal-to-compile-with-the-lh-plugin">Updating <code>.cabal</code> to compile with the LH plugin</h3>
+<p>To “check” this code with LH we need only tell GHC to use it as a plugin, in two steps.</p>
+<ol type="1">
+<li>First, adding a dependency to LH in the <code>.cabal</code> file (or <code>package.yaml</code>)</li>
+</ol>
+<pre><code>  build-depends:
+      liquid-base,
+      liquidhaskell &gt;= 0.8.10</code></pre>
+<ol start="2" type="1">
+<li>Second, tell GHC to use the plugin</li>
+</ol>
+<pre><code>  ghc-options: -fplugin=LiquidHaskell</code></pre>
+<p>That’s it. Now, everytime you (re-)build the code, GHC will <em>automatically</em> run LH on the changed modules! (If you use <code>stack</code> you may have to specify a few more dependencies, as shown in the <code>stack.yaml</code>; there are none needed if you use <code>cabal-v2</code>.) If you clone the repo and run, e.g. <code>cabal v2-build</code> or <code>stack build</code> you’ll get the following result, after the relevant dependencies are downloaded and built of course…</p>
+<pre><code>rjhala@khao-soi ~/r/lh-plugin-demo (main)&gt; stack build
+lh-plugin-demo&gt; configure (lib)
+Configuring lh-plugin-demo-0.1.0.0...
+
+lh-plugin-demo&gt; build (lib)
+Preprocessing library for lh-plugin-demo-0.1.0.0..
+Building library for lh-plugin-demo-0.1.0.0..
+[1 of 2] Compiling Demo.Lib
+
+**** LIQUID: SAFE (2 constraints checked) *****************************
+[2 of 2] Compiling Demo.Client
+
+**** LIQUID: UNSAFE ***************************************************
+
+/Users/rjhala/lh-plugin-demolh-plugin-demo/src/Demo/Client.hs:6:15: error:
+    Liquid Type Mismatch
+    .
+    The inferred type
+      VV : {v : GHC.Types.Int | v == n}
+    .
+    is not a subtype of the required type
+      VV : {VV : GHC.Types.Int | 0 &lt; VV}
+    .
+    in the context
+      n : GHC.Types.Int
+  |
+6 | bump n = incr n
+  |               ^</code></pre>
+<p>That is, during the build, LH complains that <code>incr</code> is being called with a value <code>n</code> that is not strictly positive as required by <code>incr</code>. To fix the code, we can edit it in various ways, e.g. to only call <code>incr</code> if <code>n &gt; 0</code></p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1">bump n </a>
+<a class="sourceLine" id="cb6-2" title="2">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
+<a class="sourceLine" id="cb6-3" title="3">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dv">0</span></a></code></pre></div>
+<p>and now the code builds successfully</p>
+<pre><code>rjhala@khao-soi ~/r/lh-plugin-demo (main)&gt; stack build
+lh-plugin-demo&gt; configure (lib)
+Configuring lh-plugin-demo-0.1.0.0...
+lh-plugin-demo&gt; build (lib)
+Preprocessing library for lh-plugin-demo-0.1.0.0..
+Building library for lh-plugin-demo-0.1.0.0..
+[2 of 2] Compiling Demo.Client
+
+**** LIQUID: SAFE (2 constraints checked) ****************************
+lh-plugin-demo&gt; copy/register
+Installing library in ... 
+Registering library for lh-plugin-demo-0.1.0.0..</code></pre>
+<h3 id="benefits">Benefits</h3>
+<p>There are a couple of benefits to note immediately</p>
+<ul>
+<li><p>A plain <code>stack build</code> or <code>cabal v2-build</code> takes care of all the installing <em>and</em> checking!</p></li>
+<li><p>No need to separately <em>install</em> LH; its part of the regular build.</p></li>
+<li><p>GHC’s recompilation machinery ensures that only the relevant modules are checked, e.g. the second time round, LH did not need to analyze <code>Lib.hs</code> only <code>Client.hs</code></p></li>
+</ul>
+<h2 id="shipping-specifications-with-packages">2. Shipping Specifications with Packages</h2>
+<p>While the above is nice, in principle it could have been done with some clever <code>makefile</code> trickery (perhaps?). What I’m much more excited about is that now, for the first time, you can <em>ship refinement type specifications within plain Haskell packages</em>.</p>
+<p>For example, consider a different <a href="https://github.com/ucsd-progsys/lh-plugin-demo-client">lh-plugin-demo-client</a> package that uses <code>incr</code> from <code>lh-plugin-demo</code>:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb8-1" title="1"><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb8-2" title="2">bump n</a>
+<a class="sourceLine" id="cb8-3" title="3">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
+<a class="sourceLine" id="cb8-4" title="4">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> incr (<span class="dv">0</span> <span class="op">-</span> n)</a></code></pre></div>
+<p>Again, the <code>lh-plugin-demo-client.cabal</code> file need only specify the various dependencies:</p>
+<pre><code>  build-depends:
+      liquid-base,
+      liquidhaskell,
+      lh-plugin-demo</code></pre>
+<p>and that GHC should use the plugin</p>
+<pre><code>  ghc-options: -fplugin=LiquidHaskell</code></pre>
+<p>and lo! a plain <code>stack build</code> or <code>cabal v2-build</code> takes care of all the rest.</p>
+<pre><code>rjhala@khao-soi ~/r/lh-plugin-demo-client (main)&gt; stack build
+lh-plugin-demo-client&gt; configure (lib)
+Configuring lh-plugin-demo-client-0.1.0.0...
+
+lh-plugin-demo-client&gt; build (lib)
+Preprocessing library for lh-plugin-demo-client-0.1.0.0..
+Building library for lh-plugin-demo-client-0.1.0.0..
+[1 of 1] Compiling Demo.ExternalClient
+
+**** LIQUID: UNSAFE ****************************************************
+
+/Users/rjhala/research/lh-plugin-demo-client/src/Demo/ExternalClient.hs:8:22: error:
+    Liquid Type Mismatch
+    .
+    The inferred type
+      VV : {v : GHC.Types.Int | v == 0 - n}
+    .
+    is not a subtype of the required type
+      VV : {VV : GHC.Types.Int | VV &gt; 0}
+    .
+    in the context
+      n : GHC.Types.Int
+  |
+8 |   | otherwise = incr (0 - n)
+  |                      ^^^^^^^</code></pre>
+<p>(Whoops another off by one error, lets fix it!)</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb12-1" title="1"><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb12-2" title="2">bump n</a>
+<a class="sourceLine" id="cb12-3" title="3">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
+<a class="sourceLine" id="cb12-4" title="4">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> incr (<span class="dv">1</span> <span class="op">-</span> n)</a></code></pre></div>
+<p>and now all is well</p>
+<pre><code>rjhala@khao-soi ~/r/lh-plugin-demo-client (main)&gt; stack build --fast
+lh-plugin-demo-client&gt; configure (lib)
+Configuring lh-plugin-demo-client-0.1.0.0...
+lh-plugin-demo-client&gt; build (lib)
+Preprocessing library for lh-plugin-demo-client-0.1.0.0..
+Building library for lh-plugin-demo-client-0.1.0.0..
+[1 of 1] Compiling Demo.ExternalClient
+
+**** LIQUID: SAFE (3 constraints checked) *****************************
+
+lh-plugin-demo-client&gt; copy/register
+Installing library in ... 
+Registering library for lh-plugin-demo-client-0.1.0.0..</code></pre>
+<h3 id="prelude-specifications">Prelude Specifications</h3>
+<p>Did you notice the strange <code>liquid-base</code> dependency in the cabal files?</p>
+<p>Previously, LH came installed with a “built-in” set of specifications for various <code>prelude</code> modules. This was <em>hacked</em> inside LH in a rather unfortunate manner, which made these specifications very difficult to extend.</p>
+<p>Moving forward, all the refinement specifications e.g. for <code>GHC.List</code> or <code>Data.Vector</code> or <code>Data.Set</code> or <code>Data.Bytestring</code> simply live in packages that <em>mirror</em> the original versions, e.g. <code>liquid-base</code>, <code>liquid-vector</code>, <code>liquid-containers</code>, <code>liquid-bytestring. Each</code>liquid-X<code>package directly _re-exports_ the contents of the corresponding</code>X` package, but with any additional refinement type specifications.</p>
+<p>So if you want to verify that <em>your</em> code has no <code>vector</code>-index overflow errors, you simply build with <code>liquid-vector</code> instead of <code>vector</code>! (Of course, in an ideal, and hopefully not too distant future, we’d get the refinement types directly inside <code>vector</code>, <code>containers</code> or <code>bytestring</code>.)</p>
+<h3 id="benefits-1">Benefits</h3>
+<p>So to recap, the plugin offers several nice benefits with respect to <em>shipping specifications</em></p>
+<ul>
+<li><p>Refined signatures are bundled together with packages,</p></li>
+<li><p>Importing packages with refined signatures automatically ensures those signatures are checked on client code,</p></li>
+<li><p>You can (optionally) use refined versions of <code>prelude</code> signatures, and hence, even write refined versions of your favorite <em>custom preludes</em>.</p></li>
+</ul>
+<h2 id="editor-tooling">3. Editor Tooling</h2>
+<p>I saved <em>my</em> favorite part for the end.</p>
+<p>What I have enjoyed the most about the plugin is that now (almost) all the GHC-based tools that I use in my regular Haskell development workflow, automatically incorporate LH too! For example, reloading a module in <code>ghci</code> automatically re-runs LH on that file.</p>
+<h3 id="ghcid"><code>ghcid</code></h3>
+<p>This means, that my the mega robust, editor-independent <code>ghcid</code> now automatically produces LH type errors when you save a file. Here’s <code>ghcid</code> running in a terminal.</p>
+<figure>
+<img src="../../../../static/img/plugin-ghcid.gif" alt="ghcid" /><figcaption>ghcid</figcaption>
+</figure>
+<h3 id="vscode"><code>vscode</code></h3>
+<p>Editor plugins now produce little red squiggles for LH errors too. Here’s <code>code</code> with the <code>Simple GHC (Haskell) Integration</code> plugin</p>
+<p><img src="../../../../static/img/plugin-vscode.gif" /></p>
+<h3 id="emacs"><code>emacs</code></h3>
+<p>Here’s <code>doom-emacs</code> with the <code>dante</code> plugin</p>
+<p><img src="../../../../static/img/plugin-emacs.gif" /></p>
+<h3 id="vim"><code>vim</code></h3>
+<p>And here is <code>neovim</code> with <code>ALE</code> and the <code>stack-build</code> linter</p>
+<p><img src="../../../../static/img/plugin-vim.png" /></p>
+<h3 id="benefits-2">Benefits</h3>
+<ul>
+<li>Some of this <em>was</em> possible before: we had to write special LH modes for different editors. However, now we can simply work with the increasingly more robust GHCi and Language-Server based tools already available for major editors and IDEs.</li>
+</ul>
+<h2 id="caveats">4. Caveats</h2>
+<p>Of course, all the above is quite new, and so there are a few things to watch out for.</p>
+<ul>
+<li><p>First, for certain kinds of code, LH can take much longer than GHC to check a file. This means, it may actually be too slow to run on every save, and you may want to tweak your <code>.cabal</code> file to <em>only</em> run the plugin during particular builds, not on every file update.</p></li>
+<li><p>Second, the <code>liquid-X</code> machinery is designed to allow drop in replacements for various base packages; it appears to work well in our testing, but if you try it, do let us know if you hit some odd problems that we may not have anticipated.</p></li>
+</ul>
+<h2 id="summary">Summary</h2>
+<p>Hopefully the above provides an overview of the new plugin mode: how it can be used, and what things it enables. In particular, by virtue of being a GHC plugin, LH can now</p>
+<ol type="1">
+<li><p>Run on entire Haskell packages;</p></li>
+<li><p>Export and import specifications across packages;</p></li>
+<li><p>Provide errors via existing GHC/i based editor tooling.</p></li>
+</ol>
+<p>All of which, I hope, makes it a lot easier to run LH on your code.</p>
+                <hr>
+                <ul class="pager">
+                    
+                    
+                </ul>
+
+                <div id="disqus_thread"></div>
+<script>
+    /**
+     *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+     *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+     */
+    var disqus_config = function () {
+        this.page.url        = 'https://ucsd-progsys.github.io/liquidhaskell-blog/2020/08/20/lh-as-a-ghc-plugin.lhs';  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = '/2020/08/20/lh-as-a-ghc-plugin.lhs';           // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+    };
+    (function() {  // REQUIRED CONFIGURATION VARIABLE: EDIT THE SHORTNAME BELOW
+        var d = document, s = d.createElement('script');
+        s.src = '//liquidhaskell.disqus.com/embed.js';  // IMPORTANT: Replace EXAMPLE with your forum shortname!
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
+
+
+            </div>
+        </div>
+    </div>
+</article>
+
+        </div>
+        <div id="footer">
+        </div>
+      <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                    <li>
+                        <a href="https://ucsd-progsys.github.io/liquidhaskell-blog/feed.xml" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    <li>
+                        <a href="https://twitter.com/ranjitjhala" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://plus.google.com/u/0/106612421534244742464" data-datatype="json" data-type="GET" data-target="#frame" class="reload" id="clickme" target="_blank">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+                    
+                    <li>
+                        <a href="https://github.com/ucsd-progsys" target="_blank">
+                            <span class="fa-stack fa-lg">
+
+                              <i class="fa fa-arrow-circle-o-down"></i>
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                    
+		    
+                </ul>
+                <p class="copyright text-muted">
+                
+                  Copyright &copy; Ranjit Jhala 2016-17.
+                
+                  Generated by <a href="http://jaspervdj.be/hakyll">Hakyll</a>,
+                  template by <a href="http://lucumr.pocoo.org">Armin Ronacher</a>,
+                  suggest improvements <a href="https://github.com/ucsd-progsys/liquidhaskell-blog/">here</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<!-- jQuery -->
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/jquery.min.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/spaceg.stylesheets.min.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/bootstrap.min.js"></script>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/anim.js"></script>
+<script src="https://ucsd-progsys.github.io/liquidhaskell-blog/static/js/scripts.js"></script>
+
+    </body>
+</html>
