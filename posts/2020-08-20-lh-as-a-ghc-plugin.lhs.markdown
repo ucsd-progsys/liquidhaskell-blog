@@ -113,6 +113,42 @@ or `stack build` you'll get the following result, after the relevant dependencie
 are downloaded and built of course...
 
 ```
+rjhala@khao-soi ~/r/lh-demo (main)> stack build
+lh-plugin-demo> configure (lib)
+Configuring lh-plugin-demo-0.1.0.0...
+lh-plugin-demo> build (lib)
+Preprocessing library for lh-plugin-demo-0.1.0.0..
+Building library for lh-plugin-demo-0.1.0.0..
+[1 of 2] Compiling Demo.Lib
+
+**** LIQUID: UNSAFE ************************************************************
+
+/Users/rjhala/research/lh-demo/src/Demo/Lib.hs:7:1: error:
+    Liquid Type Mismatch
+    .
+    The inferred type
+      VV : {v : GHC.Types.Int | v == x - 1}
+    .
+    is not a subtype of the required type
+      VV : {VV : GHC.Types.Int | 0 < VV}
+    .
+    in the context
+      x : {v : GHC.Types.Int | 0 < v}
+  |
+7 | incr x = x - 1
+  | ^^^^^^^^^^^^^^
+```
+
+oops, of course that `(-)` should be a `(+)` if we want the output to also be *positive* so 
+lets edit the code to
+
+```haskell
+incr x = x + 1
+```
+
+and now we get
+
+```
 rjhala@khao-soi ~/r/lh-plugin-demo (main)> stack build
 lh-plugin-demo> configure (lib)
 Configuring lh-plugin-demo-0.1.0.0...

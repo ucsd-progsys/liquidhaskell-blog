@@ -314,6 +314,33 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </ol>
 <pre><code>  ghc-options: -fplugin=LiquidHaskell</code></pre>
 <p>That’s it. Now, everytime you (re-)build the code, GHC will <em>automatically</em> run LH on the changed modules! If you use <code>stack</code> you may have to specify a few more dependencies, as shown in the <code>stack.yaml</code>; there are none needed if you use <code>cabal-v2</code>. If you clone the repo and run, e.g. <code>cabal v2-build</code> or <code>stack build</code> you’ll get the following result, after the relevant dependencies are downloaded and built of course…</p>
+<pre><code>rjhala@khao-soi ~/r/lh-demo (main)&gt; stack build
+lh-plugin-demo&gt; configure (lib)
+Configuring lh-plugin-demo-0.1.0.0...
+lh-plugin-demo&gt; build (lib)
+Preprocessing library for lh-plugin-demo-0.1.0.0..
+Building library for lh-plugin-demo-0.1.0.0..
+[1 of 2] Compiling Demo.Lib
+
+**** LIQUID: UNSAFE ************************************************************
+
+/Users/rjhala/research/lh-demo/src/Demo/Lib.hs:7:1: error:
+    Liquid Type Mismatch
+    .
+    The inferred type
+      VV : {v : GHC.Types.Int | v == x - 1}
+    .
+    is not a subtype of the required type
+      VV : {VV : GHC.Types.Int | 0 &lt; VV}
+    .
+    in the context
+      x : {v : GHC.Types.Int | 0 &lt; v}
+  |
+7 | incr x = x - 1
+  | ^^^^^^^^^^^^^^</code></pre>
+<p>oops, of course that <code>(-)</code> should be a <code>(+)</code> if we want the output to also be <em>positive</em> so lets edit the code to</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1">incr x <span class="ot">=</span> x <span class="op">+</span> <span class="dv">1</span></a></code></pre></div>
+<p>and now we get</p>
 <pre><code>rjhala@khao-soi ~/r/lh-plugin-demo (main)&gt; stack build
 lh-plugin-demo&gt; configure (lib)
 Configuring lh-plugin-demo-0.1.0.0...
@@ -343,9 +370,9 @@ Building library for lh-plugin-demo-0.1.0.0..
 6 | bump n = incr n
   |               ^</code></pre>
 <p>That is, during the build, LH complains that <code>incr</code> is being called with a value <code>n</code> that is not strictly positive as required by <code>incr</code>. To fix the code, we can edit it in various ways, e.g. to only call <code>incr</code> if <code>n &gt; 0</code></p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1">bump n </a>
-<a class="sourceLine" id="cb6-2" title="2">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
-<a class="sourceLine" id="cb6-3" title="3">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dv">0</span></a></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb8-1" title="1">bump n </a>
+<a class="sourceLine" id="cb8-2" title="2">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
+<a class="sourceLine" id="cb8-3" title="3">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dv">0</span></a></code></pre></div>
 <p>and now the code builds successfully</p>
 <pre><code>rjhala@khao-soi ~/r/lh-plugin-demo (main)&gt; stack build
 lh-plugin-demo&gt; configure (lib)
@@ -369,10 +396,10 @@ Registering library for lh-plugin-demo-0.1.0.0..</code></pre>
 <h2 id="shipping-specifications-with-packages">2. Shipping Specifications with Packages</h2>
 <p>While the above is nice, in principle it could have been done with some clever <code>makefile</code> trickery (perhaps?). What I’m much more excited about is that now, for the first time, you can <em>ship refinement type specifications within plain Haskell packages</em>.</p>
 <p>For example, consider a different <a href="https://github.com/ucsd-progsys/lh-plugin-demo-client">lh-plugin-demo-client</a> package that uses <code>incr</code> from <code>lh-plugin-demo</code>:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb8-1" title="1"><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
-<a class="sourceLine" id="cb8-2" title="2">bump n</a>
-<a class="sourceLine" id="cb8-3" title="3">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
-<a class="sourceLine" id="cb8-4" title="4">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> incr (<span class="dv">0</span> <span class="op">-</span> n)</a></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb10-1" title="1"><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb10-2" title="2">bump n</a>
+<a class="sourceLine" id="cb10-3" title="3">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
+<a class="sourceLine" id="cb10-4" title="4">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> incr (<span class="dv">0</span> <span class="op">-</span> n)</a></code></pre></div>
 <p>Again, the <code>lh-plugin-demo-client.cabal</code> file need only specify the various dependencies:</p>
 <pre><code>  build-depends:
       liquid-base,
@@ -407,10 +434,10 @@ Building library for lh-plugin-demo-client-0.1.0.0..
 8 |   | otherwise = incr (0 - n)
   |                      ^^^^^^^</code></pre>
 <p>(Whoops another off by one error, lets fix it!)</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb12-1" title="1"><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
-<a class="sourceLine" id="cb12-2" title="2">bump n</a>
-<a class="sourceLine" id="cb12-3" title="3">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
-<a class="sourceLine" id="cb12-4" title="4">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> incr (<span class="dv">1</span> <span class="op">-</span> n)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb14-1" title="1"><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
+<a class="sourceLine" id="cb14-2" title="2">bump n</a>
+<a class="sourceLine" id="cb14-3" title="3">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
+<a class="sourceLine" id="cb14-4" title="4">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> incr (<span class="dv">1</span> <span class="op">-</span> n)</a></code></pre></div>
 <p>and now all is well</p>
 <pre><code>rjhala@khao-soi ~/r/lh-plugin-demo-client (main)&gt; stack build --fast
 lh-plugin-demo-client&gt; configure (lib)
