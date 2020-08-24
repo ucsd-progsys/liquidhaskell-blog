@@ -270,14 +270,14 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </div>
 <p>I enjoy working with LH. However, I’d be the very first to confess that it has been incredibly tedious to get to work on <em>existing</em> code bases, for various reasons.</p>
 <ol type="1">
-<li><p>LH ran <em>one file at a time</em>; it was a hassle to get <strong>systematically analyze</strong> all the modules in a single package.</p></li>
+<li><p>LH ran <em>one file at a time</em>; it was a hassle to <strong>systematically analyze</strong> all the modules in a single package.</p></li>
 <li><p>LH had <em>no notion of packages</em>; it was impossible to <strong>import specifications</strong> across packages.</p></li>
 <li><p>LH had <em>no integration</em> with the standard compilation cycle; it was difficult to get robust, <strong>development-time feedback</strong> using <code>ghci</code> based tools.</p></li>
 </ol>
 <p>I’m delighted to announce the release of <a href="http://ucsd-progsys.github.io/liquidhaskell/">LH version 0.8.10.2</a>.</p>
-<p>Thanks to the ingenuity and tireless efforts of our friends <a href="http://www.alfredodinapoli.com/">Alfredo Di Napoli</a> and <a href="https://www.andres-loeh.de/">Andres Loh</a> at <a href="http://www.well-typed.com/">Well-Typed</a>, this new version solves all three of the above problems in a single stroke, making it vastly simpler (dare I say, quite straightforward!) to run LH on your Haskell code.</p>
+<p>Thanks to the ingenuity and tireless efforts of our friends <a href="http://www.alfredodinapoli.com/">Alfredo Di Napoli</a> and <a href="https://www.andres-loeh.de/">Andres Loh</a> at <a href="http://www.well-typed.com/">Well-Typed</a> this new version solves all three of the above problems in a single stroke, making it vastly simpler (dare I say, quite straightforward!) to run LH on your Haskell code.</p>
 <!-- more -->
-<p>Alfredo and Andres’ key insight was that all the above problems could be solved if LH could be re-engineered as a <strong>GHC Compiler Plugin</strong> using some cool new features in GHC 8.10 that allows the integration of external checkers during compilation. I strongly encourage you to check out Alfredo’s talk at the <a href="https://icfp20.sigplan.org/details/hiw-2020-papers/1/Liquid-Haskell-as-a-GHC-Plugin">Haskell Implementor’s Workshop</a> if you want to learn more about the rather non-trivial mechanics of how this plugin was engineered. However, in this post, lets look at <em>how</em> and <em>why</em> to use the plugin, in particular, how the plugin lets us</p>
+<p>Alfredo and Andres’ key insight was that all the above problems could be solved if LH could be re-engineered as a <a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/extending_ghc.html#compiler-plugins">GHC Compiler Plugin</a> using hooks that GHC exposes to integrate external checkers during compilation. I strongly encourage you to check out Alfredo’s talk at the <a href="https://icfp20.sigplan.org/details/hiw-2020-papers/1/Liquid-Haskell-as-a-GHC-Plugin">Haskell Implementor’s Workshop</a> if you want to learn more about the rather non-trivial mechanics of how this plugin was engineered. However, in this post, lets look at <em>how</em> and <em>why</em> to use the plugin, in particular, how the plugin lets us</p>
 <ol type="1">
 <li><p>Use GHC’s dependency resolution to analyze entire packages with minimal recompilation;</p></li>
 <li><p>Ship refined type specifications for old or new packages, and have them be verified at client code;</p></li>
@@ -468,7 +468,7 @@ Registering library for lh-plugin-demo-client-0.1.0.0..</code></pre>
 <p>I saved <em>my</em> favorite part for the end.</p>
 <p>What I have enjoyed the most about the plugin is that now (almost) all the GHC-based tools that I use in my regular Haskell development workflow, automatically incorporate LH too! For example, reloading a module in <code>ghci</code> automatically re-runs LH on that file.</p>
 <h3 id="ghcid"><code>ghcid</code></h3>
-<p>This means, that my the mega robust, editor-independent <code>ghcid</code> now automatically produces LH type errors when you save a file. Here’s <code>ghcid</code> running in a terminal.</p>
+<p>This means, that the mega robust, editor-independent <code>ghcid</code> now automatically produces LH type errors when you save a file. Here’s <code>ghcid</code> running in a terminal.</p>
 <figure>
 <img src="../../../../static/img/plugin-ghcid.gif" alt="ghcid" /><figcaption>ghcid</figcaption>
 </figure>
@@ -499,6 +499,7 @@ Registering library for lh-plugin-demo-client-0.1.0.0..</code></pre>
 <li><p>Provide errors via existing GHC/i based editor tooling.</p></li>
 </ol>
 <p>All of which, I hope, makes it a lot easier to run LH on your code.</p>
+<p>Our most profound thanks to the <a href="https://nsf.gov/">National Science Foundation</a>: this work was made possible by the support provided by grant 1917854: “FMitF: Track II: Refinement Types in the Haskell Ecosystem”.</p>
                 <hr>
                 <ul class="pager">
                     
