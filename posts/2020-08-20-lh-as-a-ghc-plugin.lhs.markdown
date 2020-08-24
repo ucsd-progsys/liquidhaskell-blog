@@ -22,7 +22,7 @@ I enjoy working with LH. However, I'd be the very first to confess
 that it has been incredibly tedious to get to work on *existing* code 
 bases, for various reasons.
 
-1. LH ran *one file at a time*; it was a hassle to get **systematically analyze** 
+1. LH ran *one file at a time*; it was a hassle to **systematically analyze** 
    all the modules in a single package.
 
 2. LH had *no notion of packages*; it was impossible to **import specifications** 
@@ -34,17 +34,16 @@ bases, for various reasons.
 I'm delighted to announce the release of [LH version 0.8.10.2](http://ucsd-progsys.github.io/liquidhaskell/).
 
 Thanks to the ingenuity and tireless efforts of our friends [Alfredo Di Napoli](http://www.alfredodinapoli.com/) 
-and [Andres Loh](https://www.andres-loeh.de/) at [Well-Typed](http://www.well-typed.com/), this new version 
+and [Andres Loh](https://www.andres-loeh.de/) at [Well-Typed](http://www.well-typed.com/) this new version 
 solves all three of the above problems in a single stroke, making it vastly simpler 
 (dare I say, quite straightforward!) to run LH on your Haskell code.
 
 <!-- more -->
 
 Alfredo and Andres' key insight was that all the above problems could be solved if 
-LH could be re-engineered as a **GHC Compiler Plugin** using some cool new features 
-in GHC 8.10 that allows the integration of external checkers during compilation.
-I strongly encourage you to check out Alfredo's talk at the [Haskell Implementor's 
-Workshop](https://icfp20.sigplan.org/details/hiw-2020-papers/1/Liquid-Haskell-as-a-GHC-Plugin) 
+LH could be re-engineered as a [GHC Compiler Plugin](https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/extending_ghc.html#compiler-plugins) 
+using hooks that GHC exposes to integrate external checkers during compilation.
+I strongly encourage you to check out Alfredo's talk at the [Haskell Implementor's Workshop](https://icfp20.sigplan.org/details/hiw-2020-papers/1/Liquid-Haskell-as-a-GHC-Plugin) 
 if you want to learn more about the rather non-trivial mechanics of how this plugin was engineered.
 However, in this post, lets look at *how* and *why* to use the plugin, 
 in particular, how the plugin lets us
@@ -351,7 +350,7 @@ LH too! For example, reloading a module in `ghci` automatically re-runs LH on th
 
 ### `ghcid`
 
-This means, that my the mega robust, editor-independent `ghcid` now automatically 
+This means, that the mega robust, editor-independent `ghcid` now automatically 
 produces LH type errors when you save a file. Here's `ghcid` running in a terminal.
 
 ![ghcid](/static/img/plugin-ghcid.gif)
@@ -410,3 +409,6 @@ and what things it enables. In particular, by virtue of being a GHC plugin, LH c
 
 All of which, I hope, makes it a lot easier to run LH on your code.
 
+Our most profound thanks to the [National Science Foundation](https://nsf.gov/): 
+this work was made possible by the support provided by grant 1917854: 
+"FMitF: Track II: Refinement Types in the Haskell Ecosystem".
