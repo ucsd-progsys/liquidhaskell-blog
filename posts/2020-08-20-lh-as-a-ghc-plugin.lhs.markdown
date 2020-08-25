@@ -377,8 +377,9 @@ And here is `neovim` with `ALE` and the `stack-build` linter
 ### Benefits
 
 + Some of this _was_ possible before: we had to write special LH modes for different 
-  editors. However, now we can simply work with the increasingly more robust GHCi and 
-  Language-Server based tools already available for major editors and IDEs.
+  editors -- special thanks to [Alan Zimmerman's](https://github.com/alanz) fantastic 
+  haskell-ide-engine!. However, now we can simply work with the increasingly more robust 
+  GHCi and Language-Server based tools already available for major editors and IDEs.
 
 4. Caveats
 ----------
