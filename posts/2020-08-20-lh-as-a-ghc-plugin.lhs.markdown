@@ -106,9 +106,13 @@ To "check" this code with LH we need only tell GHC to use it as a plugin, in two
 
 That's it. Now, everytime you (re-)build the code, GHC will _automatically_ 
 run LH on the changed modules! If you use `stack` you may have to specify 
-a few more dependencies, as shown in the `stack.yaml`; there are none needed 
-if you use `cabal-v2`. If you clone the repo and run, e.g. `cabal v2-build` 
-or `stack build` you'll get the following result, after the relevant dependencies 
+a few more dependencies, as the various packages are not (yet) on stackage, 
+as shown in the [demo `stack.yaml`](https://github.com/ucsd-progsys/lh-plugin-demo/blob/main/stack.yaml).
+No extra dependencies are needede if you use `cabal-v2`. In both cases,
+you can use the respective files [`stack.yaml`](https://github.com/ucsd-progsys/lh-plugin-demo/blob/main/stack.yaml.github) 
+and [`cabal.project`](https://github.com/ucsd-progsys/lh-plugin-demo/blob/main/cabal.project.github) 
+point to specific git snapshots if you want to use the most recent versions. 
+If you clone the repo and run, e.g. `cabal v2-build` or `stack build` you'll get the following result, after the relevant dependencies 
 are downloaded and built of course...
 
 ```
@@ -319,13 +323,15 @@ manner, which made these specifications very difficult to extend.
 Moving forward, all the refinement specifications e.g. for `GHC.List` or `Data.Vector` 
 or `Data.Set` or `Data.Bytestring` simply live in packages that *mirror* the original 
 versions, e.g. `liquid-base`,  `liquid-vector`, `liquid-containers`, `liquid-bytestring`.
-Each `liquid-X` package directly _re-exports_ all the contents of the corresponding `X` package,
-but with any additional refinement type specifications. 
+Each `liquid-X` package directly _re-exports_ all the contents of the corresponding `X` 
+package, but with any additional refinement type specifications. 
 
-So if you want to verify that _your_ code has no `vector`-index overflow errors, you simply 
-build with `liquid-vector` instead of `vector`! Of course, in an ideal, and hopefully 
-not too distant future, we'd get the refinement types directly inside `vector`, `containers` 
-or `bytestring`.
+Thus, all the refined types for various prelude operations like `(+)` or `(-)` or `head` 
+and so on, now ship with `liquid-base` and we add that dependency **instead of** base.
+Similarly, if you want to verify that _your_ code has no `vector`-index overflow errors,
+you simply build with `liquid-vector` **instead of** `vector`! Of course, in an ideal, 
+and hopefully not too distant future, we'd directly include the refinement types inside 
+`vector`, `containers` or `bytestring` respectively.
 
 ### Benefits
 
