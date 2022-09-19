@@ -1,5 +1,7 @@
 # LiquidHaskell Blog
 
+*Note:* This blog is now deprecated. You're probably looking for the latest version of the Liquid Haskell site, which can be found [in the main LH repository](https://github.com/ucsd-progsys/liquidhaskell/tree/develop/docs).
+
 LiquidHaskell is a static verifier for Haskell, based on **Liquid Types**
 
 See [about](about.md) for more details.

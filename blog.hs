@@ -105,7 +105,6 @@ makeIndex =
     compile $
       pandocCompiler -- makeItem ""
         >>= loadAndApplyTemplate "templates/index.html"   pageCtx
-        >>= loadAndApplyTemplate "templates/default.html" pageCtx
         >>= relativizeUrls
 
 makeTemplates =
