@@ -260,20 +260,38 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/termination.html">termination</a>
+                Tags: <a title="All pages tagged 'termination'." href="../../../../tags/termination.html">termination</a>
               
             </div>
 
             <br>
-			            <p>We’ve seen how, in the presence of <a href="../../../../blog/2013/11/23/telling_lies.lhs/">lazy evaluation</a>, refinements <a href="../../../../blog/2013/12/02/getting-to-the-bottom.lhs/">require termination</a>. <a href="../../../../blog/2013/12/09/checking-termination.lhs/">Next</a>, we saw how LiquidHaskell can be used to prove termination.</p>
+			            <p>We’ve seen how, in the presence of <a href="../../../../blog/2013/11/23/telling_lies.lhs/">lazy evaluation</a>, refinements
+<a href="../../../../blog/2013/12/02/getting-to-the-bottom.lhs/">require termination</a>. <a href="../../../../blog/2013/12/09/checking-termination.lhs/">Next</a>, we saw how
+LiquidHaskell can be used to prove termination.</p>
 <p>Today, lets see how <strong>termination requires refinements</strong>.</p>
-<p>That is, a crucial feature of LiquidHaskell’s termination prover is that it is not syntactically driven, i.e. is not limited to say, structural recursion. Instead, it uses the wealth of information captured by refinements that are at our disposal, in order to prove termination.</p>
-<p>This turns out to be crucial in practice. As a quick toy example – motivated by a question by <a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/blog/blog/2013/12/09/checking-termination.lhs/#comment-1159606500">Elias</a> – lets see how, unlike purely syntax-directed (structural) approaches, LiquidHaskell proves that recursive functions, such as Euclid’s GCD algorithm, terminates.</p>
+<p>That is, a crucial feature of LiquidHaskell’s termination prover is that it is
+not syntactically driven, i.e. is not limited to say, structural recursion.
+Instead, it uses the wealth of information captured by refinements that are
+at our disposal, in order to prove termination.</p>
+<p>This turns out to be crucial in practice.
+As a quick toy example – motivated by a question by <a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/blog/blog/2013/12/09/checking-termination.lhs/#comment-1159606500">Elias</a> –
+lets see how, unlike purely syntax-directed (structural) approaches,
+LiquidHaskell proves that recursive functions, such as Euclid’s GCD
+algorithm, terminates.</p>
 <!-- more -->
-<p><br> <br> <br></p>
+<p><br>
+<br>
+<br></p>
 <div class="row-fluid">
 <div class="span12 pagination-centered">
-<img src="http://faculty.etsu.edu/gardnerr/Geometry-History/Euclid_7-Raphael.jpg" alt="Euclid" width="300"> <br> <br> <br> With LiquidHaskell, Euclid wouldn’t have had to wave his hands. <br> <br> <br>
+<img src="http://faculty.etsu.edu/gardnerr/Geometry-History/Euclid_7-Raphael.jpg" alt="Euclid" width="300">
+<br>
+<br>
+<br>
+With LiquidHaskell, Euclid wouldn’t have had to wave his hands.
+<br>
+<br>
+<br>
 </div>
 </div>
 <pre><span class="hs-linenum">51: </span><span class="hs-keyword">module</span> <span class="hs-conid">GCD</span> <span class="hs-keyword">where</span>
@@ -283,7 +301,9 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">55: </span><span class="hs-definition">mod</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span>
 <span class="hs-linenum">56: </span><span class="hs-definition">gcd</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span>
 </pre>
-<p>The <a href="http://en.wikipedia.org/wiki/Euclidean_algorithm">Euclidean algorithm</a> is one of the oldest numerical algorithms still in common use and calculates the the greatest common divisor (GCD) of two natural numbers <code>a</code> and <code>b</code>.</p>
+<p>The <a href="http://en.wikipedia.org/wiki/Euclidean_algorithm">Euclidean algorithm</a> is one of the oldest numerical algorithms
+still in common use and calculates the the greatest common divisor (GCD) of two
+natural numbers <code>a</code> and <code>b</code>.</p>
 <p>Assume that <code>a &gt; b</code> and consider the following implementation of <code>gcd</code></p>
 <pre><span class="hs-linenum">66: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">gcd</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">b</span><span class="hs-conop">:</span><span class="hs-keyword">{v:</span><span class="hs-conid">Nat</span> <span class="hs-keyword">| v &lt; a}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">67: </span><a class="annot" href="#"><span class="annottext">x1:{VV : (GHC.Types.Int) | (VV &gt;= 0)}
@@ -295,11 +315,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 -&gt; x2:{VV : (GHC.Types.Int) | (VV &gt;= 0) &amp;&amp; (0 &lt; VV)}
 -&gt; {VV : (GHC.Types.Int) | (VV &gt;= 0) &amp;&amp; (VV &lt; x2)}</span><span class="hs-varop">`mod`</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt;= 0) &amp;&amp; (VV &lt; a)}</span><span class="hs-varid">b</span></a><span class="hs-layout">)</span>
 </pre>
-<p>From our previous post, to prove that <code>gcd</code> is terminating, it suffices to prove that the first argument decreases as each recursive call.</p>
-<p>By <code>gcd</code>’s type signature, <code>a &lt; b</code> holds at each iteration, thus liquidHaskell will happily discharge the terminating condition.</p>
+<p>From our previous post, to prove that <code>gcd</code> is terminating, it suffices to prove
+that the first argument decreases as each recursive call.</p>
+<p>By <code>gcd</code>’s type signature, <code>a &lt; b</code> holds at each iteration, thus liquidHaskell
+will happily discharge the terminating condition.</p>
 <p>The only condition left to prove is that <code>gcd</code>’s second argument, ie., <code>a</code>mod<code>b</code> is less that <code>b</code>.</p>
 <p>This property follows from the behavior of the <code>mod</code> operator.</p>
-<p>So, to prove <code>gcd</code> terminating, liquidHaskell needs a refined signature for <code>mod</code> that captures this behavior, i.e., that for any <code>a</code> and <code>b</code> the value <code>mod a b</code> is less than <code>b</code>. Fortunately, we can stipulate this via a refined type:</p>
+<p>So, to prove <code>gcd</code> terminating, liquidHaskell needs a refined signature for
+<code>mod</code> that captures this behavior, i.e., that for any <code>a</code> and <code>b</code> the value
+<code>mod a b</code> is less than <code>b</code>. Fortunately, we can stipulate this via a refined
+type:</p>
 <pre><span class="hs-linenum">88: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">mod</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">b</span><span class="hs-conop">:</span><span class="hs-keyword">{v:</span><span class="hs-conid">Nat</span><span class="hs-keyword">| 0 &lt; v}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Nat</span> <span class="hs-keyword">| v &lt; b}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">89: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt;= 0)}
 -&gt; x2:{VV : (GHC.Types.Int) | (VV &gt;= 0) &amp;&amp; (0 &lt; VV)}
@@ -318,7 +343,9 @@ Euclid’s original version of <code>gcd</code> is different
 <span class="hs-linenum">97: </span>         <span class="hs-keyglyph">|</span> <span class="hs-varid">a</span> <span class="hs-varop">&gt;</span>  <span class="hs-varid">b</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">gcd'</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-comment">-</span> <span class="hs-varid">b</span><span class="hs-layout">)</span> <span class="hs-varid">b</span> 
 <span class="hs-linenum">98: </span>         <span class="hs-keyglyph">|</span> <span class="hs-varid">a</span> <span class="hs-varop">&lt;</span>  <span class="hs-varid">b</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">gcd'</span> <span class="hs-varid">a</span> <span class="hs-layout">(</span><span class="hs-varid">b</span> <span class="hs-comment">-</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> 
 </pre>
-<p>Though this version is simpler, turns out that LiquidHaskell needs a more sophisticated mechanism, called <strong>lexicographic ordering</strong>, to prove it terminates. Stay tuned!</p>
+<p>Though this version is simpler, turns out that LiquidHaskell needs
+a more sophisticated mechanism, called <strong>lexicographic ordering</strong>, to
+prove it terminates. Stay tuned!</p>
                 <hr>
                 <ul class="pager">
                     

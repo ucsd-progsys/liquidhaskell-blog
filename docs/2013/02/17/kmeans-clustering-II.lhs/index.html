@@ -260,7 +260,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/basic.html">basic</a>, <a href="../../../../tags/measures.html">measures</a>
+                Tags: <a title="All pages tagged 'basic'." href="../../../../tags/basic.html">basic</a>, <a title="All pages tagged 'measures'." href="../../../../tags/measures.html">measures</a>
               
             </div>
 
@@ -271,8 +271,12 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <li>how to encode a matrix with <code>r</code> rows and <code>c</code> columns as a list of lists,</li>
 <li>some basic operations on points and matrices via list-manipulating functions</li>
 </ul>
-<p>More importantly, we saw how easy it was to encode dimensionality with refinements over the <code>len</code> measure, thereby allowing LiquidHaskell to precisely track the dimensions across the various operations.</p>
-<p>Next, lets use the basic types and operations to develop the actual <em>KMeans clustering</em> algorithm, and, along the way, see how LiquidHaskell lets us write precise module contracts which will ward against various unpleasant <em>lumpenexceptions</em>.</p>
+<p>More importantly, we saw how easy it was to encode dimensionality with refinements over
+the <code>len</code> measure, thereby allowing LiquidHaskell to precisely track the dimensions across
+the various operations.</p>
+<p>Next, lets use the basic types and operations to develop the actual <em>KMeans clustering</em>
+algorithm, and, along the way, see how LiquidHaskell lets us write precise module
+contracts which will ward against various unpleasant <em>lumpenexceptions</em>.</p>
 <!-- more -->
 <pre><span class="hs-linenum">30: </span><span class="hs-comment">{-# LANGUAGE ScopedTypeVariables, TypeSynonymInstances, FlexibleInstances #-}</span>
 <span class="hs-linenum">31: </span>
@@ -302,12 +306,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">45: </span>    <span class="hs-varid">compare</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(GHC.Classes.Ord [GHC.Types.Double])</span><span class="hs-varid">comparing</span></a> <a class="annot" href="#"><span class="annottext">(KMeans.WrapType {VV : [{VV : (GHC.Types.Double) | false}] | false} {VV : a | false})
 -&gt; {VV : [{VV : (GHC.Types.Double) | false}] | false}</span><span class="hs-varid">getVect</span></a>
 </pre>
-<p>Recall that we are using a modified version of an <a href="http://hackage.haskell.org/package/kmeans">existing KMeans implementation</a>. While not the swiftest implementation, it serves as a nice introduction to the algorithm, and the general invariants carry over to more sophisticated implementations.</p>
+<p>Recall that we are using a modified version of an <a href="http://hackage.haskell.org/package/kmeans">existing KMeans implementation</a>.
+While not the swiftest implementation, it serves as a nice introduction to the algorithm,
+and the general invariants carry over to more sophisticated implementations.</p>
 <h2 id="a-quick-recap">A Quick Recap</h2>
-<p>Before embarking on the journey, lets remind ourselves of our destination: the goal of <a href="http://en.wikipedia.org/wiki/K-means_clustering">K-Means clustering</a> is</p>
+<p>Before embarking on the journey, lets remind ourselves of our destination:
+the goal of <a href="http://en.wikipedia.org/wiki/K-means_clustering">K-Means clustering</a> is</p>
 <ul>
 <li><p><strong>Take as Input</strong> : A set of <em>points</em> represented by <em>n-dimensional points</em> in <em>Euclidian</em> space</p></li>
-<li><p><strong>Return as Ouptut</strong> : A partitioning of the points, into upto K clusters, in a manner that minimizes the sum of distances between each point and its cluster center.</p></li>
+<li><p><strong>Return as Ouptut</strong> : A partitioning of the points, into upto K clusters, in a manner that
+minimizes the sum of distances between each point and its cluster center.</p></li>
 </ul>
 <p>Last time, we introduced a variety of refinement type aliases for Haskell lists</p>
 <strong>Fixed Length Lists</strong>
@@ -328,25 +336,37 @@ We also saw several basic list operations
 <span class="hs-linenum">84: </span><span class="hs-definition">zipWith</span>   <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">b</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">c</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-varid">b</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-varid">c</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
 <span class="hs-linenum">85: </span><span class="hs-definition">transpose</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">c</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">r</span><span class="hs-conop">:</span><span class="hs-conid">PosInt</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Matrix</span> <span class="hs-varid">a</span> <span class="hs-varid">r</span> <span class="hs-varid">c</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Matrix</span> <span class="hs-varid">a</span> <span class="hs-varid">c</span> <span class="hs-varid">r</span>
 </pre>
-<p>whose types will prove essential in order to verify the invariants of the clustering algorithm. You might open the <a href="../../../../blog/2013/02/16/kmeans-clustering-I.lhs/">previous episode</a> in a separate tab to keep those functions handy, but fear not, we will refresh our memory about them when we get around to using them below.</p>
+<p>whose types will prove essential in order to verify the invariants of the
+clustering algorithm. You might open the <a href="../../../../blog/2013/02/16/kmeans-clustering-I.lhs/">previous episode</a> in a
+separate tab to keep those functions handy, but fear not, we will refresh
+our memory about them when we get around to using them below.</p>
 <h2 id="generalized-points">Generalized Points</h2>
-<p>To be more flexible, we will support <em>arbitrary</em> points as long as they can be <strong>projected</strong> to Euclidian space. In addition to supporting, say, an image or a <a href="http://www.youtube.com/watch?v=8uDuls5TyNE">cat video</a> as a point, this will allow us to <em>weight</em> different dimensions to different degrees.</p>
+<p>To be more flexible, we will support <em>arbitrary</em> points as long as they can
+be <strong>projected</strong> to Euclidian space. In addition to supporting, say, an
+image or a <a href="http://www.youtube.com/watch?v=8uDuls5TyNE">cat video</a> as a point, this will allow us to <em>weight</em>
+different dimensions to different degrees.</p>
 <p>We represent generalized points with a record</p>
 <pre><span class="hs-linenum">104: </span><span class="hs-keyword">data</span> <span class="hs-conid">WrapType</span> <span class="hs-varid">b</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">WrapType</span> <span class="hs-layout">{</span><a class="annot" href="#"><span class="annottext">(KMeans.WrapType a b) -&gt; a</span><span class="hs-varid">getVect</span></a> <span class="hs-keyglyph">::</span> <span class="hs-varid">b</span><span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">(KMeans.WrapType a b) -&gt; b</span><span class="hs-varid">getVal</span></a> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span><span class="hs-layout">}</span>
 </pre>
 <p>and we can define an alias that captures the dimensionality of the point</p>
 <pre><span class="hs-linenum">110: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">GenPoint</span> <span class="hs-varid">a</span> <span class="hs-conid">N</span>  <span class="hs-keyglyph">=</span> <span class="hs-conid">WrapType</span> <span class="hs-layout">(</span><span class="hs-conid">Point</span> <span class="hs-conid">N</span><span class="hs-layout">)</span> <span class="hs-varid">a</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>That is, <code>GenPoint a N</code> denotes a general <code>a</code> value that has an <code>N</code>-dimensional projection into Euclidean space.</p>
+<p>That is, <code>GenPoint a N</code> denotes a general <code>a</code> value that has an
+<code>N</code>-dimensional projection into Euclidean space.</p>
 <h2 id="algorithm-iterative-clustering">Algorithm: Iterative Clustering</h2>
-<p>Terrific, now that all the pieces are in place lets look at the KMeans algorithm. We have implemented a function <code>kmeans'</code>, which takes as input a dimension <code>n</code>, the maximum number of clusters <code>k</code> (which must be positive), a list of <em>generalized points</em> of dimension <code>n</code>, and returns a <code>Clustering</code> (i.e. a list of <em>non-empty lists</em>) of the generalized points.</p>
+<p>Terrific, now that all the pieces are in place lets look at the KMeans
+algorithm. We have implemented a function <code>kmeans'</code>, which takes as input a
+dimension <code>n</code>, the maximum number of clusters <code>k</code> (which must be positive),
+a list of <em>generalized points</em> of dimension <code>n</code>, and returns a <code>Clustering</code>
+(i.e. a list of <em>non-empty lists</em>) of the generalized points.</p>
 <p>So much verbiage – a type is worth a thousand comments!</p>
 <pre><span class="hs-linenum">128: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">kmeans'</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Int</span>
 <span class="hs-linenum">129: </span>            <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">k</span><span class="hs-conop">:</span><span class="hs-conid">PosInt</span>
 <span class="hs-linenum">130: </span>            <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">points</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-conid">GenPoint</span> <span class="hs-varid">a</span> <span class="hs-varid">n</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">131: </span>            <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Clustering</span> <span class="hs-layout">(</span><span class="hs-conid">GenPoint</span> <span class="hs-varid">a</span> <span class="hs-varid">n</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>There! Crisp and to the point. Sorry. Anyhoo, the function implements the above type.</p>
+<p>There! Crisp and to the point. Sorry. Anyhoo, the function implements the
+above type.</p>
 <pre><span class="hs-linenum">138: </span><a class="annot" href="#"><span class="annottext">n:(GHC.Types.Int)
 -&gt; {VV : (GHC.Types.Int) | (VV &gt; 0)}
 -&gt; [(KMeans.WrapType {VV : [(GHC.Types.Double)] | (len([VV]) = n)} a)]
@@ -377,7 +397,12 @@ We also saw several basic list operations
 <span class="hs-linenum">144: </span>    <a class="annot" href="#"><span class="annottext">(GHC.Classes.Eq a) -&gt; (a -&gt; a) -&gt; a -&gt; a</span><span class="hs-varid">fixpoint</span></a> <a class="annot" href="#"><span class="annottext">a -&gt; a</span><span class="hs-varid">f</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">x</span></a>      <span class="hs-keyglyph">=</span> <span class="hs-keyword">if</span> <a class="annot" href="#"><span class="annottext">(GHC.Types.Bool)</span><span class="hs-layout">(</span></a><a class="annot" href="#"><span class="annottext">a -&gt; a</span><span class="hs-varid">f</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">x:a
 -&gt; y:a -&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x = y))}</span><span class="hs-varop">==</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a> <span class="hs-keyword">then</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a> <span class="hs-keyword">else</span> <a class="annot" href="#"><span class="annottext">(GHC.Classes.Eq a) -&gt; (a -&gt; a) -&gt; a -&gt; a</span><span class="hs-varid">fixpoint</span></a> <a class="annot" href="#"><span class="annottext">a -&gt; a</span><span class="hs-varid">f</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">a -&gt; a</span><span class="hs-varid">f</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a><span class="hs-layout">)</span>
 </pre>
-<p>That is, <code>kmeans'</code> creates an <code>initialClustering</code> by <code>partition</code>-ing the <code>points</code> into chunks with <code>clusterSize</code> elements. Then, it invokes <code>fixpoint</code> to <em>iteratively refine</em> the initial clustering with <code>refineCluster</code> until it converges to a stable clustering that cannot be improved upon. This stable clustering is returned as the output.</p>
+<p>That is, <code>kmeans'</code> creates an <code>initialClustering</code> by
+<code>partition</code>-ing the <code>points</code> into chunks with <code>clusterSize</code> elements.
+Then, it invokes <code>fixpoint</code> to <em>iteratively refine</em> the initial
+clustering with <code>refineCluster</code> until it converges to a stable
+clustering that cannot be improved upon. This stable clustering
+is returned as the output.</p>
 <p>LiquidHaskell verifies that <code>kmeans'</code> adheres to the given signature in two steps.</p>
 <p><strong>1. Initial Clustering</strong></p>
 First, LiquidHaskell determines from
@@ -386,11 +411,18 @@ First, LiquidHaskell determines from
 that <code>clusterSize</code> is strictly positive, and hence, from
 <pre><span class="hs-linenum">163: </span><span class="hs-definition">partition</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">size</span><span class="hs-conop">:</span><span class="hs-conid">PosInt</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Clustering</span> <span class="hs-varid">a</span><span class="hs-layout">)</span>
 </pre>
-<p>which we saw <a href="../../../../blog/2013/02/16/kmeans-clustering-I.lhs/">last time</a>, that <code>initialClustering</code> is indeed a valid <code>Clustering</code> of <code>(GenPoint a n)</code>.</p>
+<p>which we saw <a href="../../../../blog/2013/02/16/kmeans-clustering-I.lhs/">last time</a>, that <code>initialClustering</code> is indeed
+a valid <code>Clustering</code> of <code>(GenPoint a n)</code>.</p>
 <p><strong>2. Fixpoint</strong></p>
-<p>Next, LiquidHaskell infers that at the call <code>fixpoint (refineCluster n) ...</code>, that the type parameter <code>a</code> of <code>fixpoint</code> can be <em>instantiated</em> with <code>Clustering (GenPoint a n)</code>. This is because <code>initialClustering</code> is a valid clustering, as we saw above, and because <code>refineCluster</code> takes – and returns – valid <code>n</code>-dimensional clusterings, as we shall see below. Consequently, the value returned by <code>kmeans'</code> is also <code>Clustering</code> of <code>GenPoint a n</code> as required.</p>
+<p>Next, LiquidHaskell infers that at the call <code>fixpoint (refineCluster n) ...</code>, that the type parameter <code>a</code> of <code>fixpoint</code> can be <em>instantiated</em> with
+<code>Clustering (GenPoint a n)</code>. This is because <code>initialClustering</code> is a
+valid clustering, as we saw above, and because <code>refineCluster</code> takes – and
+returns – valid <code>n</code>-dimensional clusterings, as we shall see below.
+Consequently, the value returned by <code>kmeans'</code> is also <code>Clustering</code> of
+<code>GenPoint a n</code> as required.</p>
 <h2 id="refining-a-clustering">Refining A Clustering</h2>
-<p>Thus, the real work in KMeans happens inside <code>refineCluster</code>, which takes a clustering and improves it, like so:</p>
+<p>Thus, the real work in KMeans happens inside <code>refineCluster</code>, which takes a
+clustering and improves it, like so:</p>
 <pre><span class="hs-linenum">186: </span><a class="annot" href="#"><span class="annottext">n:(GHC.Types.Int)
 -&gt; [{v : [(KMeans.WrapType {VV : [(GHC.Types.Double)] | (len([VV]) = n)} a)] | (len([v]) &gt; 0)}]
 -&gt; [{v : [(KMeans.WrapType {VV : [(GHC.Types.Double)] | (len([VV]) = n)} a)] | (len([v]) &gt; 0)}]</span><span class="hs-definition">refineCluster</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">n</span></a> <a class="annot" href="#"><span class="annottext">[{v : [(KMeans.WrapType {VV : [(GHC.Types.Double)] | (len([VV]) = n)} a)] | (len([v]) &gt; 0)}]</span><span class="hs-varid">clusters</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [{VV : [(KMeans.WrapType {VV : [(GHC.Types.Double)] | (n = len([VV])),
@@ -561,17 +593,28 @@ that <code>clusterSize</code> is strictly positive, and hence, from
 </pre>
 <p>The refined clustering is computed in three steps.</p>
 <ol type="1">
-<li><p>First, we compute the <code>centers :: [(Point n)]</code> of the current <code>clusters</code>. This is achieved by using <code>clusterCenter</code>, which maps a list of generalized <code>n</code>-dimensional points to a <em>single</em> <code>n</code> dimensional point (i.e. <code>Point n</code>).</p></li>
+<li><p>First, we compute the <code>centers :: [(Point n)]</code> of the current <code>clusters</code>.
+This is achieved by using <code>clusterCenter</code>, which maps a list of generalized
+<code>n</code>-dimensional points to a <em>single</em> <code>n</code> dimensional point (i.e. <code>Point n</code>).</p></li>
 <li><p>Next, we pair each point <code>p</code> in the list of all <code>points</code> with its <code>nearestCenter</code>.</p></li>
-<li><p>Finally, the pairs in the list of <code>centeredPoints</code> are grouped by the center, i.e. the first element of the tuple. The resulting groups are projected back to the original generalized points yielding the new clustering.</p></li>
+<li><p>Finally, the pairs in the list of <code>centeredPoints</code> are grouped by the
+center, i.e. the first element of the tuple. The resulting groups are
+projected back to the original generalized points yielding the new
+clustering.</p></li>
 </ol>
 The type of the output follows directly from
 <pre><span class="hs-linenum">222: </span><span class="hs-definition">groupBy</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Clustering</span> <span class="hs-varid">a</span><span class="hs-layout">)</span>
 </pre>
-<p>from <a href="../../../../blog/2013/02/16/kmeans-clustering-I.lhs/">last time</a>. At the call site above, LiquidHaskell infers that <code>a</code> can be instantiated with <code>((Point n), (GenPoint a n))</code> thereby establishing that, after <em>projecting away</em> the first element, the output is a list of non-empty lists of generalized <code>n</code>-dimensional points.</p>
-<p>That leaves us with the two crucial bits of the algorithm: <code>clusterCenter</code> and <code>nearestCenter</code>.</p>
+<p>from <a href="../../../../blog/2013/02/16/kmeans-clustering-I.lhs/">last time</a>. At the call site above, LiquidHaskell infers that
+<code>a</code> can be instantiated with <code>((Point n), (GenPoint a n))</code> thereby establishing
+that, after <em>projecting away</em> the first element, the output is a list of
+non-empty lists of generalized <code>n</code>-dimensional points.</p>
+<p>That leaves us with the two crucial bits of the algorithm: <code>clusterCenter</code>
+and <code>nearestCenter</code>.</p>
 <h2 id="computing-the-center-of-a-cluster">Computing the Center of a Cluster</h2>
-<p>The center of an <code>n</code>-dimensional cluster is simply an <code>n</code>-dimensional point whose value in each dimension is equal to the <em>average</em> value of that dimension across all the points in the cluster.</p>
+<p>The center of an <code>n</code>-dimensional cluster is simply an <code>n</code>-dimensional point
+whose value in each dimension is equal to the <em>average</em> value of that
+dimension across all the points in the cluster.</p>
 For example, consider a cluster of 2-dimensional points,
 <pre><span class="hs-linenum">241: </span><span class="hs-definition">exampleCluster</span> <span class="hs-keyglyph">=</span> <span class="hs-keyglyph">[</span> <span class="hs-keyglyph">[</span><span class="hs-num">0</span><span class="hs-layout">,</span>  <span class="hs-num">0</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">242: </span>                 <span class="hs-layout">,</span> <span class="hs-keyglyph">[</span><span class="hs-num">1</span><span class="hs-layout">,</span> <span class="hs-num">10</span><span class="hs-keyglyph">]</span>
@@ -644,29 +687,45 @@ which is just
                                 (len([VV]) &gt; 0)}
 -&gt; (GHC.Types.Double)</span><span class="hs-varop">.</span></a> <a class="annot" href="#"><span class="annottext">[(GHC.Types.Double)] -&gt; (GHC.Types.Double)</span><span class="hs-varid">sum</span></a>
 </pre>
-<p>First, we <code>transpose</code> the matrix of points in the cluster. Suppose that <code>xs</code> is the <code>exampleCluster</code> from above (and so <code>n</code> is <code>2</code> and <code>numPoints</code> is <code>5</code>.)</p>
+<p>First, we <code>transpose</code> the matrix of points in the cluster.
+Suppose that <code>xs</code> is the <code>exampleCluster</code> from above
+(and so <code>n</code> is <code>2</code> and <code>numPoints</code> is <code>5</code>.)</p>
 In this scenario, <code>xs'</code> is
 <pre><span class="hs-linenum">274: </span><span class="hs-definition">xs'</span> <span class="hs-keyglyph">=</span> <span class="hs-keyglyph">[</span> <span class="hs-keyglyph">[</span><span class="hs-num">0</span><span class="hs-layout">,</span>  <span class="hs-num">1</span><span class="hs-layout">,</span>  <span class="hs-num">2</span><span class="hs-layout">,</span>  <span class="hs-num">4</span><span class="hs-layout">,</span>  <span class="hs-num">5</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">275: </span>      <span class="hs-layout">,</span> <span class="hs-keyglyph">[</span><span class="hs-num">0</span><span class="hs-layout">,</span> <span class="hs-num">10</span><span class="hs-layout">,</span> <span class="hs-num">20</span><span class="hs-layout">,</span> <span class="hs-num">40</span><span class="hs-layout">,</span> <span class="hs-num">50</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">]</span>
 </pre>
 <p>and so <code>map average xs'</code> evaluates to <code>exampleCenter</code> from above.</p>
-<p>We have ensured that the division in the average does not lead to any nasty surprises via a <em>safe division</em> function whose precondition checks that the denominator is non-zero, <a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">as illustrated here</a>.</p>
+<p>We have ensured that the division in the average does not lead to
+any nasty surprises via a <em>safe division</em> function whose precondition
+checks that the denominator is non-zero, <a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">as illustrated here</a>.</p>
 <pre><span class="hs-linenum">285: </span><span class="hs-comment">{- safeDiv   :: (Fractional a) =&gt; a -&gt; {v:Int | v != 0} -&gt; a -}</span>
 <span class="hs-linenum">286: </span><span class="hs-definition">safeDiv</span>     <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Fractional</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
 <span class="hs-linenum">287: </span><a class="annot" href="#"><span class="annottext">(GHC.Real.Fractional a)
 -&gt; a -&gt; {VV : (GHC.Types.Int) | (VV &gt; 0)} -&gt; a</span><span class="hs-definition">safeDiv</span></a> <a class="annot" href="#"><span class="annottext">a</span><span class="hs-varid">n</span></a> <span class="hs-num">0</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | false} -&gt; {VV : a | false}</span><span class="hs-varid">liquidError</span></a> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"divide by zero"</span></a>
 <span class="hs-linenum">288: </span><span class="hs-definition">safeDiv</span> <span class="hs-varid">n</span> <span class="hs-varid">d</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = n)}</span><span class="hs-varid">n</span></a> <a class="annot" href="#"><span class="annottext">x:a -&gt; y:{VV : a | (VV != 0)} -&gt; {VV : a | (VV = (x / y))}</span><span class="hs-varop">/</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">(GHC.Num.Num a)</span><span class="hs-varid">fromIntegral</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt; 0)}</span><span class="hs-varid">d</span></a><span class="hs-layout">)</span>
 </pre>
-<p>LiquidHaskell verifies that the divide-by-zero never occurs, and furthermore, that <code>clusterCenter</code> indeed computes an <code>n</code>-dimensional center by inferring that</p>
+<p>LiquidHaskell verifies that the divide-by-zero never occurs, and furthermore,
+that <code>clusterCenter</code> indeed computes an <code>n</code>-dimensional center by inferring that</p>
 <pre><span class="hs-linenum">295: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">clusterCenter</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">NonEmptyList</span> <span class="hs-layout">(</span><span class="hs-conid">GenPoint</span> <span class="hs-varid">a</span> <span class="hs-varid">n</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Point</span> <span class="hs-varid">n</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>LiquidHaskell deduces that the <em>input</em> list of points <code>xs</code> is non-empty from the fact that <code>clusterCenter</code> is only invoked on the elements of a <code>Clustering</code> which comprise only non-empty lists. Since <code>xs</code> is non-empty, i.e. <code>(len xs) &gt; 0</code>, LiquidHaskell infers that <code>numPoints</code> is positive (hover over <code>length</code> to understand why), and hence, LiquidHaskell is satisfied that the call to <code>safeDiv</code> will always proceed without any incident.</p>
+<p>LiquidHaskell deduces that the <em>input</em> list of points <code>xs</code> is non-empty
+from the fact that <code>clusterCenter</code> is only invoked on the elements of a
+<code>Clustering</code> which comprise only non-empty lists. Since <code>xs</code> is non-empty,
+i.e. <code>(len xs) &gt; 0</code>, LiquidHaskell infers that <code>numPoints</code> is positive
+(hover over <code>length</code> to understand why), and hence, LiquidHaskell is
+satisfied that the call to <code>safeDiv</code> will always proceed without any
+incident.</p>
 To establish the <em>output</em> type <code>Point n</code> LiquidHaskell leans on the fact that
 <pre><span class="hs-linenum">307: </span><span class="hs-definition">transpose</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">m</span><span class="hs-conop">:</span><span class="hs-conid">PosInt</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Matrix</span> <span class="hs-varid">a</span> <span class="hs-varid">m</span> <span class="hs-varid">n</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Matrix</span> <span class="hs-varid">a</span> <span class="hs-varid">n</span> <span class="hs-varid">m</span>
 </pre>
-<p>to deduce that <code>xs'</code> is of type <code>Matrix Double n numPoints</code>, that is to say, a list of length <code>n</code> containing lists of length <code>numPoints</code>. Since <code>map</code> preserves the length, the value <code>map average xs'</code> is also a list of length <code>n</code>, i.e. <code>Point n</code>.</p>
+<p>to deduce that <code>xs'</code> is of type <code>Matrix Double n numPoints</code>, that is to
+say, a list of length <code>n</code> containing lists of length <code>numPoints</code>. Since
+<code>map</code> preserves the length, the value <code>map average xs'</code> is also a list
+of length <code>n</code>, i.e. <code>Point n</code>.</p>
 <h2 id="finding-the-nearest-center">Finding the Nearest Center</h2>
-<p>The last piece of the puzzle is <code>nearestCenter</code> which maps each (generalized) point to the center that it is nearest. The code is pretty self-explanatory:</p>
+<p>The last piece of the puzzle is <code>nearestCenter</code> which maps each
+(generalized) point to the center that it is nearest. The code is
+pretty self-explanatory:</p>
 <pre><span class="hs-linenum">324: </span><span class="hs-definition">nearestCenter</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">WrapType</span> <span class="hs-keyglyph">[</span><span class="hs-conid">Double</span><span class="hs-keyglyph">]</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-keyglyph">[</span><span class="hs-conid">Double</span><span class="hs-keyglyph">]</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-conid">Double</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">325: </span><a class="annot" href="#"><span class="annottext">n:(GHC.Types.Int)
 -&gt; (KMeans.WrapType {VV : [(GHC.Types.Double)] | (len([VV]) = n)} a)
@@ -720,7 +779,8 @@ To establish the <em>output</em> type <code>Point n</code> LiquidHaskell leans o
                                 (len([VV]) = len([c])),
                                 (len([VV]) &gt;= 0)}</span><span class="hs-varid">getVect</span></a> <a class="annot" href="#"><span class="annottext">{VV : (KMeans.WrapType {VV : [(GHC.Types.Double)] | (len([VV]) = n)} a) | (VV = x)}</span><span class="hs-varid">x</span></a><span class="hs-layout">)</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
 </pre>
-<p>We <code>map</code> the centers to a tuple of center <code>c</code> and the <code>distance</code> between <code>x</code> and <code>c</code>, and then we select the tuple with the smallest distance</p>
+<p>We <code>map</code> the centers to a tuple of center <code>c</code> and the <code>distance</code> between
+<code>x</code> and <code>c</code>, and then we select the tuple with the smallest distance</p>
 <pre><span class="hs-linenum">332: </span><span class="hs-definition">minKey</span>  <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-varid">k</span><span class="hs-layout">,</span> <span class="hs-varid">v</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">k</span>
 <span class="hs-linenum">333: </span><a class="annot" href="#"><span class="annottext">(GHC.Classes.Ord a) -&gt; {VV : [(b , a)] | (len([VV]) &gt;= 0)} -&gt; b</span><span class="hs-definition">minKey</span></a>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(a , b) -&gt; a</span><span class="hs-varid">fst</span></a> <a class="annot" href="#"><span class="annottext">((a , b) -&gt; a)
 -&gt; ({VV : [(a , b)] | (len([VV]) &gt;= 0)} -&gt; (a , b))
@@ -732,7 +792,8 @@ To establish the <em>output</em> type <code>Point n</code> LiquidHaskell leans o
                                 ((VV = GT) &lt;=&gt; (x &gt; y)),
                                 ((VV = LT) &lt;=&gt; (x &lt; y))}</span><span class="hs-varid">compare</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">(a , b) -&gt; b</span><span class="hs-varid">snd</span></a> <a class="annot" href="#"><span class="annottext">{VV : (a , b) | (VV = x)}</span><span class="hs-varid">x</span></a><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">(a , b) -&gt; b</span><span class="hs-varid">snd</span></a> <a class="annot" href="#"><span class="annottext">{VV : (a , b) | (VV = y)}</span><span class="hs-varid">y</span></a><span class="hs-layout">)</span><span class="hs-layout">)</span>
 </pre>
-<p>The interesting bit is that the <code>distance</code> function uses <code>zipWith</code> to ensure that the dimensionality of the center and the point match up.</p>
+<p>The interesting bit is that the <code>distance</code> function uses <code>zipWith</code> to
+ensure that the dimensionality of the center and the point match up.</p>
 <pre><span class="hs-linenum">340: </span><span class="hs-definition">distance</span>     <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-conid">Double</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-conid">Double</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Double</span>
 <span class="hs-linenum">341: </span><a class="annot" href="#"><span class="annottext">a:{VV : [(GHC.Types.Double)] | (len([VV]) &gt;= 0)}
 -&gt; {VV : [(GHC.Types.Double)] | (len([VV]) = len([a])),
@@ -766,7 +827,9 @@ To establish the <em>output</em> type <code>Point n</code> LiquidHaskell leans o
 <p>LiquidHaskell verifies <code>distance</code> by inferring that</p>
 <pre><span class="hs-linenum">347: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">nearestCenter</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">GenPoint</span> <span class="hs-varid">a</span> <span class="hs-varid">n</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-conid">Point</span> <span class="hs-varid">n</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Point</span> <span class="hs-varid">n</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>First, LiquidHaskell deduces that each center in <code>cs</code> is indeed <code>n</code>-dimensional, which follows from the output type of <code>clusterCenter</code>. Since <code>x</code> is a <code>(GenPoint a n)</code> LiquidHaskell infers that both <code>c</code> and <code>getVect x</code> are of an equal length <code>n</code>.</p>
+<p>First, LiquidHaskell deduces that each center in <code>cs</code> is indeed <code>n</code>-dimensional, which
+follows from the output type of <code>clusterCenter</code>. Since <code>x</code> is a <code>(GenPoint a n)</code>
+LiquidHaskell infers that both <code>c</code> and <code>getVect x</code> are of an equal length <code>n</code>.</p>
 Consequently, the call to
 <pre><span class="hs-linenum">355: </span><span class="hs-definition">zipWith</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">b</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">c</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-varid">b</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-varid">c</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
 </pre>
@@ -774,7 +837,10 @@ Consequently, the call to
 <p>Finally, the value returned is just one of the input centers and so is a <code>(Point n)</code>.</p>
 <h2 id="putting-it-all-together-top-level-api">Putting It All Together: Top-Level API</h2>
 <p>We can bundle the algorithm into two top-level API functions.</p>
-<p>First, a version that clusters <em>generalized</em> points. In this case, we require a function that can <code>project</code> an <code>a</code> value to an <code>n</code>-dimensional point. This function just wraps each <code>a</code>, clusters via <code>kmeans'</code> and then unwraps the points.</p>
+<p>First, a version that clusters <em>generalized</em> points. In this case, we
+require a function that can <code>project</code> an <code>a</code> value to an <code>n</code>-dimensional
+point. This function just wraps each <code>a</code>, clusters via <code>kmeans'</code> and then
+unwraps the points.</p>
 <pre><span class="hs-linenum">374: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">kmeansGen</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Int</span>
 <span class="hs-linenum">375: </span>              <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Point</span> <span class="hs-varid">n</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
 <span class="hs-linenum">376: </span>              <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">k</span><span class="hs-conop">:</span><span class="hs-conid">PosInt</span>
@@ -839,7 +905,9 @@ Consequently, the call to
                                                  (len([VV]) = n),
                                                  (len([VV]) &gt;= 0)} {VV : a | (VV = x)})</span><span class="hs-conid">WrapType</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">a -&gt; {VV : [(GHC.Types.Double)] | (len([VV]) = n)}</span><span class="hs-varid">project</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a><span class="hs-layout">)</span>
 </pre>
-<p>Second, a specialized version that operates directly on <code>n</code>-dimensional points. The specialized version just calls the general version with a trivial <code>id</code> projection.</p>
+<p>Second, a specialized version that operates directly on <code>n</code>-dimensional
+points. The specialized version just calls the general version with a
+trivial <code>id</code> projection.</p>
 <pre><span class="hs-linenum">391: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">kmeans</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Int</span>
 <span class="hs-linenum">392: </span>           <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">k</span><span class="hs-conop">:</span><span class="hs-conid">PosInt</span>
 <span class="hs-linenum">393: </span>           <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">points</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-conid">Point</span> <span class="hs-varid">n</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span>
@@ -864,11 +932,21 @@ Consequently, the call to
 <p>I hope that over the last two posts you have gotten a sense of</p>
 <ol type="1">
 <li><p>What KMeans clustering is all about,</p></li>
-<li><p>How measures and refinements can be used to describe the behavior of common list operations like <code>map</code>, <code>transpose</code>, <code>groupBy</code>, <code>zipWith</code>, and so on,</p></li>
-<li><p>How LiquidHaskell’s automated inference makes it easy to write and verify invariants of non-trivial programs.</p></li>
+<li><p>How measures and refinements can be used to describe the behavior
+of common list operations like <code>map</code>, <code>transpose</code>, <code>groupBy</code>, <code>zipWith</code>, and so on,</p></li>
+<li><p>How LiquidHaskell’s automated inference makes it easy to write and
+verify invariants of non-trivial programs.</p></li>
 </ol>
-<p>The sharp reader will have noticed that the one <em>major</em>, non syntactic, change to the <a href="http://hackage.haskell.org/package/kmeans">original code</a> is the addition of the dimension parameter <code>n</code> throughout the code. This is critically required so that we can specify the relevant invariants (which are in terms of <code>n</code>.) The value is actually a ghost, and never ever used. Fortunately, Haskell’s laziness means that we don’t have to worry about it (or other ghost variables) imposing any run-time overhead at all.</p>
-<p><strong>Exercise:</strong> Incidentally, if you have followed thus far I would encourage you to ponder about how you might modify the types (and implementation) to verify that KMeans indeed produces at most <code>k</code> clusters…</p>
+<p>The sharp reader will have noticed that the one <em>major</em>, non syntactic, change to the
+<a href="http://hackage.haskell.org/package/kmeans">original code</a> is the addition of the dimension parameter <code>n</code> throughout
+the code. This is critically required so that we can specify the relevant
+invariants (which are in terms of <code>n</code>.) The value is actually a ghost, and
+never ever used. Fortunately, Haskell’s laziness means that we don’t have
+to worry about it (or other ghost variables) imposing any run-time overhead
+at all.</p>
+<p><strong>Exercise:</strong> Incidentally, if you have followed thus far I would
+encourage you to ponder about how you might modify the types (and
+implementation) to verify that KMeans indeed produces at most <code>k</code> clusters…</p>
                 <hr>
                 <ul class="pager">
                     

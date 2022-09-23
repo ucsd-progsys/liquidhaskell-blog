@@ -260,13 +260,23 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/abstract-refinements.html">abstract-refinements</a>
+                Tags: <a title="All pages tagged 'abstract-refinements'." href="../../../../tags/abstract-refinements.html">abstract-refinements</a>
               
             </div>
 
             <br>
-			            <p>We’ve seen all sorts of interesting invariants that can be expressed with refinement predicates. For example, whether a divisor is <a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">non-zero</a>, the <a href="../../../../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">dimension</a> of lists, ensuring the safety of <a href="../../../../blog/2013/03/04/bounding-vectors.lhs/">vector indices</a> and reasoning about the <a href="../../../../blog/2013/03/26/talking/about/sets.lhs/">set</a> of values in containers and verifying their <a href="../../../../blog/2013/05/16/unique-zipper.lhs/">uniqueness</a>. In each of these cases, we were working with <em>specific</em> refinement predicates that described whatever property was of interest.</p>
-<p>Today, (drumroll please), I want to unveil a brand new feature of LiquidHaskell, which allows us to <em>abstract</em> over specific properties or invariants, which significantly increases the expressiveness of the system, whilst still allowing our friend the SMT solver to carry out verification and inference automatically.</p>
+			            <p>We’ve seen all sorts of interesting invariants that can be expressed with
+refinement predicates. For example, whether a divisor is <a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">non-zero</a>,
+the <a href="../../../../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">dimension</a> of lists, ensuring the safety of
+<a href="../../../../blog/2013/03/04/bounding-vectors.lhs/">vector indices</a> and reasoning about the <a href="../../../../blog/2013/03/26/talking/about/sets.lhs/">set</a> of values
+in containers and verifying their <a href="../../../../blog/2013/05/16/unique-zipper.lhs/">uniqueness</a>.
+In each of these cases, we were working with <em>specific</em> refinement predicates
+that described whatever property was of interest.</p>
+<p>Today, (drumroll please), I want to unveil a brand new feature of
+LiquidHaskell, which allows us to <em>abstract</em> over specific properties or
+invariants, which significantly increases the expressiveness of the
+system, whilst still allowing our friend the SMT solver to carry
+out verification and inference automatically.</p>
 <!-- more -->
 <pre><span class="hs-linenum">30: </span>
 <span class="hs-linenum">31: </span><span class="hs-keyword">module</span> <span class="hs-conid">MickeyMouse</span> <span class="hs-keyword">where</span>
@@ -274,7 +284,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">33: </span><span class="hs-keyword">import</span> <span class="hs-conid">Language</span><span class="hs-varop">.</span><span class="hs-conid">Haskell</span><span class="hs-varop">.</span><span class="hs-conid">Liquid</span><span class="hs-varop">.</span><span class="hs-conid">Prelude</span> <span class="hs-layout">(</span><span class="hs-varid">isEven</span><span class="hs-layout">)</span>
 </pre>
 <h2 id="pin-the-specification-on-the-function">Pin The Specification On the Function</h2>
-<p>Lets look at some tiny <em>mickey-mouse</em> examples to see why we may want to abstract over refinements in the first place.</p>
+<p>Lets look at some tiny <em>mickey-mouse</em> examples to see why we may want
+to abstract over refinements in the first place.</p>
 <p>Consider the following monomorphic <code>max</code> function on <code>Int</code> values:</p>
 <pre><span class="hs-linenum">45: </span><span class="hs-definition">maxInt</span>     <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> 
 <span class="hs-linenum">46: </span><a class="annot" href="#"><span class="annottext">forall &lt;p :: (GHC.Types.Int)-&gt; Bool&gt;.
@@ -296,16 +307,23 @@ or even
 <p>All of the above are valid.</p>
 <p>But which one is the <em>right</em> type?</p>
 <p>At this point, you might be exasperated for one of two reasons.</p>
-<p>First, the type enthusiasts among you may cry out – “What? Does this funny refinement type system not have <strong>principal types</strong>?”</p>
+<p>First, the type enthusiasts among you may cry out – “What? Does this funny
+refinement type system not have <strong>principal types</strong>?”</p>
 <p>No. Or, to be precise, of course not!</p>
-<p>Principal typing is a lovely feature that is one of the many reasons why Hindley-Milner is such a delightful sweet spot. Unfortunately, the moment one wants fancier specifications one must tearfully kiss principal typing good bye.</p>
+<p>Principal typing is a lovely feature that is one of the many
+reasons why Hindley-Milner is such a delightful sweet spot.
+Unfortunately, the moment one wants fancier specifications
+one must tearfully kiss principal typing good bye.</p>
 <p>Oh well.</p>
-<p>Second, you may very well say, “Yes yes, does it even matter? Just pick one and get on with it already!”</p>
+<p>Second, you may very well say, “Yes yes, does it even matter? Just pick
+one and get on with it already!”</p>
 <p>Unfortunately, it matters quite a bit.</p>
 <p>Suppose we had a refined type describing valid RGB values:</p>
 <pre><span class="hs-linenum">87: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">RGB</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-num">0</span> <span class="hs-varop">&lt;=</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-varop">&amp;&amp;</span> <span class="hs-layout">(</span><span class="hs-varid">v</span> <span class="hs-varop">&lt;</span> <span class="hs-num">256</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>Now, if I wrote a function that selected the larger, that is to say, the more intense, of two RGB values, I would certainly like to check that it produced an RGB value!</p>
+<p>Now, if I wrote a function that selected the larger, that is to say, the
+more intense, of two RGB values, I would certainly like to check that it
+produced an RGB value!</p>
 <pre><span class="hs-linenum">95: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">intenser</span>   <span class="hs-keyglyph">::</span> <span class="hs-conid">RGB</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">RGB</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">RGB</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">96: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &lt; 256) &amp;&amp; (0 &lt;= VV)}
 -&gt; {VV : (GHC.Types.Int) | (VV &lt; 256) &amp;&amp; (0 &lt;= VV)}
@@ -314,27 +332,49 @@ or even
 -&gt; {VV : (GHC.Types.Int)&lt;p&gt; | true}
 -&gt; {VV : (GHC.Types.Int)&lt;p&gt; | true}</span><span class="hs-varid">maxInt</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV == c1) &amp;&amp; (VV &lt; 256) &amp;&amp; (0 &lt;= VV)}</span><span class="hs-varid">c1</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV == c2) &amp;&amp; (VV &lt; 256) &amp;&amp; (0 &lt;= VV)}</span><span class="hs-varid">c2</span></a>
 </pre>
-<p>Well, guess what. The first type (with <code>v &gt;= 0</code>) one would tell us that the output was non-negative, losing the upper bound. The second type (with <code>v &lt; 10</code>) would cause LiquidHaskell to bellyache about <code>maxInt</code> being called with improper arguments – muttering darkly that an RGB value is not necesarily less than <code>10</code>. As for the third type … well, you get the idea.</p>
+<p>Well, guess what. The first type (with <code>v &gt;= 0</code>) one would tell us that
+the output was non-negative, losing the upper bound. The second type (with
+<code>v &lt; 10</code>) would cause LiquidHaskell to bellyache about <code>maxInt</code> being
+called with improper arguments – muttering darkly that an RGB value
+is not necesarily less than <code>10</code>. As for the third type … well, you get the idea.</p>
 <p>So alas, the choice of type <em>does</em> matter.</p>
 If we were clairvoyant, we would give <code>maxInt</code> a type like
 <pre><span class="hs-linenum">108: </span><span class="hs-definition">maxInt</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">RGB</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">RGB</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">RGB</span> 
 </pre>
-<p>but of course, that has its own issues. (“What? I have to write a <em>separate</em> function for picking the larger of two <em>4</em> digit numbers?!”)</p>
+<p>but of course, that has its own issues. (“What? I have to write a
+<em>separate</em> function for picking the larger of two <em>4</em> digit numbers?!”)</p>
 <h2 id="defining-parametric-invariants">Defining Parametric Invariants</h2>
 <p>Lets take a step back from the types, and turn to a spot of handwaving.</p>
 <p>What’s <em>really</em> going on with <code>maxInt</code>?</p>
 <p>Well, the function returns <em>one of</em> its two arguments <code>x</code> and <code>y</code>.</p>
-<p>This means that if <em>both</em> arguments satisfy some property then the output <em>must</em> satisfy that property, <em>regardless of what that property was!</em></p>
-<p>To teach LiquidHaskell to understand this notion of “regardless of property” we introduce the idea of <strong>abstracting over refinements</strong> or, if you prefer, parameterizing a type over its refinements.</p>
+<p>This means that if <em>both</em> arguments satisfy some property then the output
+<em>must</em> satisfy that property, <em>regardless of what that property was!</em></p>
+<p>To teach LiquidHaskell to understand this notion of “regardless of
+property” we introduce the idea of <strong>abstracting over refinements</strong>
+or, if you prefer, parameterizing a type over its refinements.</p>
 <p>In particular, we type <code>maxInt</code> as</p>
 <pre><span class="hs-linenum">133: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">maxInt</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varop">&lt;</span><span class="hs-varid">p</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Prop</span><span class="hs-varop">&gt;.</span> <span class="hs-conid">Int</span><span class="hs-varop">&lt;</span><span class="hs-varid">p</span><span class="hs-varop">&gt;</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span><span class="hs-varop">&lt;</span><span class="hs-varid">p</span><span class="hs-varop">&gt;</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span><span class="hs-varop">&lt;</span><span class="hs-varid">p</span><span class="hs-varop">&gt;</span><span class="hs-keyword">@-}</span>
 </pre>
-<p>Here, the definition says explicitly: <em>for any property</em> <code>p</code> that is a property of <code>Int</code>, the function takes two inputs each of which satisfy <code>p</code> and returns an output that satisfies <code>p</code>. That is to say, <code>Int&lt;p&gt;</code> is just an abbreviation for <code>{v:Int | (p v)}</code></p>
-<p><strong>Digression: Whither Decidability?</strong> At first glance, it may appear that these abstract <code>p</code> have taken us into the realm of higher-order logics, where we must leave decidable checking and our faithful SMT companion at that door, and instead roll up our sleeves for interactive proofs (not that there’s anything wrong with that!) Fortunately, that’s not the case. We simply encode abstract refinements <code>p</code> as <em>uninterpreted function symbols</em> in the refinement logic.</p>
+<p>Here, the definition says explicitly: <em>for any property</em> <code>p</code> that is a
+property of <code>Int</code>, the function takes two inputs each of which satisfy <code>p</code>
+and returns an output that satisfies <code>p</code>. That is to say, <code>Int&lt;p&gt;</code> is
+just an abbreviation for <code>{v:Int | (p v)}</code></p>
+<p><strong>Digression: Whither Decidability?</strong>
+At first glance, it may appear that these abstract <code>p</code> have taken us into
+the realm of higher-order logics, where we must leave decidable checking
+and our faithful SMT companion at that door, and instead roll up our
+sleeves for interactive proofs (not that there’s anything wrong with that!)
+Fortunately, that’s not the case. We simply encode abstract refinements <code>p</code>
+as <em>uninterpreted function symbols</em> in the refinement logic.</p>
 Uninterpreted functions are special symbols <code>p</code> which satisfy only the <em>congruence axiom</em>.
 <pre><span class="hs-linenum">150: </span><span class="hs-keyword">forall</span> <span class="hs-conid">X</span><span class="hs-layout">,</span> <span class="hs-conid">Y</span><span class="hs-varop">.</span> <span class="hs-keyword">if</span> <span class="hs-layout">(</span><span class="hs-conid">X</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">Y</span><span class="hs-layout">)</span> <span class="hs-keyword">then</span>  <span class="hs-varid">p</span><span class="hs-layout">(</span><span class="hs-conid">X</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">p</span><span class="hs-layout">(</span><span class="hs-conid">Y</span><span class="hs-layout">)</span>
 </pre>
-<p>Happily, reasoning with such uninterpreted functions is quite decidable (thanks to Ackermann, yes, <em>that</em> Ackermann) and actually rather efficient. Thus, via SMT, LiquidHaskell happily verifies that <code>maxInt</code> indeed behaves as advertised: the input types ensure that both <code>(p x)</code> and <code>(p y)</code> hold and hence that the returned value in either branch of <code>maxInt</code> satisfies the refinement <code>{v:Int | p(v)}</code>, thereby ensuring the output type.</p>
+<p>Happily, reasoning with such uninterpreted functions is quite decidable
+(thanks to Ackermann, yes, <em>that</em> Ackermann) and actually rather efficient.
+Thus, via SMT, LiquidHaskell happily verifies that <code>maxInt</code> indeed behaves
+as advertised: the input types ensure that both <code>(p x)</code> and <code>(p y)</code> hold
+and hence that the returned value in either branch of <code>maxInt</code> satisfies
+the refinement <code>{v:Int | p(v)}</code>, thereby ensuring the output type.</p>
 <p>By the same reasoning, we can define the <code>maximumInt</code> operator on lists:</p>
 <pre><span class="hs-linenum">163: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">maximumInt</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varop">&lt;</span><span class="hs-varid">p</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Prop</span><span class="hs-varop">&gt;.</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-conid">Int</span> <span class="hs-varop">&lt;</span><span class="hs-varid">p</span><span class="hs-varop">&gt;</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-varop">&lt;</span><span class="hs-varid">p</span><span class="hs-varop">&gt;</span><span class="hs-keyword">@-}</span>
 <span class="hs-linenum">164: </span><a class="annot" href="#"><span class="annottext">forall &lt;p :: (GHC.Types.Int)-&gt; Bool&gt;.
@@ -350,7 +390,8 @@ Uninterpreted functions are special symbols <code>p</code> which satisfy only th
 -&gt; {VV : (GHC.Types.Int)&lt;p&gt; | true}</span><span class="hs-varid">maxInt</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | ((papp1 p VV)) &amp;&amp; (VV == x)}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">{VV : [{VV : (GHC.Types.Int) | ((papp1 p VV))}] | (VV == xs) &amp;&amp; ((len VV) &gt;= 0)}</span><span class="hs-varid">xs</span></a>
 </pre>
 <h2 id="using-parametric-invariants">Using Parametric Invariants</h2>
-<p>Its only useful to parametrize over invariants if there is some easy way to <em>instantiate</em> the parameters.</p>
+<p>Its only useful to parametrize over invariants if there is some easy way
+to <em>instantiate</em> the parameters.</p>
 <p>Concretely, consider the function:</p>
 <pre><span class="hs-linenum">176: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">maxEvens1</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-conid">Int</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Int</span> <span class="hs-keyword">| (Even v)}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">177: </span><a class="annot" href="#"><span class="annottext">[(GHC.Types.Int)] -&gt; {VV : (GHC.Types.Int) | ((VV mod 2) == 0)}</span><span class="hs-definition">maxEvens1</span></a> <a class="annot" href="#"><span class="annottext">[(GHC.Types.Int)]</span><span class="hs-varid">xs</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">forall &lt;p :: (GHC.Types.Int)-&gt; Bool&gt;.
@@ -374,12 +415,16 @@ where the function <code>isEven</code> is from the Language.Haskell.Liquid.Prelu
 </pre>
 <p>To verify that <code>maxEvens1</code> returns an even number, LiquidHaskell</p>
 <ol type="1">
-<li><p>infers that the list <code>(0:xs')</code> has type <code>[{v:Int | (Even v)}]</code>, that is, is a list of even numbers.</p></li>
-<li><p>automatically instantiates the <em>refinement</em> parameter of <code>maximumInt</code> with the concrete refinement <code>{\v -&gt; (Even v)}</code> and so</p></li>
+<li><p>infers that the list <code>(0:xs')</code> has type <code>[{v:Int | (Even v)}]</code>,
+that is, is a list of even numbers.</p></li>
+<li><p>automatically instantiates the <em>refinement</em> parameter of
+<code>maximumInt</code> with the concrete refinement <code>{\v -&gt; (Even v)}</code> and so</p></li>
 <li><p>concludes that the value returned by <code>maxEvens1</code> is indeed <code>Even</code>.</p></li>
 </ol>
 <h2 id="parametric-invariants-and-type-classes">Parametric Invariants and Type Classes</h2>
-<p>Ok, lets be honest, the above is clearly quite contrived. After all, wouldn’t you write a <em>polymorphic</em> <code>max</code> function? And having done so, we’d just get all the above goodness from old fashioned parametricity.</p>
+<p>Ok, lets be honest, the above is clearly quite contrived. After all,
+wouldn’t you write a <em>polymorphic</em> <code>max</code> function? And having done so,
+we’d just get all the above goodness from old fashioned parametricity.</p>
 That is to say, if we just wrote:
 <pre><span class="hs-linenum">213: </span><span class="hs-definition">max</span>     <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varid">a</span><span class="hs-varop">.</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> 
 <span class="hs-linenum">214: </span><span class="hs-definition">max</span> <span class="hs-varid">x</span> <span class="hs-varid">y</span> <span class="hs-keyglyph">=</span> <span class="hs-keyword">if</span> <span class="hs-varid">x</span> <span class="hs-varop">&gt;</span> <span class="hs-varid">y</span> <span class="hs-keyword">then</span> <span class="hs-varid">x</span> <span class="hs-keyword">else</span> <span class="hs-varid">y</span>
@@ -387,18 +432,28 @@ That is to say, if we just wrote:
 <span class="hs-linenum">216: </span><span class="hs-definition">maximum</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varid">a</span><span class="hs-varop">.</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
 <span class="hs-linenum">217: </span><span class="hs-definition">maximum</span> <span class="hs-layout">(</span><span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-varid">xs</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">foldr</span> <span class="hs-varid">max</span> <span class="hs-varid">x</span> <span class="hs-varid">xs</span>
 </pre>
-<p>then we could happily <em>instantiate</em> the <code>a</code> with <code>{v:Int | v &gt; 0}</code> or <code>{v:Int | (Even v)}</code> or whatever was needed at the call-site of <code>max</code>. Sigh. Perhaps we are still pining for Hindley-Milner.</p>
+<p>then we could happily <em>instantiate</em> the <code>a</code> with <code>{v:Int | v &gt; 0}</code> or
+<code>{v:Int | (Even v)}</code> or whatever was needed at the call-site of <code>max</code>.
+Sigh. Perhaps we are still pining for Hindley-Milner.</p>
 Well, if this was an ML perhaps we could but in Haskell, the types would be
 <pre><span class="hs-linenum">225: </span><span class="hs-layout">(</span><span class="hs-varop">&gt;</span><span class="hs-layout">)</span>     <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span>
 <span class="hs-linenum">226: </span><span class="hs-definition">max</span>     <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
 <span class="hs-linenum">227: </span><span class="hs-definition">maximum</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
 </pre>
-<p>Our first temptation may be to furtively look over our shoulders, and convinced no one was watching, just pretend that funny <code>(Ord a)</code> business was not there, and quietly just treat <code>maximum</code> as <code>[a] -&gt; a</code> and summon parametricity.</p>
+<p>Our first temptation may be to furtively look over our shoulders, and
+convinced no one was watching, just pretend that funny <code>(Ord a)</code> business
+was not there, and quietly just treat <code>maximum</code> as <code>[a] -&gt; a</code> and summon
+parametricity.</p>
 <p>That would be most unwise. We may get away with it with the harmless <code>Ord</code> but what of, say, <code>Num</code>.</p>
 Clearly a function
 <pre><span class="hs-linenum">238: </span><span class="hs-definition">numCrunch</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Num</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
 </pre>
-<p>is not going to necessarily return one of its inputs as an output. Thus, it is laughable to believe that <code>numCrunch</code> would, if given a list of of even (or positive, negative, prime, RGB, …) integers, return a even (or positive, negative, prime, RGB, …) integer, since the function might add or subtract or multiply or do other unspeakable things to the numbers in order to produce the output value.</p>
+<p>is not going to necessarily return one of its inputs as an output.
+Thus, it is laughable to believe that <code>numCrunch</code> would, if given
+a list of of even (or positive, negative, prime, RGB, …) integers,
+return a even (or positive, negative, prime, RGB, …) integer, since
+the function might add or subtract or multiply or do other unspeakable
+things to the numbers in order to produce the output value.</p>
 <p>And yet, typeclasses are everywhere.</p>
 <p>How could we possibly verify that</p>
 <pre><span class="hs-linenum">253: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">maxEvens2</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-conid">Int</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Int</span> <span class="hs-keyword">| (Even v) }</span> <span class="hs-keyword">@-}</span>
@@ -431,7 +486,8 @@ y:{VV : (GHC.Types.Int) | ((VV mod 2) == 0)}
 -&gt; {VV : (GHC.Types.Bool) | (((Prop VV)) &lt;=&gt; (x &lt;= y))}</span><span class="hs-varop">&lt;=</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | ((papp1 p VV)) &amp;&amp; (VV == y)}</span><span class="hs-varid">y</span></a> <span class="hs-keyword">then</span> <a class="annot" href="#"><span class="annottext">{VV : a | ((papp1 p VV)) &amp;&amp; (VV == y)}</span><span class="hs-varid">y</span></a> <span class="hs-keyword">else</span> <a class="annot" href="#"><span class="annottext">{VV : a | ((papp1 p VV)) &amp;&amp; (VV == x)}</span><span class="hs-varid">x</span></a>
 </pre>
 <p>The answer: abstract refinements.</p>
-<p>First, via the same analysis as the monomorphic <code>Int</code> case, LiquidHaskell establishes that</p>
+<p>First, via the same analysis as the monomorphic <code>Int</code> case, LiquidHaskell
+establishes that</p>
 <pre><span class="hs-linenum">276: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">maxPoly</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varop">&lt;</span><span class="hs-varid">p</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Prop</span><span class="hs-varop">&gt;.</span> 
 <span class="hs-linenum">277: </span>                 <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-varid">a</span><span class="hs-varop">&lt;</span><span class="hs-varid">p</span><span class="hs-varop">&gt;</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-varid">a</span><span class="hs-varop">&lt;</span><span class="hs-varid">p</span><span class="hs-varop">&gt;</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span><span class="hs-varop">&lt;</span><span class="hs-varid">p</span><span class="hs-varop">&gt;</span> <span class="hs-keyword">@-}</span>
 </pre>
@@ -439,15 +495,24 @@ y:{VV : (GHC.Types.Int) | ((VV mod 2) == 0)}
 <pre><span class="hs-linenum">283: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">maximumPoly</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varop">&lt;</span><span class="hs-varid">p</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Prop</span><span class="hs-varop">&gt;.</span> 
 <span class="hs-linenum">284: </span>                     <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-varop">&lt;</span><span class="hs-varid">p</span><span class="hs-varop">&gt;</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span><span class="hs-varop">&lt;</span><span class="hs-varid">p</span><span class="hs-varop">&gt;</span>     <span class="hs-keyword">@-}</span>
 </pre>
-<p>Second, at the call-site for <code>maximumPoly</code> in <code>maxEvens2</code> LiquidHaskell instantiates the type variable <code>a</code> with <code>Int</code>, and the abstract refinement parameter <code>p</code> with <code>{\v -&gt; (Even v)}</code> after which, the verification proceeds as described earlier (for the <code>Int</code> case).</p>
+<p>Second, at the call-site for <code>maximumPoly</code> in <code>maxEvens2</code> LiquidHaskell
+instantiates the type variable <code>a</code> with <code>Int</code>, and the abstract refinement
+parameter <code>p</code> with <code>{\v -&gt; (Even v)}</code> after which, the verification proceeds
+as described earlier (for the <code>Int</code> case).</p>
 <h2 id="and-so">And So</h2>
-<p>If you’ve courageously slogged through to this point then you’ve learnt that</p>
+<p>If you’ve courageously slogged through to this point then you’ve learnt
+that</p>
 <ol type="1">
 <li><p>Sometimes, choosing the right type can be quite difficult!</p></li>
-<li><p>But fortunately, with <em>abstract refinements</em> we needn’t choose, but can write types that are parameterized over the actual concrete invariants or refinements, which</p></li>
+<li><p>But fortunately, with <em>abstract refinements</em> we needn’t choose, but
+can write types that are parameterized over the actual concrete
+invariants or refinements, which</p></li>
 <li><p>Can be instantiated at the call-sites i.e. users of the functions.</p></li>
 </ol>
-<p>We started with some really frivolous examples, but buckle your seatbelt and hold on tight, because we’re going to see some rather nifty things that this new technique makes possible, including induction, reasoning about memoizing functions, and <em>ordering</em> and <em>sorting</em> data. Stay tuned.</p>
+<p>We started with some really frivolous examples, but buckle your seatbelt
+and hold on tight, because we’re going to see some rather nifty things that
+this new technique makes possible, including induction, reasoning about
+memoizing functions, and <em>ordering</em> and <em>sorting</em> data. Stay tuned.</p>
                 <hr>
                 <ul class="pager">
                     

@@ -260,23 +260,36 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/benchmarks.html">benchmarks</a>, <a href="../../../../tags/text.html">text</a>
+                Tags: <a title="All pages tagged 'benchmarks'." href="../../../../tags/benchmarks.html">benchmarks</a>, <a title="All pages tagged 'text'." href="../../../../tags/text.html">text</a>
               
             </div>
 
             <br>
-			            <p>A large part of the allure of Haskell is its elegant, high-level ADTs that ensure<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> that programs won’t be plagued by problems like the infamous <a href="http://en.wikipedia.org/wiki/Heartbleed">SSL heartbleed bug</a>.</p>
-<p>However, another part of Haskell’s charm is that when you really really need to, you can drop down to low-level pointer twiddling to squeeze the most performance out of your machine. But of course, that opens the door to the #heartbleeds.</p>
+			            <p>A large part of the allure of Haskell is its elegant, high-level ADTs
+that ensure<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> that programs won’t be plagued by problems
+like the infamous <a href="http://en.wikipedia.org/wiki/Heartbleed">SSL heartbleed bug</a>.</p>
+<p>However, another part of Haskell’s charm is that when you really really
+need to, you can drop down to low-level pointer twiddling to squeeze the
+most performance out of your machine. But of course, that opens the door
+to the #heartbleeds.</p>
 <p>Can we have have our cake and eat it too?</p>
 <p>Can we twiddle pointers and still get the nice safety assurances of high-level types?</p>
 <!-- more -->
-<p>To understand the potential for potential bleeding, let’s study the popular <code>text</code> library for efficient text processing. The library provides the high-level API Haskellers have come to expect while using stream fusion and byte arrays under the hood to guarantee high performance.</p>
-Suppose we wanted to get the <em>i</em>th <code>Char</code> of a <code>Text</code>, we could write a function<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a>
+<p>To understand the potential for potential bleeding,
+let’s study the popular <code>text</code> library for efficient
+text processing. The library provides the high-level
+API Haskellers have come to expect while using stream
+fusion and byte arrays under the hood to guarantee
+high performance.</p>
+Suppose we wanted to get the <em>i</em>th <code>Char</code> of a <code>Text</code>,
+we could write a function<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>
 <pre><span class="hs-linenum">39: </span><span class="hs-definition">charAt</span> <span class="hs-layout">(</span><span class="hs-conid">Text</span> <span class="hs-varid">a</span> <span class="hs-varid">o</span> <span class="hs-varid">l</span><span class="hs-layout">)</span> <span class="hs-varid">i</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">word2char</span> <span class="hs-varop">$</span> <span class="hs-varid">unsafeIndex</span> <span class="hs-varid">a</span> <span class="hs-layout">(</span><span class="hs-varid">o</span><span class="hs-varop">+</span><span class="hs-varid">i</span><span class="hs-layout">)</span>
 <span class="hs-linenum">40: </span>  <span class="hs-keyword">where</span> 
 <span class="hs-linenum">41: </span>    <span class="hs-varid">word2char</span>         <span class="hs-keyglyph">=</span> <span class="hs-varid">chr</span> <span class="hs-varop">.</span> <span class="hs-varid">fromIntegral</span>
 </pre>
-<p>which extracts the underlying array <code>a</code>, indexes into it starting at the offset <code>o</code> and casts the <code>Word16</code> to a <code>Char</code>, using functions exported by <code>text</code>.</p>
+<p>which extracts the underlying array <code>a</code>, indexes into it starting
+at the offset <code>o</code> and casts the <code>Word16</code> to a <code>Char</code>, using
+functions exported by <code>text</code>.</p>
 Let’s try this out in GHCi.
 <pre><span class="hs-linenum">50: </span><span class="hs-definition">ghci</span><span class="hs-varop">&gt;</span> <span class="hs-keyword">let</span> <span class="hs-varid">t</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">pack</span> <span class="hs-keyglyph">[</span><span class="hs-chr">'d'</span><span class="hs-layout">,</span><span class="hs-chr">'o'</span><span class="hs-layout">,</span><span class="hs-chr">'g'</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">51: </span><span class="hs-definition">ghci</span><span class="hs-varop">&gt;</span> <span class="hs-varid">charAt</span> <span class="hs-varid">t</span> <span class="hs-num">0</span>
@@ -290,9 +303,15 @@ Looks good so far, what happens if we keep going?
 <span class="hs-linenum">60: </span><span class="hs-definition">ghci</span><span class="hs-varop">&gt;</span> <span class="hs-varid">charAt</span> <span class="hs-varid">t</span> <span class="hs-num">100</span>
 <span class="hs-linenum">61: </span><span class="hs-chr">'\8745'</span>
 </pre>
-<p>Oh dear, not only did we not get any sort of exception from Haskell, we weren’t even stopped by the OS with a segfault. This is quite dangerous since we have no idea what sort of data we just read! To be fair to the library’s authors, we did use a function that was clearly branded <code>unsafe</code>, but these functions, while not intended for <em>clients</em>, pervade the implementation of the <em>library</em>.</p>
+<p>Oh dear, not only did we not get any sort of exception from Haskell,
+we weren’t even stopped by the OS with a segfault. This is quite
+dangerous since we have no idea what sort of data we just read!
+To be fair to the library’s authors, we did use a function that
+was clearly branded <code>unsafe</code>, but these functions, while not
+intended for <em>clients</em>, pervade the implementation of the <em>library</em>.</p>
 <p>Wouldn’t it be nice to have these last two calls <em>rejected at compile time</em>?</p>
-<p>In this post we’ll see exactly how prevent invalid memory accesses like this with LiquidHaskell.</p>
+<p>In this post we’ll see exactly how prevent invalid memory accesses
+like this with LiquidHaskell.</p>
 <div class="hidden">
 <pre><span class="hs-linenum">80: </span><span class="hs-comment">{-# LANGUAGE BangPatterns, MagicHash, Rank2Types,
     RecordWildCards, UnboxedTuples, ExistentialQuantification #-}</span>
@@ -361,9 +380,11 @@ Looks good so far, what happens if we keep going?
 </pre>
 </div>
 <h2 id="the-text-lifecycle">The <code>Text</code> Lifecycle</h2>
-<p><code>text</code> splits the reading and writing array operations between two types of arrays, immutable <code>Array</code>s and mutable <code>MArray</code>s. This leads to the following general lifecycle:</p>
+<p><code>text</code> splits the reading and writing array operations between two
+types of arrays, immutable <code>Array</code>s and mutable <code>MArray</code>s. This leads to
+the following general lifecycle:</p>
 <figure>
-<img src="../../../../static/img/text-lifecycle.png" alt="The lifecycle of a Text" /><figcaption>The lifecycle of a <code>Text</code></figcaption>
+<img src="../../../../static/img/text-lifecycle.png" alt="The lifecycle of a Text" /><figcaption aria-hidden="true">The lifecycle of a <code>Text</code></figcaption>
 </figure>
 <p>The main four array operations we care about are:</p>
 <ol type="1">
@@ -373,13 +394,16 @@ Looks good so far, what happens if we keep going?
 <li><strong>reading</strong> from an <code>Array</code>.</li>
 </ol>
 <h2 id="creating-an-marray">Creating an <code>MArray</code></h2>
-<p>The (mutable) <code>MArray</code> is a thin wrapper around GHC’s primitive <code>MutableByteArray#</code>, additionally carrying the number of <code>Word16</code>s it can store.</p>
+<p>The (mutable) <code>MArray</code> is a thin wrapper around GHC’s primitive
+<code>MutableByteArray#</code>, additionally carrying the number of <code>Word16</code>s it
+can store.</p>
 <pre><span class="hs-linenum">167: </span><span class="hs-keyword">data</span> <span class="hs-conid">MArray</span> <span class="hs-varid">s</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">MArray</span> <span class="hs-layout">{</span> <a class="annot" href="#"><span class="annottext">forall a. (MArray a) -&gt; (MutableByteArray# a)</span><span class="hs-varid">maBA</span></a>  <span class="hs-keyglyph">::</span> <span class="hs-conid">MutableByteArray</span><span class="hs-cpp">#</span> <span class="hs-varid">s</span>
 <span class="hs-linenum">168: </span>                       <span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">forall a.
 x1:(MArray a) -&gt; {v : Int | (v == (maLen x1)) &amp;&amp; (v &gt;= 0)}</span><span class="hs-varid">maLen</span></a> <span class="hs-keyglyph">::</span> <span class="hs-varop">!</span><span class="hs-conid">Int</span>
 <span class="hs-linenum">169: </span>                       <span class="hs-layout">}</span>
 </pre>
-<p>It doesn’t make any sense to have a negative length, so we <em>refine</em> the data definition to require that <code>maLen</code> be non-negative.</p>
+<p>It doesn’t make any sense to have a negative length, so we <em>refine</em>
+the data definition to require that <code>maLen</code> be non-negative.</p>
 <pre><span class="hs-linenum">176: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">data</span> <span class="hs-conid">MArray</span> <span class="hs-varid">s</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">MArray</span> <span class="hs-layout">{</span> <span class="hs-varid">maBA</span>  <span class="hs-keyglyph">::</span> <span class="hs-conid">MutableByteArray</span><span class="hs-cpp">#</span> <span class="hs-varid">s</span>
 <span class="hs-linenum">177: </span>                           <span class="hs-layout">,</span> <span class="hs-varid">maLen</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Nat</span>
 <span class="hs-linenum">178: </span>                           <span class="hs-layout">}</span>
@@ -393,7 +417,8 @@ As an added bonus, the above specification generates <strong>field-accessor meas
 <p>We can use these accessor measures to define <code>MArray</code>s of size <code>N</code>:</p>
 <pre><span class="hs-linenum">192: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">MArrayN</span> <span class="hs-varid">a</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">MArray</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-varid">maLen</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">N</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>and we can use the above alias, to write a type that tracks the size of an <code>MArray</code> at the point where it is created:</p>
+<p>and we can use the above alias, to write a type that tracks the size
+of an <code>MArray</code> at the point where it is created:</p>
 <pre><span class="hs-linenum">199: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">new</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varid">s</span><span class="hs-varop">.</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">ST</span> <span class="hs-varid">s</span> <span class="hs-layout">(</span><span class="hs-conid">MArrayN</span> <span class="hs-varid">s</span> <span class="hs-varid">n</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">200: </span><a class="annot" href="#"><span class="annottext">forall a.
 x1:{v : Int | (v &gt;= 0)}
@@ -420,11 +445,15 @@ x1:{v : Int | (v &gt;= 0)}
 -&gt; x2:{x5 : Int | (x5 &gt;= 0)}
 -&gt; {x3 : Int | ((x2 == 1) =&gt; (x3 == (x1 * 2))) &amp;&amp; (x3 &gt;= 0)}</span><span class="hs-varop">`shiftL`</span></a> <a class="annot" href="#"><span class="annottext">{x2 : Int | (x2 == (1  :  int))}</span><span class="hs-num">1</span></a>
 </pre>
-<p><code>new n</code> is an <code>ST</code> action that produces an <code>MArray s</code> with <code>n</code> slots each of which is 2 bytes (as internally <code>text</code> manipulates <code>Word16</code>s).</p>
-<p>The verification process here is quite simple; LH recognizes that the <code>n</code> used to construct the returned array (<code>MArray marr# n</code>) the same <code>n</code> passed to <code>new</code>.</p>
+<p><code>new n</code> is an <code>ST</code> action that produces an <code>MArray s</code> with <code>n</code> slots each
+of which is 2 bytes (as internally <code>text</code> manipulates <code>Word16</code>s).</p>
+<p>The verification process here is quite simple; LH recognizes that
+the <code>n</code> used to construct the returned array (<code>MArray marr# n</code>)
+the same <code>n</code> passed to <code>new</code>.</p>
 <h2 id="writing-into-an-marray">Writing into an <code>MArray</code></h2>
 <p>Once we have <em>created</em> an <code>MArray</code>, we’ll want to write our data into it.</p>
-<p>A <code>Nat</code> is a valid index into an <code>MArray</code> if it is <em>strictly less than</em> the size of the array.</p>
+<p>A <code>Nat</code> is a valid index into an <code>MArray</code> if it is <em>strictly less than</em>
+the size of the array.</p>
 <pre><span class="hs-linenum">226: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">MAValidI</span> <span class="hs-conid">MA</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-varop">&lt;</span> <span class="hs-layout">(</span><span class="hs-varid">maLen</span> <span class="hs-conid">MA</span><span class="hs-layout">)</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
 <p>We use this valid index alias to refine the type of <code>unsafeWrite</code></p>
@@ -440,15 +469,28 @@ x1:(MArray a)
 <span class="hs-linenum">236: </span>      <span class="hs-keyword">case</span> <a class="annot" href="#"><span class="annottext">(MutableByteArray# a) -&gt; Int# -&gt; Word# -&gt; (State# a) -&gt; (State# a)</span><span class="hs-varid">writeWord16Array</span></a><span class="hs-cpp">#</span> <a class="annot" href="#"><span class="annottext">(MutableByteArray# a)</span><span class="hs-varid">maBA</span></a> <a class="annot" href="#"><span class="annottext">{x2 : Int# | (x2 == i)}</span><span class="hs-varid">i</span></a><span class="hs-cpp">#</span> <a class="annot" href="#"><span class="annottext">{x2 : Word# | (x2 == e)}</span><span class="hs-varid">e</span></a><span class="hs-cpp">#</span> <a class="annot" href="#"><span class="annottext">{x2 : (State# a) | (x2 == s1)}</span><span class="hs-varid">s1</span></a><span class="hs-cpp">#</span> <span class="hs-keyword">of</span>
 <span class="hs-linenum">237: </span>        <span class="hs-varid">s2</span><span class="hs-cpp">#</span> <span class="hs-keyglyph">-&gt;</span> <a class="annot" href="#"><span class="annottext">forall a b. a -&gt; b -&gt; (a, b)</span><span class="hs-layout">(</span></a><span class="hs-cpp">#</span> <a class="annot" href="#"><span class="annottext">(State# a)</span><span class="hs-varid">s2</span></a><span class="hs-cpp">#</span><span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{x2 : () | (x2 == GHC.Tuple.())}</span><span class="hs-conid">()</span></a> <span class="hs-cpp">#</span><span class="hs-layout">)</span>
 </pre>
-<p>Note that, when compiled with appropriate options, the implementation of <code>text</code> checks the bounds at run-time. However, LiquidHaskell can statically prove that the error branch is unreachable, i.e. the <code>assert</code> <strong>cannot fail</strong> (as long as the inputs adhere to the given specification) by giving <code>assert</code> the type:</p>
+<p>Note that, when compiled with appropriate options, the implementation of
+<code>text</code> checks the bounds at run-time. However, LiquidHaskell can statically
+prove that the error branch is unreachable, i.e. the <code>assert</code> <strong>cannot fail</strong>
+(as long as the inputs adhere to the given specification) by giving <code>assert</code>
+the type:</p>
 <pre><span class="hs-linenum">247: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">assert</span> <span class="hs-varid">assert</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Bool</span> <span class="hs-keyword">| (Prop v)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyword">@-}</span>
 </pre>
 <h2 id="bulk-writing-into-an-marray">Bulk Writing into an <code>MArray</code></h2>
-<p>So now we can write individual <code>Word16</code>s into an array, but maybe we have a whole bunch of text we want to dump into the array. Remember, <code>text</code> is supposed to be fast! C has <code>memcpy</code> for cases like this but it’s notoriously unsafe; with the right type however, we can regain safety. <code>text</code> provides a wrapper around <code>memcpy</code> to copy <code>n</code> elements from one <code>MArray</code> to another.</p>
-<p><code>copyM</code> requires two <code>MArray</code>s and valid offsets into each – note that a valid offset is <strong>not</strong> necessarily a valid <em>index</em>, it may be one element out-of-bounds</p>
+<p>So now we can write individual <code>Word16</code>s into an array, but maybe we
+have a whole bunch of text we want to dump into the array. Remember,
+<code>text</code> is supposed to be fast! C has <code>memcpy</code> for cases like this but
+it’s notoriously unsafe; with the right type however, we can regain safety.
+<code>text</code> provides a wrapper around <code>memcpy</code> to copy <code>n</code> elements from
+one <code>MArray</code> to another.</p>
+<p><code>copyM</code> requires two <code>MArray</code>s and valid offsets into each – note
+that a valid offset is <strong>not</strong> necessarily a valid <em>index</em>, it may
+be one element out-of-bounds</p>
 <pre><span class="hs-linenum">265: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">MAValidO</span> <span class="hs-conid">MA</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-varop">&lt;=</span> <span class="hs-layout">(</span><span class="hs-varid">maLen</span> <span class="hs-conid">MA</span><span class="hs-layout">)</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>– and a <code>count</code> of elements to copy. The <code>count</code> must represent a valid region in each <code>MArray</code>, in other words <code>offset + count &lt;= length</code> must hold for each array.</p>
+<p>– and a <code>count</code> of elements to copy.
+The <code>count</code> must represent a valid region in each <code>MArray</code>, in
+other words <code>offset + count &lt;= length</code> must hold for each array.</p>
 <pre><span class="hs-linenum">273: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">copyM</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">dest</span><span class="hs-conop">:</span><span class="hs-conid">MArray</span> <span class="hs-varid">s</span>
 <span class="hs-linenum">274: </span>          <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">didx</span><span class="hs-conop">:</span><span class="hs-conid">MAValidO</span> <span class="hs-varid">dest</span>
 <span class="hs-linenum">275: </span>          <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">src</span><span class="hs-conop">:</span><span class="hs-conid">MArray</span> <span class="hs-varid">s</span>
@@ -479,21 +521,29 @@ x1:(MArray a)
 <span class="hs-linenum">287: </span>                           <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">(MArray a) -&gt; (MutableByteArray# a)</span><span class="hs-varid">maBA</span></a> <a class="annot" href="#"><span class="annottext">{x2 : (MArray a) | (x2 == src)}</span><span class="hs-varid">src</span></a><span class="hs-layout">)</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; {x2 : CSize | (x2 == x1)}</span><span class="hs-varid">fromIntegral</span></a> <a class="annot" href="#"><span class="annottext">{x4 : Int | (x4 == sidx) &amp;&amp; (x4 &gt;= 0) &amp;&amp; (x4 &lt;= (maLen src))}</span><span class="hs-varid">sidx</span></a><span class="hs-layout">)</span>
 <span class="hs-linenum">288: </span>                           <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; {x2 : CSize | (x2 == x1)}</span><span class="hs-varid">fromIntegral</span></a> <a class="annot" href="#"><span class="annottext">{x5 : Int | (x5 == count) &amp;&amp; (x5 &gt;= 0) &amp;&amp; ((didx + x5) &lt;= (maLen dest)) &amp;&amp; ((sidx + x5) &lt;= (maLen src))}</span><span class="hs-varid">count</span></a><span class="hs-layout">)</span>
 </pre>
-<p>Again, the two <code>assert</code>s in the function were in the original code as (optionally compiled out) run-time checks of the precondition, but with LiquidHaskell we can actually <em>prove</em> that the <code>assert</code>s <strong>always succeed</strong>.</p>
+<p>Again, the two <code>assert</code>s in the function were in the original code as
+(optionally compiled out) run-time checks of the precondition, but with
+LiquidHaskell we can actually <em>prove</em> that the <code>assert</code>s <strong>always succeed</strong>.</p>
 <h2 id="freezing-an-marray-into-an-array">Freezing an <code>MArray</code> into an <code>Array</code></h2>
-<p>Before we can package up our <code>MArray</code> into a <code>Text</code>, we need to <em>freeze</em> it, preventing any further mutation. The key property here is of course that the frozen <code>Array</code> should have the same length as the <code>MArray</code>.</p>
-<p>Just as <code>MArray</code> wraps a mutable array, <code>Array</code> wraps an <em>immutable</em> <code>ByteArray#</code> and carries its length in <code>Word16</code>s.</p>
+<p>Before we can package up our <code>MArray</code> into a <code>Text</code>, we need to
+<em>freeze</em> it, preventing any further mutation. The key property
+here is of course that the frozen <code>Array</code> should have the same
+length as the <code>MArray</code>.</p>
+<p>Just as <code>MArray</code> wraps a mutable array, <code>Array</code> wraps an <em>immutable</em>
+<code>ByteArray#</code> and carries its length in <code>Word16</code>s.</p>
 <pre><span class="hs-linenum">307: </span><span class="hs-keyword">data</span> <span class="hs-conid">Array</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">Array</span> <span class="hs-layout">{</span> <a class="annot" href="#"><span class="annottext">Array -&gt; ByteArray#</span><span class="hs-varid">aBA</span></a>  <span class="hs-keyglyph">::</span> <span class="hs-conid">ByteArray</span><span class="hs-cpp">#</span>
 <span class="hs-linenum">308: </span>                   <span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">x1:Array -&gt; {v : Int | (v == (aLen x1)) &amp;&amp; (v &gt;= 0)}</span><span class="hs-varid">aLen</span></a> <span class="hs-keyglyph">::</span> <span class="hs-varop">!</span><span class="hs-conid">Int</span>
 <span class="hs-linenum">309: </span>                   <span class="hs-layout">}</span>
 </pre>
-<p>As before, we get free accessor measures <code>aBA</code> and <code>aLen</code> just by refining the data definition</p>
+<p>As before, we get free accessor measures <code>aBA</code> and <code>aLen</code> just by
+refining the data definition</p>
 <pre><span class="hs-linenum">316: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">data</span> <span class="hs-conid">Array</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">Array</span> <span class="hs-layout">{</span> <span class="hs-varid">aBA</span>  <span class="hs-keyglyph">::</span> <span class="hs-conid">ByteArray</span><span class="hs-cpp">#</span>
 <span class="hs-linenum">317: </span>                       <span class="hs-layout">,</span> <span class="hs-varid">aLen</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Nat</span>
 <span class="hs-linenum">318: </span>                       <span class="hs-layout">}</span>
 <span class="hs-linenum">319: </span>  <span class="hs-keyword">@-}</span>
 </pre>
-<p>so we can refer to the components of an <code>Array</code> in our refinements. Using these measures, we can define</p>
+<p>so we can refer to the components of an <code>Array</code> in our refinements.
+Using these measures, we can define</p>
 <pre><span class="hs-linenum">326: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">ArrayN</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Array</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-varid">aLen</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">N</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">327: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">unsafeFreeze</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">ma</span><span class="hs-conop">:</span><span class="hs-conid">MArray</span> <span class="hs-varid">s</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">ST</span> <span class="hs-varid">s</span> <span class="hs-layout">(</span><span class="hs-conid">ArrayN</span> <span class="hs-layout">(</span><span class="hs-varid">maLen</span> <span class="hs-varid">ma</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">328: </span><a class="annot" href="#"><span class="annottext">forall a.
@@ -508,9 +558,12 @@ x1:(MArray a) -&gt; (ST a {v : Array | ((aLen v) == (maLen x1))})</span><span cl
 -&gt; x2:{x5 : Int | (x5 &gt;= 0)}
 -&gt; {x3 : Array | ((aBA x3) == x1) &amp;&amp; ((aLen x3) == x2)}</span><span class="hs-conid">Array</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">(MutableByteArray# a) -&gt; {x1 : ByteArray# | false}</span><span class="hs-varid">unsafeCoerce</span></a><span class="hs-cpp">#</span> <a class="annot" href="#"><span class="annottext">(MutableByteArray# a)</span><span class="hs-varid">maBA</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{x2 : Int | (x2 &gt;= 0)}</span><span class="hs-varid">maLen</span></a> <span class="hs-cpp">#</span><span class="hs-layout">)</span>
 </pre>
-<p>Again, LiquidHaskell is happy to prove our specification as we simply copy the length parameter <code>maLen</code> over into the <code>Array</code>.</p>
+<p>Again, LiquidHaskell is happy to prove our specification as we simply
+copy the length parameter <code>maLen</code> over into the <code>Array</code>.</p>
 <h2 id="reading-from-an-array">Reading from an <code>Array</code></h2>
-<p>Finally, we will eventually want to read a value out of the <code>Array</code>. As with <code>unsafeWrite</code> we require a valid index into the <code>Array</code>, which we denote using the <code>AValidI</code> alias.</p>
+<p>Finally, we will eventually want to read a value out of the
+<code>Array</code>. As with <code>unsafeWrite</code> we require a valid index into the
+<code>Array</code>, which we denote using the <code>AValidI</code> alias.</p>
 <pre><span class="hs-linenum">342: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">AValidI</span> <span class="hs-conid">A</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-varop">&lt;</span> <span class="hs-layout">(</span><span class="hs-varid">aLen</span> <span class="hs-conid">A</span><span class="hs-layout">)</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">343: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">unsafeIndex</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span><span class="hs-conop">:</span><span class="hs-conid">Array</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">AValidI</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Word16</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">344: </span><a class="annot" href="#"><span class="annottext">x1:Array -&gt; {v : Int | (v &gt;= 0) &amp;&amp; (v &lt; (aLen x1))} -&gt; Word16</span><span class="hs-definition">unsafeIndex</span></a> <span class="hs-conid">Array</span><span class="hs-layout">{</span><span class="hs-keyglyph">..</span><span class="hs-layout">}</span> <a class="annot" href="#"><span class="annottext">{v : Int | (v &gt;= 0)}</span><span class="hs-varid">i</span></a><span class="hs-keyglyph">@</span><span class="hs-layout">(</span><span class="hs-conid">I</span><span class="hs-cpp">#</span> <span class="hs-varid">i</span><span class="hs-cpp">#</span><span class="hs-layout">)</span>
@@ -520,9 +573,11 @@ x1:(MArray a) -&gt; (ST a {v : Array | ((aLen v) == (maLen x1))})</span><span cl
 <span class="hs-linenum">346: </span>  <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span> <span class="hs-keyglyph">=</span> <span class="hs-keyword">case</span> <a class="annot" href="#"><span class="annottext">ByteArray# -&gt; Int# -&gt; Word#</span><span class="hs-varid">indexWord16Array</span></a><span class="hs-cpp">#</span> <a class="annot" href="#"><span class="annottext">ByteArray#</span><span class="hs-varid">aBA</span></a> <a class="annot" href="#"><span class="annottext">{x2 : Int# | (x2 == i)}</span><span class="hs-varid">i</span></a><span class="hs-cpp">#</span> <span class="hs-keyword">of</span>
 <span class="hs-linenum">347: </span>                  <span class="hs-varid">r</span><span class="hs-cpp">#</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">Word# -&gt; Word16</span><span class="hs-conid">W16</span></a><span class="hs-cpp">#</span> <a class="annot" href="#"><span class="annottext">Word#</span><span class="hs-varid">r</span></a><span class="hs-cpp">#</span><span class="hs-layout">)</span>
 </pre>
-<p>As before, LiquidHaskell can easily prove that the error branch is unreachable, i.e. is <em>never</em> executed at run-time.</p>
+<p>As before, LiquidHaskell can easily prove that the error branch
+is unreachable, i.e. is <em>never</em> executed at run-time.</p>
 <h2 id="wrapping-it-all-up">Wrapping it all up</h2>
-<p>Now we can finally define the core datatype of the <code>text</code> package! A <code>Text</code> value consists of three fields:</p>
+<p>Now we can finally define the core datatype of the <code>text</code> package!
+A <code>Text</code> value consists of three fields:</p>
 <p>A. an <code>Array</code>,</p>
 <p>B. an <code>Int</code> offset into the <em>middle</em> of the array, and</p>
 <p>C. an <code>Int</code> length denoting the number of valid indices <em>after</em> the offset.</p>
@@ -534,8 +589,10 @@ x1:(MArray a) -&gt; (ST a {v : Array | ((aLen v) == (maLen x1))})</span><span cl
 <span class="hs-linenum">372: </span>             <span class="hs-layout">}</span>
 <span class="hs-linenum">373: </span>  <span class="hs-keyword">@-}</span>
 </pre>
-<p>These invariants ensure that any <em>index</em> we pick between <code>tOff</code> and <code>tOff + tLen</code> will be a valid index into <code>tArr</code>.</p>
-<p>As shown above with <code>new</code>, <code>unsafeWrite</code>, and <code>unsafeFreeze</code>, we can type the top-level function that creates a <code>Text</code> from a <code>[Char]</code> as:</p>
+<p>These invariants ensure that any <em>index</em> we pick between <code>tOff</code> and
+<code>tOff + tLen</code> will be a valid index into <code>tArr</code>.</p>
+<p>As shown above with <code>new</code>, <code>unsafeWrite</code>, and <code>unsafeFreeze</code>, we can type the
+top-level function that creates a <code>Text</code> from a <code>[Char]</code> as:</p>
 <pre><span class="hs-linenum">383: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">pack</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">s</span><span class="hs-conop">:</span><span class="hs-conid">String</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Text</span> <span class="hs-keyword">| (tLen v) = (len s)}</span> <span class="hs-keyword">@-}</span>
 </pre>
 <h2 id="preventing-bleeds">Preventing Bleeds</h2>
@@ -544,13 +601,18 @@ x1:(MArray a) -&gt; (ST a {v : Array | ((aLen v) == (maLen x1))})</span><span cl
 <span class="hs-linenum">393: </span>  <span class="hs-keyword">where</span> 
 <span class="hs-linenum">394: </span>    <a class="annot" href="#"><span class="annottext">Word16 -&gt; exists [Int].Char</span><span class="hs-varid">word2char</span></a>          <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">Int -&gt; Char</span><span class="hs-varid">chr</span></a> <a class="annot" href="#"><span class="annottext">(Int -&gt; Char) -&gt; (Word16 -&gt; Int) -&gt; Word16 -&gt; exists [Int].Char</span><span class="hs-varop">.</span></a> <a class="annot" href="#"><span class="annottext">x1:Word16 -&gt; {x2 : Int | (x2 == x1)}</span><span class="hs-varid">fromIntegral</span></a>
 </pre>
-<p>Aha! LiquidHaskell flags the call to <code>unsafeIndex</code> because of course, <code>i</code> may fall outside the bounds of the given array <code>a</code>! We can remedy that by specifying a bound for the index:</p>
+<p>Aha! LiquidHaskell flags the call to <code>unsafeIndex</code> because of course, <code>i</code> may fall
+outside the bounds of the given array <code>a</code>! We can remedy that by specifying
+a bound for the index:</p>
 <pre><span class="hs-linenum">402: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">charAt</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">t</span><span class="hs-conop">:</span><span class="hs-conid">Text</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Nat</span> <span class="hs-keyword">| v &lt; (tLen t)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Char</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">403: </span><a class="annot" href="#"><span class="annottext">x1:Text -&gt; {v : Int | (v &gt;= 0) &amp;&amp; (v &lt; (tLen x1))} -&gt; Char</span><span class="hs-definition">charAt</span></a> <span class="hs-layout">(</span><span class="hs-conid">Text</span> <span class="hs-varid">a</span> <span class="hs-varid">o</span> <span class="hs-varid">l</span><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{v : Int | (v &gt;= 0)}</span><span class="hs-varid">i</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">Word16 -&gt; exists [Int].Char</span><span class="hs-varid">word2char</span></a> <a class="annot" href="#"><span class="annottext">(Word16 -&gt; Char) -&gt; Word16 -&gt; Char</span><span class="hs-varop">$</span></a> <a class="annot" href="#"><span class="annottext">x1:Array -&gt; {x4 : Int | (x4 &gt;= 0) &amp;&amp; (x4 &lt; (aLen x1))} -&gt; Word16</span><span class="hs-varid">unsafeIndex</span></a> <a class="annot" href="#"><span class="annottext">{x2 : Array | (x2 == a)}</span><span class="hs-varid">a</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{x4 : Int | (x4 == o) &amp;&amp; (x4 &gt;= 0) &amp;&amp; (x4 &lt;= (aLen a))}</span><span class="hs-varid">o</span></a><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {x4 : Int | (x4 == (x1 + x2))}</span><span class="hs-varop">+</span></a><a class="annot" href="#"><span class="annottext">{x3 : Int | (x3 == i) &amp;&amp; (x3 &gt;= 0)}</span><span class="hs-varid">i</span></a><span class="hs-layout">)</span>
 <span class="hs-linenum">404: </span>  <span class="hs-keyword">where</span> 
 <span class="hs-linenum">405: </span>    <a class="annot" href="#"><span class="annottext">Word16 -&gt; exists [Int].Char</span><span class="hs-varid">word2char</span></a>         <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">Int -&gt; Char</span><span class="hs-varid">chr</span></a> <a class="annot" href="#"><span class="annottext">(Int -&gt; Char) -&gt; (Word16 -&gt; Int) -&gt; Word16 -&gt; exists [Int].Char</span><span class="hs-varop">.</span></a> <a class="annot" href="#"><span class="annottext">x1:Word16 -&gt; {x2 : Int | (x2 == x1)}</span><span class="hs-varid">fromIntegral</span></a>
 </pre>
-<p>That is, we can access the <code>i</code>th <code>Char</code> as long as <code>i</code> is a <code>Nat</code> less than the the size of the text, namely <code>tLen t</code>. Now LiquidHaskell is convinced that the call to <code>unsafeIndex</code> is safe, but of course, we have passed the burden of proof onto users of <code>charAt</code>.</p>
+<p>That is, we can access the <code>i</code>th <code>Char</code> as long as <code>i</code> is a <code>Nat</code> less
+than the the size of the text, namely <code>tLen t</code>. Now LiquidHaskell is convinced
+that the call to <code>unsafeIndex</code> is safe, but of course, we have passed
+the burden of proof onto users of <code>charAt</code>.</p>
 <p>Now, if we try calling <code>charAt</code> as we did at the beginning</p>
 <pre><span class="hs-linenum">416: </span><a class="annot" href="#"><span class="annottext">[Char]</span><span class="hs-definition">test</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{x3 : [Char] | (((null x3)) &lt;=&gt; false) &amp;&amp; ((len x3) &gt;= 0)}</span><span class="hs-keyglyph">[</span></a><a class="annot" href="#"><span class="annottext">{x2 : Char | (x2 == good)}</span><span class="hs-varid">good</span></a><span class="hs-layout">,</span><a class="annot" href="#"><span class="annottext">{x2 : Char | (x2 == bad)}</span><span class="hs-varid">bad</span></a><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">417: </span>  <span class="hs-keyword">where</span>
@@ -558,10 +620,15 @@ x1:(MArray a) -&gt; (ST a {v : Array | ((aLen v) == (maLen x1))})</span><span cl
 <span class="hs-linenum">419: </span>    <a class="annot" href="#"><span class="annottext">Char</span><span class="hs-varid">good</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:Text -&gt; {x4 : Int | (x4 &gt;= 0) &amp;&amp; (x4 &lt; (tLen x1))} -&gt; Char</span><span class="hs-varid">charAt</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:[Char] -&gt; {x2 : Text | ((tLen x2) == (len x1))}</span><span class="hs-varid">pack</span></a> <a class="annot" href="#"><span class="annottext">{x4 : [Char] | (((null x4)) &lt;=&gt; false) &amp;&amp; (x4 == dog) &amp;&amp; ((len x4) &gt;= 0)}</span><span class="hs-varid">dog</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{x2 : Int | (x2 == (2  :  int))}</span><span class="hs-num">2</span></a>
 <span class="hs-linenum">420: </span>    <a class="annot" href="#"><span class="annottext">Char</span><span class="hs-varid">bad</span></a>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:Text -&gt; {x4 : Int | (x4 &gt;= 0) &amp;&amp; (x4 &lt; (tLen x1))} -&gt; Char</span><span class="hs-varid">charAt</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x1:[Char] -&gt; {x2 : Text | ((tLen x2) == (len x1))}</span><span class="hs-varid">pack</span></a> <a class="annot" href="#"><span class="annottext">{x4 : [Char] | (((null x4)) &lt;=&gt; false) &amp;&amp; (x4 == dog) &amp;&amp; ((len x4) &gt;= 0)}</span><span class="hs-varid">dog</span></a><span class="hs-layout">)</span> <span class="hs-error"><a class="annot" href="#"><span class="annottext">{x2 : Int | (x2 == (3  :  int))}</span><span class="hs-num">3</span></a></span>
 </pre>
-<p>we see that LiquidHaskell verifies the <code>good</code> call, but flags <code>bad</code> as <strong>unsafe</strong>.</p>
+<p>we see that LiquidHaskell verifies the <code>good</code> call, but flags <code>bad</code> as
+<strong>unsafe</strong>.</p>
 <h2 id="enforcing-sanitization">Enforcing Sanitization</h2>
-<p>EDIT: As several folks have pointed out, the #heartbleed error was due to inputs not being properly sanitized. The above approach <strong>ensures, at compile time</strong>, that proper sanitization has been performed.</p>
-<p>To see this in action, lets write a little function that just shows the character at a given position:</p>
+<p>EDIT: As several folks have pointed out, the #heartbleed error was
+due to inputs not being properly sanitized. The above approach
+<strong>ensures, at compile time</strong>, that proper sanitization has been
+performed.</p>
+<p>To see this in action, lets write a little function that just shows the
+character at a given position:</p>
 <pre><span class="hs-linenum">438: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">showCharAt</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">t</span><span class="hs-conop">:</span><span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Nat</span> <span class="hs-keyword">| v &lt; (tLen t)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">_</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">439: </span><a class="annot" href="#"><span class="annottext">x1:Text -&gt; {v : Int | (v &gt;= 0) &amp;&amp; (v &lt; (tLen x1))} -&gt; (IO ())</span><span class="hs-definition">showCharAt</span></a> <a class="annot" href="#"><span class="annottext">Text</span><span class="hs-varid">t</span></a> <a class="annot" href="#"><span class="annottext">{v : Int | (v &gt;= 0) &amp;&amp; (v &lt; (tLen t))}</span><span class="hs-varid">i</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">[Char] -&gt; (IO ())</span><span class="hs-varid">putStrLn</span></a> <a class="annot" href="#"><span class="annottext">([Char] -&gt; (IO ())) -&gt; [Char] -&gt; (IO ())</span><span class="hs-varop">$</span></a> <a class="annot" href="#"><span class="annottext">Char -&gt; [Char]</span><span class="hs-varid">show</span></a> <a class="annot" href="#"><span class="annottext">(Char -&gt; [Char]) -&gt; Char -&gt; [Char]</span><span class="hs-varop">$</span></a> <a class="annot" href="#"><span class="annottext">x1:Text -&gt; {x4 : Int | (x4 &gt;= 0) &amp;&amp; (x4 &lt; (tLen x1))} -&gt; Char</span><span class="hs-varid">charAt</span></a> <a class="annot" href="#"><span class="annottext">{x2 : Text | (x2 == t)}</span><span class="hs-varid">t</span></a> <a class="annot" href="#"><span class="annottext">{x4 : Int | (x4 == i) &amp;&amp; (x4 &gt;= 0) &amp;&amp; (x4 &lt; (tLen t))}</span><span class="hs-varid">i</span></a>
 </pre>
@@ -585,12 +652,13 @@ x1:(MArray a) -&gt; (ST a {v : Array | ((aLen v) == (maLen x1))})</span><span cl
 <span class="hs-linenum">462: </span>         <span class="hs-keyword">then</span> <a class="annot" href="#"><span class="annottext">x1:Text -&gt; {x5 : Int | (x5 &gt;= 0) &amp;&amp; (x5 &lt; (tLen x1))} -&gt; (IO ())</span><span class="hs-varid">showCharAt</span></a> <a class="annot" href="#"><span class="annottext">{x2 : Text | (x2 == txt)}</span><span class="hs-varid">txt</span></a> <span class="hs-error"><a class="annot" href="#"><span class="annottext">{x2 : Int | (x2 == i)}</span><span class="hs-varid">i</span></a></span> 
 <span class="hs-linenum">463: </span>         <span class="hs-keyword">else</span> <a class="annot" href="#"><span class="annottext">[Char] -&gt; (IO ())</span><span class="hs-varid">putStrLn</span></a> <a class="annot" href="#"><span class="annottext">{x2 : [Char] | ((len x2) &gt;= 0)}</span><span class="hs-str">"Bad Input!"</span></a>
 </pre>
-<p>Thus, we can use LiquidHaskell to block, at compile time, any serious bleeding from pointers gone wild.</p>
-<section class="footnotes">
+<p>Thus, we can use LiquidHaskell to block, at compile time, any serious bleeding
+from pointers gone wild.</p>
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Assuming the absence of errors in the compiler and run-time…<a href="#fnref1" class="footnote-back">↩</a></p></li>
-<li id="fn2"><p>This function is bad for numerous reasons, least of which is that <code>Data.Text.index</code> is already provided, but stay with us…<a href="#fnref2" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>Assuming the absence of errors in the compiler and run-time…<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>This function is bad for numerous reasons, least of which is that <code>Data.Text.index</code> is already provided, but stay with us…<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
                 <hr>

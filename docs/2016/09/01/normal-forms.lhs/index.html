@@ -260,12 +260,21 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/measures.html">measures</a>
+                Tags: <a title="All pages tagged 'measures'." href="../../../../tags/measures.html">measures</a>
               
             </div>
 
             <br>
-			            <p>I have been preparing an undergraduate course on Compilers in which we build a compiler that crunches an ML-like language to X86 assembly. One of my favorite steps in the compilation is the <a href="https://users.soe.ucsc.edu/~cormac/papers/pldi93.pdf">conversion to A-Normal Form (ANF)</a> where, informally speaking, each call or primitive operation’s arguments are <strong>immediate</strong> values, i.e. constants or variable lookups whose values can be loaded with a single machine instruction. For example, the expression</p>
+			            <p>I have been preparing an undergraduate course on
+Compilers in which we build a compiler that crunches
+an ML-like language to X86 assembly.
+One of my favorite steps in the compilation is the
+<a href="https://users.soe.ucsc.edu/~cormac/papers/pldi93.pdf">conversion to A-Normal Form (ANF)</a>
+where, informally speaking, each call or primitive
+operation’s arguments are <strong>immediate</strong> values,
+i.e. constants or variable lookups whose values can
+be loaded with a single machine instruction. For example,
+the expression</p>
 <pre><span class="hs-linenum">25: </span><span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-num">2</span> <span class="hs-varop">+</span> <span class="hs-num">3</span><span class="hs-layout">)</span> <span class="hs-varop">*</span> <span class="hs-layout">(</span><span class="hs-num">12</span> <span class="hs-comment">-</span> <span class="hs-num">4</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-varop">*</span> <span class="hs-layout">(</span><span class="hs-num">7</span> <span class="hs-varop">+</span> <span class="hs-num">8</span><span class="hs-layout">)</span>
 </pre>
 <p>has the A-Normal Form:</p>
@@ -276,7 +285,11 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">35: </span><span class="hs-keyword">in</span>
 <span class="hs-linenum">36: </span>    <span class="hs-varid">anf2</span> <span class="hs-varop">*</span> <span class="hs-varid">anf3</span>
 </pre>
-<p>The usual presentation of ANF conversion is very elegant but relies upon a clever use of <a href="http://matt.might.net/articles/a-normalization/">continuations</a>. Lets look at another perhaps simpler approach, where we can use refinements to light the way.</p>
+<p>The usual presentation of ANF conversion
+is very elegant but relies upon a clever
+use of <a href="http://matt.might.net/articles/a-normalization/">continuations</a>.
+Lets look at another perhaps simpler approach,
+where we can use refinements to light the way.</p>
 <!-- more -->
 <div class="hidden">
 <pre><span class="hs-linenum">49: </span><span class="hs-keyword">{-@</span> <span class="hs-conid">LIQUID</span> <span class="hs-str">"--no-termination"</span> <span class="hs-keyword">@-}</span>
@@ -316,7 +329,9 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">88: </span>  <span class="hs-keyglyph">|</span> <span class="hs-conid">EApp</span>  <span class="hs-conid">Expr</span> <span class="hs-conid">Expr</span>         <span class="hs-comment">-- ^ Function applications</span>
 <span class="hs-linenum">89: </span>  <span class="hs-keyword">deriving</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">(GHC.Show.Show ANF.Expr)</span><span class="hs-conid">Show</span></a><span class="hs-layout">)</span>
 </pre>
-<p>The language, defined by <code>Expr</code> has integers, variables, binary operators, let-binders and function definitions (lambdas) and calls (applications). In the above, <code>Var</code> and <code>Op</code> are simply:</p>
+<p>The language, defined by <code>Expr</code> has integers, variables, binary operators,
+let-binders and function definitions (lambdas) and calls (applications).
+In the above, <code>Var</code> and <code>Op</code> are simply:</p>
 <pre><span class="hs-linenum">97: </span><span class="hs-keyword">type</span> <span class="hs-conid">Var</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">String</span>
 <span class="hs-linenum">98: </span>
 <span class="hs-linenum">99: </span><span class="hs-keyword">data</span> <span class="hs-conid">Op</span>  <span class="hs-keyglyph">=</span> <span class="hs-conid">Plus</span> <span class="hs-keyglyph">|</span> <span class="hs-conid">Minus</span> <span class="hs-keyglyph">|</span> <span class="hs-conid">Times</span>
@@ -354,17 +369,27 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                                       &amp;&amp; (Prop (isAnf v) &lt;=&gt; true)} | v == ANF.EInt}</span><span class="hs-conid">EInt</span></a> <span class="hs-num">8</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
 </pre>
 <h2 id="a-normal-form">A-Normal Form</h2>
-<p>Before we can describe a <em>conversion</em> to A-Normal Form (ANF), we must pin down what ANF <em>is</em>. Our informal description was: ``each call or primitive operation’s arguments are immediate values, i.e. constants or variable lookups’’.</p>
-<p>We <em>could</em> define a brand new datatypes, say <code>IExpr</code> and <code>AExpr</code> whose values correspond to <em>immediate</em> and <em>ANF</em> terms. (Try it, as an exercise.) Unfortunately, doing so leads to a bunch of code duplication, e.g. duplicate printers for <code>Expr</code> and <code>AExpr</code>. Instead, lets see how we can use refinements to carve out suitable subsets.</p>
+<p>Before we can describe a <em>conversion</em> to A-Normal Form (ANF),
+we must pin down what ANF <em>is</em>. Our informal description was:
+``each call or primitive operation’s arguments are immediate
+values, i.e. constants or variable lookups’’.</p>
+<p>We <em>could</em> define a brand new datatypes, say <code>IExpr</code> and <code>AExpr</code>
+whose values correspond to <em>immediate</em> and <em>ANF</em> terms.
+(Try it, as an exercise.) Unfortunately, doing so leads to a
+bunch of code duplication, e.g. duplicate printers for <code>Expr</code>
+and <code>AExpr</code>. Instead, lets see how we can use refinements to
+carve out suitable subsets.</p>
 <p><strong>Immediate Expressions</strong></p>
-<p>An <code>Expr</code> is <strong>immediate</strong> if it is a <code>Number</code> or a <code>Var</code>; we can formalize this as a Haskell predicate:</p>
+<p>An <code>Expr</code> is <strong>immediate</strong> if it is a <code>Number</code> or a <code>Var</code>;
+we can formalize this as a Haskell predicate:</p>
 <pre><span class="hs-linenum">136: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">measure</span> <span class="hs-varid">isImm</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">137: </span><span class="hs-definition">isImm</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Expr</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span>
 <span class="hs-linenum">138: </span><a class="annot" href="#"><span class="annottext">x1:ANF.Expr -&gt; {VV : GHC.Types.Bool | Prop VV &lt;=&gt; Prop (isImm x1)}</span><span class="hs-definition">isImm</span></a> <span class="hs-layout">(</span><span class="hs-conid">EInt</span> <span class="hs-keyword">_</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">True</span>
 <span class="hs-linenum">139: </span><span class="hs-definition">isImm</span> <span class="hs-layout">(</span><span class="hs-conid">EVar</span> <span class="hs-keyword">_</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">True</span>
 <span class="hs-linenum">140: </span><span class="hs-definition">isImm</span> <span class="hs-keyword">_</span>        <span class="hs-keyglyph">=</span> <span class="hs-conid">False</span>
 </pre>
-<p>and then we can use the predicate to define a refinement type for <em>immediate</em> expressions:</p>
+<p>and then we can use the predicate to define a refinement type
+for <em>immediate</em> expressions:</p>
 <pre><span class="hs-linenum">147: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">ImmExpr</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Expr</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">isImm</span> <span class="hs-varid">v</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
 <p>For example, <code>e1</code> is immediate but <code>e2</code> is not:</p>
@@ -378,7 +403,9 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                                                                                     &amp;&amp; Prop (isImm x3))} | v == ANF.EBin}</span><span class="hs-conid">EBin</span></a></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-conid">Plus</span></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-varid">e1</span></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-varid">e1</span></span>
 </pre>
 <p><strong>ANF Expressions</strong></p>
-<p>Similiarly, an <code>Expr</code> is in <strong>ANF</strong> if all arguments for operators and applications are <strong>immediate</strong>. Once again, we can formalize this intuition as a Haskell predicate:</p>
+<p>Similiarly, an <code>Expr</code> is in <strong>ANF</strong> if all arguments for operators
+and applications are <strong>immediate</strong>. Once again, we can formalize
+this intuition as a Haskell predicate:</p>
 <pre><span class="hs-linenum">167: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">measure</span> <span class="hs-varid">isAnf</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">168: </span><span class="hs-definition">isAnf</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Expr</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span>
 <span class="hs-linenum">169: </span><a class="annot" href="#"><span class="annottext">x1:ANF.Expr -&gt; {VV : GHC.Types.Bool | Prop VV &lt;=&gt; Prop (isAnf x1)}</span><span class="hs-definition">isAnf</span></a> <span class="hs-layout">(</span><span class="hs-conid">EInt</span> <span class="hs-layout">{</span><span class="hs-layout">}</span><span class="hs-layout">)</span>      <span class="hs-keyglyph">=</span> <span class="hs-conid">True</span>
@@ -406,7 +433,9 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                                                                                     &amp;&amp; Prop (isImm x3))} | v == ANF.EBin}</span><span class="hs-conid">EBin</span></a></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-conid">Plus</span></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-varid">e2'</span></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-varid">e2'</span></span>
 </pre>
 <h2 id="anf-conversion-intuition">ANF Conversion: Intuition</h2>
-<p>Now that we have clearly demarcated the territories belonging to plain <code>Expr</code>, immediate <code>ImmExpr</code> and A-Normal <code>AnfExpr</code>, lets see how we can convert the former to the latter.</p>
+<p>Now that we have clearly demarcated the territories belonging to plain <code>Expr</code>,
+immediate <code>ImmExpr</code> and A-Normal <code>AnfExpr</code>, lets see how we can convert the
+former to the latter.</p>
 <p>Recall that our goal is to convert expressions like</p>
 <pre><span class="hs-linenum">203: </span><span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-num">2</span> <span class="hs-varop">+</span> <span class="hs-num">3</span><span class="hs-layout">)</span> <span class="hs-varop">*</span> <span class="hs-layout">(</span><span class="hs-num">12</span> <span class="hs-comment">-</span> <span class="hs-num">4</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-varop">*</span> <span class="hs-layout">(</span><span class="hs-num">7</span> <span class="hs-varop">+</span> <span class="hs-num">8</span><span class="hs-layout">)</span>
 </pre>
@@ -429,7 +458,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 <p>where, <code>v1</code> and <code>v2</code> are immediate, and <code>ai</code> are ANF.</p>
 <p><strong>Making Arguments Immediate</strong></p>
-<p>In other words, the key requirement is a way to crunch arbitrary <em>argument expressions</em> like <code>e1</code> into <strong>a pair</strong></p>
+<p>In other words, the key requirement is a way to crunch
+arbitrary <em>argument expressions</em> like <code>e1</code> into <strong>a pair</strong></p>
 <pre><span class="hs-linenum">240: </span><span class="hs-layout">(</span><span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-varid">x1</span><span class="hs-layout">,</span> <span class="hs-varid">a1</span><span class="hs-layout">)</span> <span class="hs-varop">...</span> <span class="hs-layout">(</span><span class="hs-varid">xn</span><span class="hs-layout">,</span> <span class="hs-varid">an</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span><span class="hs-layout">,</span> <span class="hs-varid">v1</span><span class="hs-layout">)</span>
 </pre>
 <p>where</p>
@@ -437,13 +467,17 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <li><code>a1...an</code> are <code>AnfExpr</code>, and</li>
 <li><code>v1</code> is an immediate <code>ImmExpr</code></li>
 </ol>
-<p>such that <code>e1</code> is <em>equivalent</em> to <code>let x1 = a1 ... xn = an in v1</code>. Thus, we need a function</p>
+<p>such that <code>e1</code> is <em>equivalent</em> to <code>let x1 = a1 ... xn = an in v1</code>.
+Thus, we need a function</p>
 <pre><span class="hs-linenum">252: </span><span class="hs-definition">imm</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Expr</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-conid">Var</span><span class="hs-layout">,</span> <span class="hs-conid">AnfExpr</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span><span class="hs-layout">,</span> <span class="hs-conid">ImmExpr</span><span class="hs-layout">)</span>
 </pre>
-<p>which we will use to <strong>make arguments immediate</strong> thereby yielding a top level conversion function</p>
+<p>which we will use to <strong>make arguments immediate</strong> thereby yielding
+a top level conversion function</p>
 <pre><span class="hs-linenum">259: </span><span class="hs-definition">anf</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Expr</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">AnfExpr</span>
 </pre>
-<p>As we need to generate “temporary” intermediate binders, it will be convenient to work within a monad that generates <code>fresh</code> variables:</p>
+<p>As we need to generate “temporary” intermediate
+binders, it will be convenient to work within a
+monad that generates <code>fresh</code> variables:</p>
 <pre><span class="hs-linenum">267: </span><span class="hs-keyword">type</span> <span class="hs-conid">AnfM</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">State</span> <span class="hs-conid">Int</span> <span class="hs-varid">a</span>
 <span class="hs-linenum">268: </span>
 <span class="hs-linenum">269: </span><span class="hs-definition">fresh</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">AnfM</span> <span class="hs-conid">Var</span>
@@ -498,7 +532,11 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                                                    &amp;&amp; (Prop (isAnf v) &lt;=&gt; Prop (isImm x1)
                                                                           &amp;&amp; Prop (isImm x2))} | v == ANF.EApp}</span><span class="hs-conid">EApp</span></a> <span class="hs-varid">v1</span> <span class="hs-varid">v2</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
 </pre>
-<p>In <code>anf</code> the real work happens inside <code>imm</code> which takes an arbitary <em>argument</em> expression and makes it <strong>immediate</strong> by generating temporary (ANF) bindings. The resulting bindings (and immediate values) are composed by the helper <code>mkLet</code> that takes a list of binders and a body <code>AnfExpr</code> and stitches them into a single <code>AnfExpr</code>:</p>
+<p>In <code>anf</code> the real work happens inside <code>imm</code> which takes an arbitary
+<em>argument</em> expression and makes it <strong>immediate</strong> by generating temporary
+(ANF) bindings. The resulting bindings (and immediate values) are
+composed by the helper <code>mkLet</code> that takes a list of binders and a body
+<code>AnfExpr</code> and stitches them into a single <code>AnfExpr</code>:</p>
 <pre><span class="hs-linenum">325: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">mkLet</span> <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-conid">Var</span><span class="hs-layout">,</span> <span class="hs-conid">AnfExpr</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">AnfExpr</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">AnfExpr</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">326: </span><a class="annot" href="#"><span class="annottext">[([GHC.Types.Char], {v : ANF.Expr | Prop (isAnf v)})] -&gt; {v : ANF.Expr | Prop (isAnf v)} -&gt; {v : ANF.Expr | Prop (isAnf v)}</span><span class="hs-definition">mkLet</span></a> <span class="hs-conid">[]</span>         <a class="annot" href="#"><span class="annottext">{v : ANF.Expr | Prop (isAnf v)}</span><span class="hs-varid">e'</span></a> <span class="hs-keyglyph">=</span> <span class="hs-varid">e'</span>
 <span class="hs-linenum">327: </span><span class="hs-definition">mkLet</span> <span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-varid">x</span><span class="hs-layout">,</span><span class="hs-varid">e</span><span class="hs-layout">)</span><span class="hs-conop">:</span><span class="hs-varid">bs</span><span class="hs-layout">)</span> <span class="hs-varid">e'</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : [GHC.Types.Char] -&gt; x2:ANF.Expr -&gt; x3:ANF.Expr -&gt; {v : ANF.Expr | (Prop (isImm v) &lt;=&gt; false)
@@ -1256,7 +1294,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 <ul>
 <li><p>Numbers and variables are already immediate, and are returned directly.</p></li>
-<li><p>Let-binders and lambdas are simply converted to ANF, and assigned to a fresh binder:</p></li>
+<li><p>Let-binders and lambdas are simply converted to ANF, and assigned to a fresh
+binder:</p></li>
 </ul>
 <pre><span class="hs-linenum">350: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">immExpr</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Expr</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">AnfM</span> <span class="hs-layout">(</span><span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-conid">Var</span><span class="hs-layout">,</span> <span class="hs-conid">AnfExpr</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span><span class="hs-layout">,</span> <span class="hs-conid">ImmExpr</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">351: </span><a class="annot" href="#"><span class="annottext">ANF.Expr -&gt; (Control.Monad.Trans.State.Lazy.StateT GHC.Types.Int Data.Functor.Identity.Identity ([([GHC.Types.Char], {v : ANF.Expr | Prop (isAnf v)})], {v : ANF.Expr | Prop (isImm v)}))</span><span class="hs-definition">immExpr</span></a> <a class="annot" href="#"><span class="annottext">ANF.Expr</span><span class="hs-varid">e</span></a> <span class="hs-keyglyph">=</span> <span class="hs-keyword">do</span>
@@ -1268,7 +1307,9 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                                          &amp;&amp; (Prop (isAnf v) &lt;=&gt; true)} | v == ANF.EVar}</span><span class="hs-conid">EVar</span></a> <span class="hs-varid">t</span><span class="hs-layout">)</span>
 </pre>
 <ul>
-<li>Finally, binary operators and applications are converted by <code>imm2</code> that takes two arbitrary expressions and an expression constructor, yielding the anf-binders and immediate expression.</li>
+<li>Finally, binary operators and applications are converted by <code>imm2</code> that
+takes two arbitrary expressions and an expression constructor, yielding
+the anf-binders and immediate expression.</li>
 </ul>
 <pre><span class="hs-linenum">362: </span><span class="hs-definition">imm2</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Expr</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Expr</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">ImmExpr</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">ImmExpr</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">AnfExpr</span><span class="hs-layout">)</span>
 <span class="hs-linenum">363: </span>     <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">AnfM</span> <span class="hs-layout">(</span><span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-conid">Var</span><span class="hs-layout">,</span> <span class="hs-conid">AnfExpr</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span><span class="hs-layout">,</span> <span class="hs-conid">ImmExpr</span><span class="hs-layout">)</span>
@@ -2055,7 +2096,10 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">396: </span><span class="hs-keyword">in</span>
 <span class="hs-linenum">397: </span>    <span class="hs-varid">anf2</span> <span class="hs-varop">*</span> <span class="hs-varid">anf3</span>
 </pre>
-<p>There! The refinements make this tricky conversion quite straightforward and natural, without requiring us to duplicate types and code. As an exercise, can you use refinements to:</p>
+<p>There! The refinements make this tricky conversion quite
+straightforward and natural, without requiring us to
+duplicate types and code. As an exercise, can you use
+refinements to:</p>
 <ol type="1">
 <li>Port the classic <a href="http://matt.might.net/articles/a-normalization/">continuation-based conversion ?</a></li>
 <li>Check that the conversion yields <a href="http://ucsd-progsys.github.io/liquidhaskell-tutorial/10-case-study-associative-maps.html#/using-maps-well-scoped-expressions">well-scoped terms ?</a></li>

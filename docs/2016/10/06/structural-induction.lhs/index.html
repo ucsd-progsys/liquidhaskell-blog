@@ -260,20 +260,29 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/reflection.html">reflection</a>, <a href="../../../../tags/induction.html">induction</a>, <a href="../../../../tags/measures.html">measures</a>
+                Tags: <a title="All pages tagged 'reflection'." href="../../../../tags/reflection.html">reflection</a>, <a title="All pages tagged 'induction'." href="../../../../tags/induction.html">induction</a>, <a title="All pages tagged 'measures'." href="../../../../tags/measures.html">measures</a>
               
             </div>
 
             <br>
 			            <h2 id="lists-are-monoids">Lists are Monoids</h2>
-<p><a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/blog/blog/2016/09/18/refinement-reflection.lhs/">Previously</a> we saw how Refinement Reflection can be used to write Haskell functions that prove theorems about other Haskell functions. Today, we will see how Refinement Reflection works on <strong>recursive data types</strong>. As an example, we will prove that <strong>lists are monoids</strong> (under nil and append).</p>
-<p>Lets see how to express <strong>the monoid laws</strong> as liquid types, and then prove the laws by writing plain Haskell functions that are checked by LiquidHaskell.</p>
+<p><a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/blog/blog/2016/09/18/refinement-reflection.lhs/">Previously</a> we saw how Refinement Reflection
+can be used to write Haskell functions that prove theorems about
+other Haskell functions. Today, we will see how Refinement Reflection
+works on <strong>recursive data types</strong>.
+As an example, we will prove that <strong>lists are monoids</strong> (under nil and append).</p>
+<p>Lets see how to express <strong>the monoid laws</strong> as liquid types, and then prove
+the laws by writing plain Haskell functions that are checked by LiquidHaskell.</p>
 <!-- more -->
 <p><br></p>
 <div class="row-fluid">
 <div class="span12 pagination-centered">
 <p style="text-align:center">
-<img class="center-block" src="http://www.aaronartprints.org/images/Paintings/4597.jpg" alt="Recursion" width="300"> <br> Recursive Paper and Pencil Proofs. “Drawing Hands” by Escher. <br>
+<img class="center-block" src="http://www.aaronartprints.org/images/Paintings/4597.jpg" alt="Recursion" width="300">
+<br>
+Recursive Paper and Pencil Proofs.
+“Drawing Hands” by Escher.
+<br>
 </p>
 </div>
 </div>
@@ -296,8 +305,12 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <pre><span class="hs-linenum">66: </span><span class="hs-keyword">data</span> <span class="hs-conid">List</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">|</span> <span class="hs-conid">C</span> <span class="hs-varid">a</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-varid">a</span><span class="hs-layout">)</span>
 </pre>
 <h2 id="induction-on-lists">Induction on Lists</h2>
-<p>As we will see, <em>proofs</em> by structural induction will correspond to <em>programs</em> that perform recursion on lists. To keep things legit, we must verify that those programs are total and terminating.</p>
-<p>To that end, lets define a <code>length</code> function that computes the natural number that is the size of a list.</p>
+<p>As we will see, <em>proofs</em> by structural induction will correspond to
+<em>programs</em> that perform recursion on lists. To keep things legit,
+we must verify that those programs are total and terminating.</p>
+<p>To that end, lets define a <code>length</code> function that
+computes the natural number that is the size of a
+list.</p>
 <pre><span class="hs-linenum">81: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">measure</span> <span class="hs-varid">length</span>               <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">82: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">length</span>      <span class="hs-keyglyph">::</span> <span class="hs-conid">List</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Nat</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">83: </span><a class="annot" href="#"><span class="annottext">x1:(StructuralInduction.List a) -&gt; {v : GHC.Types.Int | v &gt;= 0
@@ -307,7 +320,9 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                      &amp;&amp; v == length xs}</span><span class="hs-varid">length</span></a> <span class="hs-varid">xs</span>
 </pre>
 <p>We lift <code>length</code> in the logic, as a <a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/blog/blog/2014/02/11/the-advantage-of-measures.lhs/">measure</a>.</p>
-<p>We can now tell Liquid Haskell that when proving termination on recursive functions with a list argument <code>xs</code>, it should check whether the <code>length xs</code> is decreasing.</p>
+<p>We can now tell Liquid Haskell that when proving termination
+on recursive functions with a list argument <code>xs</code>, it should
+check whether the <code>length xs</code> is decreasing.</p>
 <pre><span class="hs-linenum">94: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">data</span> <span class="hs-conid">List</span> <span class="hs-keyglyph">[</span><span class="hs-varid">length</span><span class="hs-keyglyph">]</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">|</span> <span class="hs-conid">C</span> <span class="hs-layout">{</span><span class="hs-varid">hd</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span><span class="hs-layout">,</span> <span class="hs-varid">tl</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">List</span> <span class="hs-varid">a</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
 <h2 id="reflecting-lists-into-the-logic">Reflecting Lists into the Logic</h2>
@@ -319,14 +334,17 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <li><em>testing</em> if a value has a given data constructor, and</li>
 <li><em>extracting</em> the corresponding field’s value.</li>
 </ul>
-<p>For our example, LH will automatically derive the following functions in the refinement logic.</p>
+<p>For our example, LH will automatically derive the following
+functions in the refinement logic.</p>
 <pre><span class="hs-linenum">116: </span><span class="hs-definition">isN</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">L</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span>         <span class="hs-comment">-- Haskell's null</span>
 <span class="hs-linenum">117: </span><span class="hs-definition">isC</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">L</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span>         <span class="hs-comment">-- Haskell's not . null</span>
 <span class="hs-linenum">118: </span>
 <span class="hs-linenum">119: </span><span class="hs-definition">select_C_1</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">L</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>     <span class="hs-comment">-- Haskell's head</span>
 <span class="hs-linenum">120: </span><span class="hs-definition">select_C_2</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">L</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">L</span> <span class="hs-varid">a</span>   <span class="hs-comment">-- Haskell's tail</span>
 </pre>
-<p>A programmer <em>never</em> sees the above operators; they are internally used by LH to <strong>reflect</strong> Haskell functions into the refinement logic, as we shall see shortly.</p>
+<p>A programmer <em>never</em> sees the above operators; they are internally
+used by LH to <strong>reflect</strong> Haskell functions into the refinement logic,
+as we shall see shortly.</p>
 <h2 id="defining-the-monoid-operators">Defining the Monoid Operators</h2>
 <p>A structure is a monoid, when it has two operators:</p>
 <ul>
@@ -359,9 +377,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                                      &amp;&amp; VV == (if is_N xs then ys else StructuralInduction.C (select_C_1 xs) (&lt;&gt; (select_C_2 xs) ys))
                                      &amp;&amp; VV == &lt;&gt; xs ys}</span><span class="hs-varid">xs</span></a> <span class="hs-varop">&lt;&gt;</span> <span class="hs-varid">ys</span><span class="hs-layout">)</span>
 </pre>
-<p>LiquidHaskell automatically checked that the recursive <code>(&lt;&gt;)</code> is terminating, by checking that the <code>length</code> of its first argument is decreasing. Since both the above operators are provably terminating, LH lets us reflect them into logic.</p>
-<p>As with our <a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/blog/blog/2016/09/18/refinement-reflection.lhs/">previous</a> <code>fibonacci</code> example, reflection of a function into logic, means strengthening the result type of the function with its implementation.</p>
-<p>Thus, the <strong>automatically</strong> derived, strengthened types for <code>empty</code> and <code>(&lt;&gt;)</code> will be</p>
+<p>LiquidHaskell automatically checked that the recursive <code>(&lt;&gt;)</code>
+is terminating, by checking that the <code>length</code> of its first
+argument is decreasing. Since both the above operators are
+provably terminating, LH lets us reflect them into logic.</p>
+<p>As with our <a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/blog/blog/2016/09/18/refinement-reflection.lhs/">previous</a>
+<code>fibonacci</code> example, reflection of a function
+into logic, means strengthening the result type
+of the function with its implementation.</p>
+<p>Thus, the <strong>automatically</strong> derived, strengthened
+types for <code>empty</code> and <code>(&lt;&gt;)</code> will be</p>
 <pre><span class="hs-linenum">166: </span><span class="hs-definition">empty</span>   <span class="hs-keyglyph">::</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">List</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-varop">==</span> <span class="hs-varid">empty</span> <span class="hs-varop">&amp;&amp;</span> <span class="hs-varid">v</span> <span class="hs-varop">==</span> <span class="hs-conid">N</span> <span class="hs-layout">}</span>
 <span class="hs-linenum">167: </span>
 <span class="hs-linenum">168: </span><span class="hs-layout">(</span><span class="hs-varop">&lt;&gt;</span><span class="hs-layout">)</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-conid">List</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">ys</span><span class="hs-conop">:</span><span class="hs-conid">List</span> <span class="hs-varid">a</span>
@@ -370,9 +395,14 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">171: </span>                         <span class="hs-conid">C</span> <span class="hs-layout">(</span><span class="hs-varid">select_C_1</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><span class="hs-varid">select_C_2</span> <span class="hs-varid">xs</span> <span class="hs-varop">&lt;&gt;</span> <span class="hs-varid">ys</span><span class="hs-layout">)</span>
 <span class="hs-linenum">172: </span>        <span class="hs-layout">}</span>
 </pre>
-<p>In effect, the derived checker and selector functions are used to translate Haskell to logic. The above is just to <em>explain</em> how LH reasons about the operators; the programmer never (directly) reads or writes the operators <code>isN</code> or <code>select_C_1</code> etc.</p>
+<p>In effect, the derived checker and selector functions are used
+to translate Haskell to logic. The above is just to <em>explain</em>
+how LH reasons about the operators; the programmer never (directly)
+reads or writes the operators <code>isN</code> or <code>select_C_1</code> etc.</p>
 <h2 id="proving-the-monoid-laws">Proving the Monoid Laws</h2>
-<p>Finally, we have set everything up, (actually LiquidHaskell did most of the work for us) and we are ready to prove the monoid laws for the <code>List</code>.</p>
+<p>Finally, we have set everything up, (actually LiquidHaskell
+did most of the work for us) and we are ready to prove the
+monoid laws for the <code>List</code>.</p>
 <p>First we prove left identity of <code>empty</code>.</p>
 <pre><span class="hs-linenum">190: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">leftId</span>  <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">List</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{ empty &lt;&gt; x == x }</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">191: </span><a class="annot" href="#"><span class="annottext">x1:(StructuralInduction.List a) -&gt; {VV : () | &lt;&gt; empty x1 == x1}</span><span class="hs-definition">leftId</span></a> <a class="annot" href="#"><span class="annottext">(StructuralInduction.List a)</span><span class="hs-varid">x</span></a>
@@ -381,7 +411,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">194: </span>   <a class="annot" href="#"><span class="annottext">(StructuralInduction.List a) -&gt; (StructuralInduction.List a) -&gt; (StructuralInduction.List a)</span><span class="hs-varop">==.</span></a> <span class="hs-varid">x</span>
 <span class="hs-linenum">195: </span>   <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
 </pre>
-<p>This proof was trivial, because left identity is satisfied by the way we defined <code>(&lt;&gt;)</code>.</p>
+<p>This proof was trivial, because left identity is satisfied
+by the way we defined <code>(&lt;&gt;)</code>.</p>
 <p>Next, we prove right identity of <code>empty</code>.</p>
 <pre><span class="hs-linenum">204: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">rightId</span>  <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">List</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{ x &lt;&gt; empty  == x }</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">205: </span><a class="annot" href="#"><span class="annottext">x1:(StructuralInduction.List a) -&gt; {VV : () | &lt;&gt; x1 empty == x1}</span><span class="hs-definition">rightId</span></a> <span class="hs-conid">N</span>
@@ -416,8 +447,13 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                                                                        &amp;&amp; v == StructuralInduction.C x x1}</span><span class="hs-conid">C</span></a> <span class="hs-varid">x</span> <span class="hs-varid">xs</span>        <span class="hs-varid">∵</span> <a class="annot" href="#"><span class="annottext">{VV : () | &lt;&gt; xs empty == xs}</span><span class="hs-varid">rightId</span></a> <span class="hs-varid">xs</span>
 <span class="hs-linenum">214: </span>   <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
 </pre>
-<p>This proof is more tricky, as it requires <strong>structural induction</strong> which is encoded in LH proofs simply as <strong>recursion</strong>. LH ensures that the inductive hypothesis is appropriately applied by checking that the recursive proof is total and terminating. In the <code>rightId</code> case, for termination, Liquid Haskell checked that <code>length xs &lt; length (C x xs)</code>.</p>
-<p>It turns out that we can prove lots of properties about lists using structural induction, encoded in Haskell as</p>
+<p>This proof is more tricky, as it requires <strong>structural induction</strong> which is
+encoded in LH proofs simply as <strong>recursion</strong>. LH ensures that the inductive
+hypothesis is appropriately applied by checking that the recursive proof is
+total and terminating. In the <code>rightId</code> case, for termination, Liquid Haskell
+checked that <code>length xs &lt; length (C x xs)</code>.</p>
+<p>It turns out that we can prove lots of properties about lists using structural
+induction, encoded in Haskell as</p>
 <ul>
 <li>case splitting,</li>
 <li>recursive calls, and</li>
@@ -487,8 +523,10 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                                                                        &amp;&amp; v == StructuralInduction.C x x1}</span><span class="hs-conid">C</span></a> <span class="hs-varid">x</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span> <span class="hs-varop">&lt;&gt;</span> <span class="hs-varid">y</span><span class="hs-layout">)</span> <span class="hs-varop">&lt;&gt;</span> <span class="hs-varid">z</span>
 <span class="hs-linenum">247: </span>  <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
 </pre>
-<p>The above proof of associativity reifies the paper and pencil proof by structural induction.</p>
-<p>With that, we can safely conclude that our user defined list is a monoid!</p>
+<p>The above proof of associativity reifies the paper and pencil
+proof by structural induction.</p>
+<p>With that, we can safely conclude that our user defined list
+is a monoid!</p>
 <h2 id="conclusion">Conclusion</h2>
 <p>We saw how Refinement Reflection can be used to</p>
 <ul>
@@ -496,7 +534,10 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <li>naturally encode structural inductive proofs of these properties, and</li>
 <li>have these proofs machine checked by Liquid Haskell.</li>
 </ul>
-<p>Why is this useful? Because the theorems we prove refer to your Haskell functions! Thus you (or in the future, the compiler) can use properties like monoid or monad laws to optimize your Haskell code. In the future, we will present examples of code optimizations using monoid laws. Stay tuned!</p>
+<p>Why is this useful? Because the theorems we prove refer to your Haskell
+functions! Thus you (or in the future, the compiler) can use properties like
+monoid or monad laws to optimize your Haskell code. In the future, we will
+present examples of code optimizations using monoid laws. Stay tuned!</p>
                 <hr>
                 <ul class="pager">
                     

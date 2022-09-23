@@ -260,14 +260,23 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/reflection.html">reflection</a>
+                Tags: <a title="All pages tagged 'reflection'." href="../../../../tags/reflection.html">reflection</a>
               
             </div>
 
             <br>
-			            <p>We’ve taught LiquidHaskell a new trick that we call ``Refinement Reflection’’ which lets us turn Haskell into a theorem prover capable of proving arbitrary properties of code. The key idea is to <strong>reflect</strong> the code of the function into its <strong>output type</strong>, which lets us then reason about the function at the (refinement) type level. Lets see how to use refinement types to express a theorem, for example that fibonacci is a monotonically increasing function, then write plain Haskell code to reify a paper-and-pencil-style proof for that theorem, that can be machine checked by LiquidHaskell.</p>
+			            <p>We’ve taught LiquidHaskell a new trick that we call ``Refinement Reflection’’
+which lets us turn Haskell into a theorem prover capable of proving arbitrary
+properties of code. The key idea is to <strong>reflect</strong> the code of the function into
+its <strong>output type</strong>, which lets us then reason about the function at the
+(refinement) type level. Lets see how to use refinement types to express a
+theorem, for example that fibonacci is a monotonically increasing function,
+then write plain Haskell code to reify a paper-and-pencil-style proof
+for that theorem, that can be machine checked by LiquidHaskell.</p>
 <!-- more -->
-<p><br> <br> <br></p>
+<p><br>
+<br>
+<br></p>
 <div class="row-fluid">
 <div class="span12 pagination-centered">
 <img src="https://eyesofodysseus.files.wordpress.com/2013/06/full-moon-over-ocean-reflection.jpg" alt="Reflection" width="300">
@@ -297,56 +306,74 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 </div>
 <h2 id="shallow-vs.-deep-specifications">Shallow vs. Deep Specifications</h2>
-<p>Up to now, we have been using Liquid Haskell to specify and verify “shallow” specifications that abstractly describe the behavior of functions. For example, below, we specify and verify that <code>fib</code>restricted to natural numbers, always terminates returning a natural number.</p>
+<p>Up to now, we have been using Liquid Haskell to specify and verify “shallow”
+specifications that abstractly describe the behavior of functions. For example,
+below, we specify and verify that <code>fib</code>restricted to natural numbers, always
+terminates returning a natural number.</p>
 <pre><span class="hs-linenum">70: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">fib</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Nat</span> <span class="hs-varop">/</span> <span class="hs-keyglyph">[</span><span class="hs-varid">i</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">71: </span><a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v &gt;= 0} -&gt; {v : GHC.Types.Int | v &gt;= 0}</span><span class="hs-definition">fib</span></a> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v &gt;= 0}</span><span class="hs-varid">i</span></a> <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Bool</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | Prop v &lt;=&gt; x1 == x2}</span><span class="hs-varop">==</span></a> <span class="hs-num">0</span>    <span class="hs-keyglyph">=</span> <span class="hs-num">0</span> 
 <span class="hs-linenum">72: </span>      <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Bool</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | Prop v &lt;=&gt; x1 == x2}</span><span class="hs-varop">==</span></a> <span class="hs-num">1</span>    <span class="hs-keyglyph">=</span> <span class="hs-num">1</span> 
 <span class="hs-linenum">73: </span>      <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v &gt;= 0} -&gt; {v : GHC.Types.Int | v &gt;= 0}</span><span class="hs-varid">fib</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-varid">i</span></a><a class="annot" href="#"><span class="annottext">x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class="hs-comment">-</span></a><span class="hs-num">1</span><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 + x2}</span><span class="hs-varop">+</span></a> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v &gt;= 0} -&gt; {v : GHC.Types.Int | v &gt;= 0}</span><span class="hs-varid">fib</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-varid">i</span></a><a class="annot" href="#"><span class="annottext">x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class="hs-comment">-</span></a><span class="hs-num">2</span><span class="hs-layout">)</span>
 </pre>
-<p>In this post we present how refinement reflection is used to verify “deep” specifications that use the exact definition of Haskell functions. For example, we will prove that the Haskell <code>fib</code> function is increasing.</p>
+<p>In this post we present how refinement reflection is used to verify
+“deep” specifications that use the exact definition of Haskell functions.
+For example, we will prove that the Haskell <code>fib</code> function is increasing.</p>
 <h2 id="propositions">Propositions</h2>
-<p>To begin with, we import <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/include/Language/Haskell/Liquid/ProofCombinators.hs">ProofCombinators</a>, a (Liquid) Haskell library that defines and manipulates logical proofs.</p>
+<p>To begin with, we import <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/include/Language/Haskell/Liquid/ProofCombinators.hs">ProofCombinators</a>, a (Liquid) Haskell
+library that defines and manipulates logical proofs.</p>
 <pre><span class="hs-linenum">89: </span><span class="hs-keyword">import</span> <span class="hs-conid">Language</span><span class="hs-varop">.</span><span class="hs-conid">Haskell</span><span class="hs-varop">.</span><span class="hs-conid">Liquid</span><span class="hs-varop">.</span><span class="hs-conid">ProofCombinators</span>
 </pre>
 <p>A <code>Proof</code> is a data type that carries no run time information</p>
 <pre><span class="hs-linenum">95: </span><span class="hs-keyword">type</span> <span class="hs-conid">Proof</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span>
 </pre>
-<p>but can be refined with desired logical propositions. For example, the following type states that <code>1 + 1 == 2</code></p>
+<p>but can be refined with desired logical propositions.
+For example, the following type states that <code>1 + 1 == 2</code></p>
 <pre><span class="hs-linenum">102: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">OnePlusOne</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span> <span class="hs-conid">Proof</span> <span class="hs-keyglyph">|</span> <span class="hs-num">1</span> <span class="hs-varop">+</span> <span class="hs-num">1</span> <span class="hs-varop">==</span> <span class="hs-num">2</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>Since the <code>v</code> and <code>Proof</code> are irrelevant, we may as well abbreviate the above to</p>
+<p>Since the <code>v</code> and <code>Proof</code> are irrelevant, we may as well abbreviate
+the above to</p>
 <pre><span class="hs-linenum">109: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">OnePlusOne'</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span> <span class="hs-num">1</span> <span class="hs-varop">+</span> <span class="hs-num">1</span> <span class="hs-varop">==</span> <span class="hs-num">2</span> <span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>As another example, the following function type declares that <em>for each</em> <code>x</code> and <code>y</code> the plus operator commutes.</p>
+<p>As another example, the following function type declares
+that <em>for each</em> <code>x</code> and <code>y</code> the plus operator commutes.</p>
 <pre><span class="hs-linenum">117: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">PlusComm</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">x</span> <span class="hs-varop">+</span> <span class="hs-varid">y</span> <span class="hs-varop">==</span> <span class="hs-varid">y</span> <span class="hs-varop">+</span> <span class="hs-varid">x</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span> 
 </pre>
 <h2 id="trivial-proofs">Trivial Proofs</h2>
-<p>We prove the above theorems using Haskell programs. The <code>ProofCombinators</code> module defines the <code>trivial</code> proof</p>
+<p>We prove the above theorems using Haskell programs.
+The <code>ProofCombinators</code> module defines the <code>trivial</code> proof</p>
 <pre><span class="hs-linenum">129: </span><span class="hs-definition">trivial</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Proof</span> 
 <span class="hs-linenum">130: </span><span class="hs-definition">trivial</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span>
 </pre>
-<p>and the “casting” operator <code>(***)</code> that makes proof terms look nice:</p>
+<p>and the “casting” operator <code>(***)</code> that makes proof terms look
+nice:</p>
 <pre><span class="hs-linenum">137: </span><span class="hs-keyword">data</span> <span class="hs-conid">QED</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">QED</span>
 <span class="hs-linenum">138: </span>
 <span class="hs-linenum">139: </span><span class="hs-layout">(</span><span class="hs-varop">***</span><span class="hs-layout">)</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">QED</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Proof</span>
 <span class="hs-linenum">140: </span><span class="hs-keyword">_</span> <span class="hs-varop">***</span> <span class="hs-keyword">_</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">()</span>
 </pre>
-<p>Using the underlying SMT’s knowledge on linear arithmetic, we can trivially prove the above propositions.</p>
+<p>Using the underlying SMT’s knowledge on linear arithmetic,
+we can trivially prove the above propositions.</p>
 <pre><span class="hs-linenum">147: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">propOnePlueOne</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">OnePlusOne</span> <span class="hs-keyword">@-}</span> 
 <span class="hs-linenum">148: </span><a class="annot" href="#"><span class="annottext">() -&gt; {VV : () | 1 + 1 == 2}</span><span class="hs-definition">propOnePlueOne</span></a> <span class="hs-keyword">_</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : Language.Haskell.Liquid.ProofCombinators.QED | v == Language.Haskell.Liquid.ProofCombinators.QED}</span><span class="hs-varid">trivial</span></a> <span class="hs-varop">***</span> <span class="hs-conid">QED</span> 
 <span class="hs-linenum">149: </span>
 <span class="hs-linenum">150: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">propPlusComm</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">PlusComm</span> <span class="hs-keyword">@-}</span> 
 <span class="hs-linenum">151: </span><a class="annot" href="#"><span class="annottext">x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {VV : () | x1 + x2 == x2 + x1}</span><span class="hs-definition">propPlusComm</span></a> <span class="hs-keyword">_</span> <span class="hs-keyword">_</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : Language.Haskell.Liquid.ProofCombinators.QED | v == Language.Haskell.Liquid.ProofCombinators.QED}</span><span class="hs-varid">trivial</span></a> <span class="hs-varop">***</span> <span class="hs-conid">QED</span> 
 </pre>
-<p>We saw how we use SMT’s knowledge on linear arithmetic to trivially prove arithmetic properties. But how can we prove ``deep’’ properties on Haskell’s functions?</p>
+<p>We saw how we use SMT’s knowledge on linear arithmetic
+to trivially prove arithmetic properties. But how can
+we prove ``deep’’ properties on Haskell’s functions?</p>
 <h2 id="refinement-reflection">Refinement Reflection</h2>
-<p>Refinement Reflection allows deep specification and verification by reflecting the code implementing a Haskell function into the function’s output refinement type.</p>
-<p>Refinement Reflection proceeds in 3 steps: definition, reflection, and application. Consider reflecting the definition of <code>fib</code> into the logic</p>
+<p>Refinement Reflection allows deep specification and
+verification by reflecting the code implementing a Haskell
+function into the function’s output refinement type.</p>
+<p>Refinement Reflection proceeds in 3 steps: definition, reflection, and application.
+Consider reflecting the definition of <code>fib</code> into the logic</p>
 <pre><span class="hs-linenum">171: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">reflect</span> <span class="hs-varid">fib</span> <span class="hs-keyword">@-}</span>
 </pre>
 <p>then the following three reflection steps will occur.</p>
 <h2 id="step-1-definition">Step 1: Definition</h2>
-<p>Reflection of the Haskell function <code>fib</code> defines in logic an <em>uninterpreted</em> function <code>fib</code> that satisfies the congruence axiom.</p>
+<p>Reflection of the Haskell function <code>fib</code> defines in logic
+an <em>uninterpreted</em> function <code>fib</code> that satisfies the congruence axiom.</p>
 <p>In the logic the function <code>fib</code> is defined.</p>
 <pre><span class="hs-linenum">185: </span><span class="hs-definition">fib</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> 
 </pre>
@@ -354,19 +381,26 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <pre><span class="hs-linenum">191: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">fibCongruence</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">j</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{i == j =&gt; fib i == fib j}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">192: </span><a class="annot" href="#"><span class="annottext">x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; x2:{v : GHC.Types.Int | v &gt;= 0} -&gt; {VV : () | x1 == x2 =&gt; fib x1 == fib x2}</span><span class="hs-definition">fibCongruence</span></a> <span class="hs-keyword">_</span> <span class="hs-keyword">_</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : Language.Haskell.Liquid.ProofCombinators.QED | v == Language.Haskell.Liquid.ProofCombinators.QED}</span><span class="hs-varid">trivial</span></a> <span class="hs-varop">***</span> <span class="hs-conid">QED</span> 
 </pre>
-<p>Other than congruence, SMT knowns nothing for the function <code>fib</code>, until reflection happens!</p>
+<p>Other than congruence, SMT knowns nothing for the function <code>fib</code>,
+until reflection happens!</p>
 <h2 id="step-2-reflection">Step 2: Reflection</h2>
-<p>As a second step, Liquid Haskell connects the Haskell function <code>fib</code> with the homonymous logical function, by reflecting the implementation of <code>fib</code> in its result type.</p>
+<p>As a second step, Liquid Haskell connects the Haskell function <code>fib</code>
+with the homonymous logical function,
+by reflecting the implementation of <code>fib</code> in its result type.</p>
 <p>The result type of <code>fib</code> is automatically strengthened to the following.</p>
 <pre><span class="hs-linenum">210: </span><span class="hs-definition">fib</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-varop">==</span> <span class="hs-varid">fib</span> <span class="hs-varid">i</span> <span class="hs-varop">&amp;&amp;</span> <span class="hs-varid">v</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">fibP</span> <span class="hs-varid">i</span> <span class="hs-layout">}</span>
 </pre>
-<p>That is, the result satisfies the <code>fibP</code> predicate exactly reflecting the implementation of <code>fib</code>.</p>
+<p>That is, the result satisfies the <code>fibP</code> predicate
+exactly reflecting the implementation of <code>fib</code>.</p>
 <pre><span class="hs-linenum">217: </span><span class="hs-definition">fibP</span> <span class="hs-varid">i</span> <span class="hs-keyglyph">=</span> <span class="hs-keyword">if</span> <span class="hs-varid">i</span> <span class="hs-varop">==</span> <span class="hs-num">0</span> <span class="hs-keyword">then</span> <span class="hs-num">0</span> <span class="hs-keyword">else</span>
 <span class="hs-linenum">218: </span>         <span class="hs-keyword">if</span> <span class="hs-varid">i</span> <span class="hs-varop">==</span> <span class="hs-num">1</span> <span class="hs-keyword">then</span> <span class="hs-num">1</span> <span class="hs-keyword">else</span>
 <span class="hs-linenum">219: </span>         <span class="hs-varid">fin</span> <span class="hs-layout">(</span><span class="hs-varid">i</span><span class="hs-comment">-</span><span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varop">+</span> <span class="hs-varid">fib</span> <span class="hs-layout">(</span><span class="hs-varid">i</span><span class="hs-comment">-</span><span class="hs-num">2</span><span class="hs-layout">)</span>
 </pre>
 <h2 id="step-3-application">Step 3: Application</h2>
-<p>With the reflected refinement type, each application of <code>fib</code> automatically unfolds the definition of <code>fib</code> once. As an example, applying <code>fib</code> to <code>0</code>, <code>1</code>, and <code>2</code> allows us to prove that <code>fib 2 == 1</code>:</p>
+<p>With the reflected refinement type,
+each application of <code>fib</code> automatically unfolds the definition of <code>fib</code>
+once.
+As an example, applying <code>fib</code> to <code>0</code>, <code>1</code>, and <code>2</code> allows us to prove that <code>fib 2 == 1</code>:</p>
 <pre><span class="hs-linenum">231: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">fibTwo</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">_</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{ fib 2 == 1 }</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">232: </span><a class="annot" href="#"><span class="annottext">() -&gt; {VV : () | fib 2 == 1}</span><span class="hs-definition">fibTwo</span></a> <span class="hs-keyword">_</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : [GHC.Types.Int] | null v &lt;=&gt; false}</span><span class="hs-keyglyph">[</span></a><a class="annot" href="#"><span class="annottext">{v : x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; {v : GHC.Types.Int | v &gt;= 0
                                                              &amp;&amp; v == fib x1
@@ -378,7 +412,10 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 <p>Though valid, the above <code>fibTwo</code> proof is not pretty!</p>
 <h2 id="structuring-proofs">Structuring Proofs</h2>
-<p>To make our proofs look nice, we use combinators from the <code>ProofCombinators</code> library, which exports a family of operators <code>(*.)</code> where <code>*</code> comes from the theory of linear arithmetic and the refinement type of <code>x *. y</code></p>
+<p>To make our proofs look nice, we use combinators from
+the <code>ProofCombinators</code> library, which exports a family
+of operators <code>(*.)</code> where <code>*</code> comes from the theory of
+linear arithmetic and the refinement type of <code>x *. y</code></p>
 <ul>
 <li><strong>requires</strong> that <code>x *. y</code> holds and</li>
 <li><strong>ensures</strong> that the returned value is equal to <code>x</code>.</li>
@@ -390,7 +427,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">255: </span><span class="hs-layout">(</span><span class="hs-varop">&lt;=.</span><span class="hs-layout">)</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-layout">{</span><span class="hs-varid">a</span><span class="hs-keyglyph">|</span> <span class="hs-varid">x</span><span class="hs-varop">&lt;=</span><span class="hs-varid">y</span><span class="hs-layout">}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-varid">a</span><span class="hs-keyglyph">|</span> <span class="hs-varid">v</span><span class="hs-varop">==</span><span class="hs-varid">x</span><span class="hs-layout">}</span>
 <span class="hs-linenum">256: </span><span class="hs-definition">x</span> <span class="hs-varop">&lt;=.</span> <span class="hs-keyword">_</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">x</span>
 </pre>
-<p>Using these predefined operators, we construct paper and pencil-like proofs for the <code>fib</code> function.</p>
+<p>Using these predefined operators, we construct paper and pencil-like proofs
+for the <code>fib</code> function.</p>
 <pre><span class="hs-linenum">263: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">fibTwoPretty</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{ fib 2 == 1 }</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">264: </span><a class="annot" href="#"><span class="annottext">{VV : () | fib 2 == 1}</span><span class="hs-definition">fibTwoPretty</span></a> 
 <span class="hs-linenum">265: </span>  <span class="hs-keyglyph">=</span>   <a class="annot" href="#"><span class="annottext">{v : x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; {v : GHC.Types.Int | v &gt;= 0
@@ -404,7 +442,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">267: </span>  <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
 </pre>
 <h2 id="because-operator">Because operator</h2>
-<p>To allow the reuse of existing proofs, <code>ProofCombinators</code> defines the because operator <code>(∵)</code></p>
+<p>To allow the reuse of existing proofs, <code>ProofCombinators</code> defines the because
+operator <code>(∵)</code></p>
 <pre><span class="hs-linenum">279: </span><span class="hs-layout">(</span><span class="hs-varid">∵</span><span class="hs-layout">)</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Proof</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Proof</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
 <span class="hs-linenum">280: </span><span class="hs-definition">f</span> <span class="hs-varid">∵</span> <span class="hs-varid">y</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">f</span> <span class="hs-varid">y</span>
 </pre>
@@ -424,8 +463,12 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">292: </span>  <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
 </pre>
 <h2 id="proofs-by-induction-i.e.-recursion">Proofs by Induction (i.e. Recursion)</h2>
-<p>Next, combining the above operators we specify and prove that <code>fib</code> is increasing, that is for each natural number <code>i</code>, <code>fib i &lt;= fib (i+1)</code>.</p>
-<p>We specify the theorem as a refinement type for <code>fubUp</code> and use Haskell code to persuade Liquid Haskell that the theorem holds.</p>
+<p>Next, combining the above operators we specify and prove that
+<code>fib</code> is increasing, that is for each natural number <code>i</code>,
+<code>fib i &lt;= fib (i+1)</code>.</p>
+<p>We specify the theorem as a refinement type for <code>fubUp</code>
+and use Haskell code to persuade Liquid Haskell that
+the theorem holds.</p>
 <pre><span class="hs-linenum">309: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">fibUp</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">i</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{fib i &lt;= fib (i+1)}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">310: </span><a class="annot" href="#"><span class="annottext">x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; {VV : () | fib x1 &lt;= fib (x1 + 1)}</span><span class="hs-definition">fibUp</span></a> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v &gt;= 0}</span><span class="hs-varid">i</span></a>
 <span class="hs-linenum">311: </span>  <span class="hs-keyglyph">|</span> <a class="annot" href="#"><span class="annottext">GHC.Types.Bool</span><span class="hs-varid">i</span></a> <a class="annot" href="#"><span class="annottext">x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Bool | Prop v &lt;=&gt; x1 == x2}</span><span class="hs-varop">==</span></a> <span class="hs-num">0</span>
@@ -474,12 +517,15 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 <p>The proof proceeds <em>by induction on</em> <code>i</code>.</p>
 <ul>
-<li><p>The base cases <code>i == 0</code> and <code>i == 1</code> are represented as Haskell’s case splitting.</p></li>
-<li><p>The inductive hypothesis is represented by recursive calls on smaller inputs.</p></li>
+<li><p>The base cases <code>i == 0</code> and <code>i == 1</code> are represented
+as Haskell’s case splitting.</p></li>
+<li><p>The inductive hypothesis is represented by recursive calls
+on smaller inputs.</p></li>
 </ul>
 <p>Finally, the SMT solves arithmetic reasoning to conclude the proof.</p>
 <h2 id="higher-order-theorems">Higher Order Theorems</h2>
-<p>Refinement Reflection can be used to express and verify higher order theorems! For example, <code>fMono</code> specifies that each locally increasing function is monotonic!</p>
+<p>Refinement Reflection can be used to express and verify higher order theorems!
+For example, <code>fMono</code> specifies that each locally increasing function is monotonic!</p>
 <pre><span class="hs-linenum">345: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">fMono</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">f</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span><span class="hs-layout">)</span>
 <span class="hs-linenum">346: </span>          <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">fUp</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-varid">z</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{f z &lt;= f (z+1)}</span><span class="hs-layout">)</span>
 <span class="hs-linenum">347: </span>          <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span>
@@ -501,8 +547,10 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">360: </span>  <a class="annot" href="#"><span class="annottext">GHC.Types.Int -&gt; GHC.Types.Int -&gt; () -&gt; GHC.Types.Int</span><span class="hs-varop">&lt;.</span></a>  <a class="annot" href="#"><span class="annottext">{v : {v : GHC.Types.Int | v &gt;= 0} -&gt; GHC.Types.Int | v == f}</span><span class="hs-varid">f</span></a> <span class="hs-varid">y</span>             <span class="hs-varid">∵</span> <a class="annot" href="#"><span class="annottext">{v : x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; {v : () | f x1 &lt;= f (x1 + 1)} | v == thm}</span><span class="hs-varid">thm</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">GHC.Types.Int</span><span class="hs-varid">y</span></a><a class="annot" href="#"><span class="annottext">x1:GHC.Types.Int -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 - x2}</span><span class="hs-comment">-</span></a><span class="hs-num">1</span><span class="hs-layout">)</span>
 <span class="hs-linenum">361: </span>  <span class="hs-varop">***</span> <span class="hs-conid">QED</span>
 </pre>
-<p>Again, the recursive implementation of <code>fMono</code> depicts the paper and pencil proof of <code>fMono</code> by induction on the decreasing argument <code>/ [y]</code>.</p>
-<p>Since <code>fib</code> is proven to be locally increasing by <code>fUp</code>, we use <code>fMono</code> to prove that <code>fib</code> is monotonic.</p>
+<p>Again, the recursive implementation of <code>fMono</code> depicts the paper and pencil
+proof of <code>fMono</code> by induction on the decreasing argument <code>/ [y]</code>.</p>
+<p>Since <code>fib</code> is proven to be locally increasing by <code>fUp</code>, we use <code>fMono</code>
+to prove that <code>fib</code> is monotonic.</p>
 <pre><span class="hs-linenum">371: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">fibMono</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Nat</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">m</span><span class="hs-conop">:</span><span class="hs-keyword">{Nat | n &lt; m }</span>  <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{fib n &lt;= fib m}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">372: </span><a class="annot" href="#"><span class="annottext">x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; x2:{v : GHC.Types.Int | v &gt;= 0
                                                            &amp;&amp; x1 &lt; v} -&gt; {VV : () | fib x1 &lt;= fib x2}</span><span class="hs-definition">fibMono</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : x1:({v : GHC.Types.Int | v &gt;= 0} -&gt; GHC.Types.Int) -&gt; (x4:{v : GHC.Types.Int | v &gt;= 0} -&gt; {v : () | x1 x4 &lt;= x1 (x4 + 1)}) -&gt; x5:{v : GHC.Types.Int | v &gt;= 0} -&gt; x6:{v : GHC.Types.Int | v &gt;= 0
@@ -511,11 +559,21 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
                                                              &amp;&amp; v == (if x1 == 0 then 0 else (if x1 == 1 then 1 else fib (x1 - 1) + fib (x1 - 2)))} | v == fib}</span><span class="hs-varid">fib</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:{v : GHC.Types.Int | v &gt;= 0} -&gt; {v : () | fib x1 &lt;= fib (x1 + 1)} | v == RefinementReflection.fibUp}</span><span class="hs-varid">fibUp</span></a>
 </pre>
 <h2 id="conclusion">Conclusion</h2>
-<p>We saw how refinement reflection turns Haskell into a theorem prover by reflecting the code implementing a Haskell function into the function’s output refinement type.</p>
-<p>Refinement Types are used to express theorems, Haskell code is used to prove such theorems expressing paper pencil proofs, and Liquid Haskell verifies the validity of the proofs!</p>
-<p>Proving <code>fib</code> monotonic is great, but this is Haskell! Wouldn’t it be nice to prove theorems about inductive data types and higher order functions? Like fusions and folds? Or program equivalence on run-time optimizations like map-reduce?</p>
+<p>We saw how refinement reflection turns Haskell
+into a theorem prover by reflecting the code
+implementing a Haskell function into the
+function’s output refinement type.</p>
+<p>Refinement Types are used to express theorems,
+Haskell code is used to prove such theorems
+expressing paper pencil proofs, and Liquid Haskell
+verifies the validity of the proofs!</p>
+<p>Proving <code>fib</code> monotonic is great, but this is Haskell!
+Wouldn’t it be nice to prove theorems about inductive data types
+and higher order functions? Like fusions and folds?
+Or program equivalence on run-time optimizations like map-reduce?</p>
 <p>Stay tuned!</p>
-<p>Even better, if you happen you be in Nara for ICFP’16, come to my <a href="http://cufp.org/2016/t6-niki-vazou-liquid-haskell-intro.html">CUFP tutorial</a> for more!</p>
+<p>Even better, if you happen you be in Nara for ICFP’16,
+come to my <a href="http://cufp.org/2016/t6-niki-vazou-liquid-haskell-intro.html">CUFP tutorial</a> for more!</p>
                 <hr>
                 <ul class="pager">
                     

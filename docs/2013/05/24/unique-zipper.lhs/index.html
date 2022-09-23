@@ -260,16 +260,29 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/basic.html">basic</a>, <a href="../../../../tags/measures.html">measures</a>, <a href="../../../../tags/sets.html">sets</a>, <a href="../../../../tags/uniqueness.html">uniqueness</a>
+                Tags: <a title="All pages tagged 'basic'." href="../../../../tags/basic.html">basic</a>, <a title="All pages tagged 'measures'." href="../../../../tags/measures.html">measures</a>, <a title="All pages tagged 'sets'." href="../../../../tags/sets.html">sets</a>, <a title="All pages tagged 'uniqueness'." href="../../../../tags/uniqueness.html">uniqueness</a>
               
             </div>
 
             <br>
-			            <p><strong>The story so far:</strong> <a href="blog/2013/03/26/talking-about-sets.lhs/">Previously</a> we saw how we can use LiquidHaskell to talk about set of values and specifically the <em>set of values</em> in a list.</p>
-<p>Often, we want to enforce the invariant that a particular data structure contains <em>no duplicates</em>. For example, we may have a structure that holds a collection of file handles, or other resources, where the presence of duplicates could lead to unpleasant leaks.</p>
-<p>In this post, we will see how to use LiquidHaskell to talk about the set of duplicate values in data structures, and hence, let us specify and verify uniqueness, that is, the absence of duplicates.</p>
+			            <p><strong>The story so far:</strong> <a href="blog/2013/03/26/talking-about-sets.lhs/">Previously</a> we saw
+how we can use LiquidHaskell to talk about set of values
+and specifically the <em>set of values</em> in a list.</p>
+<p>Often, we want to enforce the invariant that a particular data structure
+contains <em>no duplicates</em>. For example, we may have a structure that holds
+a collection of file handles, or other resources, where the presence of
+duplicates could lead to unpleasant leaks.</p>
+<p>In this post, we will see how to use LiquidHaskell to talk
+about the set of duplicate values in data structures, and
+hence, let us specify and verify uniqueness, that is, the
+absence of duplicates.</p>
 <!-- more -->
-<p>To begin, lets extend our vocabulary to talk about the <em>set of duplicate values</em> in lists. By constraining this set to be empty, we can specify a list without duplicates, or an <strong>unique list</strong>. Once we express uniqueness on lists, it is straightforward to describe uniqueness on other data structures that contain lists. As an example, we will illustrate the properties of a <strong>unique zipper</strong>.</p>
+<p>To begin, lets extend our vocabulary to talk about the <em>set of duplicate
+values</em> in lists. By constraining this set to be empty, we can specify a
+list without duplicates, or an <strong>unique list</strong>. Once we express uniqueness
+on lists, it is straightforward to describe uniqueness on other data
+structures that contain lists. As an example, we will illustrate the
+properties of a <strong>unique zipper</strong>.</p>
 <pre><span class="hs-linenum">37: </span><span class="hs-keyword">module</span> <span class="hs-conid">UniqueZipper</span> <span class="hs-keyword">where</span>
 <span class="hs-linenum">38: </span>
 <span class="hs-linenum">39: </span><span class="hs-keyword">import</span> <span class="hs-conid">Prelude</span>  <span class="hs-varid">hiding</span> <span class="hs-layout">(</span><span class="hs-varid">reverse</span><span class="hs-layout">,</span> <span class="hs-layout">(</span><span class="hs-varop">++</span><span class="hs-layout">)</span><span class="hs-layout">,</span> <span class="hs-varid">filter</span><span class="hs-layout">)</span>
@@ -281,7 +294,8 @@ In the previous post we used a measure for the elements of a list, from <a href=
 <span class="hs-linenum">49: </span><span class="hs-definition">listElts</span> <span class="hs-layout">(</span><span class="hs-conid">[]</span><span class="hs-layout">)</span>    <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-varop">?</span> <span class="hs-layout">(</span><span class="hs-conid">Set_emp</span> <span class="hs-varid">v</span><span class="hs-layout">)</span><span class="hs-layout">)</span><span class="hs-layout">}</span>
 <span class="hs-linenum">50: </span><span class="hs-definition">listElts</span> <span class="hs-layout">(</span><span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-varid">xs</span><span class="hs-layout">)</span>  <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-conid">Set_cup</span> <span class="hs-layout">(</span><span class="hs-conid">Set_sng</span> <span class="hs-varid">x</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><span class="hs-varid">listElts</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-layout">}</span>
 </pre>
-<p>With this measure we defined predicate aliases that describe relations between lists:</p>
+<p>With this measure we defined predicate aliases
+that describe relations between lists:</p>
 <pre><span class="hs-linenum">57: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">predicate</span> <span class="hs-conid">EqElts</span>  <span class="hs-conid">X</span> <span class="hs-conid">Y</span>      <span class="hs-keyglyph">=</span> 
 <span class="hs-linenum">58: </span>      <span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-varid">listElts</span> <span class="hs-conid">X</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-varid">listElts</span> <span class="hs-conid">Y</span><span class="hs-layout">)</span><span class="hs-layout">)</span>                        <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">59: </span>
@@ -297,17 +311,29 @@ In the previous post we used a measure for the elements of a list, from <a href=
 <span class="hs-linenum">69: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">predicate</span> <span class="hs-conid">ListElt</span> <span class="hs-conid">N</span> <span class="hs-conid">X</span>      <span class="hs-keyglyph">=</span> 
 <span class="hs-linenum">70: </span>      <span class="hs-layout">(</span><span class="hs-conid">Set_mem</span> <span class="hs-conid">N</span> <span class="hs-layout">(</span><span class="hs-varid">listElts</span> <span class="hs-conid">X</span><span class="hs-layout">)</span><span class="hs-layout">)</span>                             <span class="hs-keyword">@-}</span>
 </pre>
-<p>These predicates were our vocabulary on specifying properties of list functions. Remember, that <code>reverse</code> returns an output list that has the same elements, i.e., <code>EqElts</code>, with the input list. We can extend these predicates and express list uniqueness. So reversing a unique list should again return an output list that has the same elements as the input list, and also it is unique.</p>
+<p>These predicates were our vocabulary on specifying properties of list functions.
+Remember, that <code>reverse</code> returns an output list that has the same elements, i.e., <code>EqElts</code>, with the input list.
+We can extend these predicates and express list uniqueness.
+So reversing a unique list should again return an output list that has the same
+elements as the input list, and also it is unique.</p>
 <h1 id="describing-unique-lists">Describing Unique Lists</h1>
 <p>To describe unique lists, we follow two steps:</p>
 <ol type="1">
 <li>we describe the set of duplicate values of a list; and</li>
 <li>we demand this set to be empty.</li>
 </ol>
-<p>Towards the first step, we define a measure <code>dups</code> that returns the duplicate values of its input list. This measure is recursively defined: The duplicates of an empty list is the empty set. We compute the duplicates of a non-empty list, namely <code>x:xs</code>, as follows:</p>
+<p>Towards the first step, we define a measure <code>dups</code>
+that returns the duplicate values of its input list.
+This measure is recursively defined:
+The duplicates of an empty list is the empty set.
+We compute the duplicates of a non-empty list,
+namely <code>x:xs</code>, as follows:</p>
 <ul>
-<li><p>If <code>x</code> is an element of <code>xs</code>, then <code>x</code> is a duplicate. Hence, <code>dups</code> is <code>x</code> plus the (recursively computed) duplicates in <code>xs</code>.</p></li>
-<li><p>Otherwise, we can ignore <code>x</code> and recursively compute the duplicates of <code>xs</code>.</p></li>
+<li><p>If <code>x</code> is an element of <code>xs</code>, then <code>x</code> is a duplicate.
+Hence, <code>dups</code> is <code>x</code> plus the (recursively computed)
+duplicates in <code>xs</code>.</p></li>
+<li><p>Otherwise, we can ignore <code>x</code> and recursively compute
+the duplicates of <code>xs</code>.</p></li>
 </ul>
 <p>The above intuition can be formalized as a measure:</p>
 <pre><span class="hs-linenum">105: </span><span class="hs-keyword">{-@</span>
@@ -326,9 +352,16 @@ In the previous post we used a measure for the elements of a list, from <a href=
 <span class="hs-linenum">123: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">UList</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-conid">ListUnique</span> <span class="hs-varid">v</span><span class="hs-layout">)</span><span class="hs-layout">}</span>     <span class="hs-keyword">@-}</span>
 </pre>
 <h1 id="functions-on-unique-lists">Functions on Unique Lists</h1>
-<p>In the previous post, we proved interesting properties about the list trilogy, i.e., <code>append</code>, <code>reverse</code>, and <code>filter</code>. Now, we will prove that apart from these properties, all these functions preserve list uniqueness.</p>
+<p>In the previous post, we proved interesting properties about
+the list trilogy, i.e., <code>append</code>, <code>reverse</code>, and <code>filter</code>.
+Now, we will prove that apart from these properties,
+all these functions preserve list uniqueness.</p>
 <h2 id="append">Append</h2>
-<p>To begin with, we proved that the output of append indeed includes the elements from both the input lists. Now, we can also prove that if both input lists are unique <em>and their elements are disjoint</em>, then the output list is also unique.</p>
+<p>To begin with, we proved that the output of append
+indeed includes the elements from both the input lists.
+Now, we can also prove that if both input lists are
+unique <em>and their elements are disjoint</em>, then the
+output list is also unique.</p>
 <pre><span class="hs-linenum">145: </span><span class="hs-keyword">infixr</span> <span class="hs-num">5</span> <span class="hs-varop">++</span>
 <span class="hs-linenum">146: </span><span class="hs-keyword">{-@</span> <span class="hs-layout">(</span><span class="hs-varop">++</span><span class="hs-layout">)</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">UList</span> <span class="hs-varid">a</span><span class="hs-layout">)</span>
 <span class="hs-linenum">147: </span>         <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">ys</span><span class="hs-conop">:</span><span class="hs-keyword">{v:</span> <span class="hs-conid">UList</span> <span class="hs-varid">a</span> <span class="hs-keyword">| (DisjointElts v xs)}</span>
@@ -347,7 +380,9 @@ y:a
 -&gt; {VV : [a] | ((Set_emp (dups VV))) &amp;&amp; ((listElts VV) == (Set_cup (listElts xs) (listElts ys)))}</span><span class="hs-varop">++</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | ((Set_emp (dups VV))) &amp;&amp; (VV == ys) &amp;&amp; ((len VV) &gt;= 0)}</span><span class="hs-varid">ys</span></a><span class="hs-layout">)</span>
 </pre>
 <h2 id="reverse">Reverse</h2>
-<p>Next, we can prove that if a unique list is reversed, the output list has the same elements as the input, and also it is unique.</p>
+<p>Next, we can prove that if a unique list is reversed,
+the output list has the same elements as the input,
+and also it is unique.</p>
 <pre><span class="hs-linenum">163: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">reverse</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">UList</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">UList</span> <span class="hs-varid">a</span> <span class="hs-keyword">| (EqElts v xs)}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">164: </span><span class="hs-definition">reverse</span> <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">165: </span><a class="annot" href="#"><span class="annottext">forall a.
@@ -367,7 +402,8 @@ y:a
 -&gt; {VV : [a]&lt;p&gt; | ((dups VV) == (if ((Set_mem y (listElts ys))) then (Set_cup (Set_sng y) (dups ys)) else (dups ys))) &amp;&amp; ((len VV) == (1 + (len ys))) &amp;&amp; ((listElts VV) == (Set_cup (Set_sng y) (listElts ys)))}</span><span class="hs-conop">:</span></a><a class="annot" href="#"><span class="annottext">{VV : [a] | ((Set_emp (dups VV))) &amp;&amp; (VV == a) &amp;&amp; ((len VV) &gt;= 0)}</span><span class="hs-varid">a</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV == xs) &amp;&amp; ((len VV) &gt;= 0)}</span><span class="hs-varid">xs</span></a> 
 </pre>
 <h2 id="filter">Filter</h2>
-<p>Finally, filtering a unique list returns a list with a subset of values of the input list, that once again is unique!</p>
+<p>Finally, filtering a unique list returns a list with a subset of
+values of the input list, that once again is unique!</p>
 <pre><span class="hs-linenum">178: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">filter</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span><span class="hs-layout">)</span> 
 <span class="hs-linenum">179: </span>           <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">UList</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> 
 <span class="hs-linenum">180: </span>           <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">UList</span> <span class="hs-varid">a</span> <span class="hs-keyword">| (SubElts v xs)}</span> 
@@ -391,17 +427,32 @@ y:a
 -&gt; {VV : [a] | ((Set_emp (dups VV))) &amp;&amp; ((Set_sub (listElts VV) (listElts x2))) &amp;&amp; ((len VV) &gt;= 0)}</span><span class="hs-varid">filter</span></a> <a class="annot" href="#"><span class="annottext">a -&gt; (GHC.Types.Bool)</span><span class="hs-varid">p</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV == xs) &amp;&amp; ((len VV) &gt;= 0)}</span><span class="hs-varid">xs</span></a>
 </pre>
 <h1 id="unique-zipper">Unique Zipper</h1>
-<p>That was easy enough! Now, lets look at a slightly more interesting structure fashioned from lists. A <a href="http://en.wikipedia.org/wiki/Zipper_(data_structure)">zipper</a> is an aggregate data stucture that is used to arbitrary traverse the structure and update its contents.</p>
-<p>We define a zipper as a data type that contains an element (called <code>focus</code>) that we are currently using, a list of elements (called <code>up</code>) before the current one, and a list of elements (called <code>down</code>) after the current one.</p>
+<p>That was easy enough! Now, lets look at a slightly more interesting
+structure fashioned from lists. A <a href="http://en.wikipedia.org/wiki/Zipper_(data_structure)">zipper</a> is an aggregate
+data stucture that is used to arbitrary traverse the structure and update
+its contents.</p>
+<p>We define a zipper as a data type that contains an element (called <code>focus</code>)
+that we are currently using, a list of elements (called <code>up</code>) before
+the current one, and a list of elements (called <code>down</code>) after the current one.</p>
 <pre><span class="hs-linenum">202: </span><span class="hs-keyword">data</span> <span class="hs-conid">Zipper</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">Zipper</span> <span class="hs-layout">{</span> <a class="annot" href="#"><span class="annottext">forall a. (UniqueZipper.Zipper a) -&gt; a</span><span class="hs-varid">focus</span></a> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span>       <span class="hs-comment">-- focused element in this set</span>
 <span class="hs-linenum">203: </span>                       <span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">forall a. (UniqueZipper.Zipper a) -&gt; [a]</span><span class="hs-varid">up</span></a>    <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span>     <span class="hs-comment">-- elements to the left</span>
 <span class="hs-linenum">204: </span>                       <span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">forall a. (UniqueZipper.Zipper a) -&gt; [a]</span><span class="hs-varid">down</span></a>  <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-layout">}</span>   <span class="hs-comment">-- elements to the right</span>
 </pre>
-<p>One well-known application of zippers is in the <a href="http://xmonad.org/">XMonad</a> tiling window manager. The set of windows being managed is stored in a zipper similar to the above. The <code>focus</code> happily coincides with the window currently in focus, and the <code>up</code> and <code>down</code> to the list of windows that come before and after it.</p>
-<p>One crucial invariant maintained by XMonad is that the zipper structure is unique – i.e. each window appears at most once inside the zipper.</p>
+<p>One well-known application of zippers is in the
+<a href="http://xmonad.org/">XMonad</a> tiling window manager.
+The set of windows being managed is stored in a zipper
+similar to the above. The <code>focus</code> happily coincides with
+the window currently in focus, and the <code>up</code> and <code>down</code>
+to the list of windows that come before and after it.</p>
+<p>One crucial invariant maintained by XMonad is that the zipper structure is
+unique – i.e. each window appears at most once inside the zipper.</p>
 <p>Lets see how we can state and check that all the values in a zipper are unique.</p>
-<p>To start with, we would like to refine the <code>Zipper</code> data declaration to express that both the lists in the structure are unique <strong>and</strong> do not include <code>focus</code> in their values.</p>
-<p>LiquidHaskell allow us to refine data type declarations, using the liquid comments. So, apart from above definition definition for the <code>Zipper</code>, we add a refined one, stating that the data structure always enjoys the desired properties.</p>
+<p>To start with, we would like to refine the <code>Zipper</code> data declaration
+to express that both the lists in the structure are unique <strong>and</strong>
+do not include <code>focus</code> in their values.</p>
+<p>LiquidHaskell allow us to refine data type declarations, using the liquid comments.
+So, apart from above definition definition for the <code>Zipper</code>, we add a refined one,
+stating that the data structure always enjoys the desired properties.</p>
 <pre><span class="hs-linenum">229: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">data</span> <span class="hs-conid">Zipper</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">Zipper</span> <span class="hs-layout">{</span> <span class="hs-varid">focus</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span>
 <span class="hs-linenum">230: </span>                           <span class="hs-layout">,</span> <span class="hs-varid">up</span>    <span class="hs-keyglyph">::</span> <span class="hs-conid">UListDif</span> <span class="hs-varid">a</span> <span class="hs-varid">focus</span>
 <span class="hs-linenum">231: </span>                           <span class="hs-layout">,</span> <span class="hs-varid">down</span>  <span class="hs-keyglyph">::</span> <span class="hs-conid">UListDif</span> <span class="hs-varid">a</span> <span class="hs-varid">focus</span><span class="hs-layout">}</span>
@@ -409,12 +460,21 @@ y:a
 <span class="hs-linenum">233: </span>
 <span class="hs-linenum">234: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">UListDif</span> <span class="hs-varid">a</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">UList</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-varid">not</span> <span class="hs-layout">(</span><span class="hs-conid">ListElt</span> <span class="hs-conid">N</span> <span class="hs-varid">v</span><span class="hs-layout">)</span><span class="hs-layout">)</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>It is worth noting that the above is kind of <em>dependent</em> record in that the types of the <code>up</code> and <code>down</code> fields depend on the value of the <code>focus</code> field.</p>
-<p>With this annotation any time we use a <code>Zipper</code> in the code LiquidHaskell knows that the <code>up</code> and <code>down</code> components are unique lists that do not include <code>focus</code>. Moreover, when a new <code>Zipper</code> is constructed LiquidHaskell proves that this property holds, otherwise a liquid type error is reported.</p>
+<p>It is worth noting that the above is kind of <em>dependent</em> record in that
+the types of the <code>up</code> and <code>down</code> fields depend on the value of the <code>focus</code>
+field.</p>
+<p>With this annotation any time we use a <code>Zipper</code> in the code LiquidHaskell
+knows that the <code>up</code> and <code>down</code> components are unique lists
+that do not include <code>focus</code>. Moreover, when a new <code>Zipper</code> is constructed
+LiquidHaskell proves that this property holds, otherwise a liquid type
+error is reported.</p>
 <p>Hold on a minute!</p>
-<p>The awake reader will have noticed that values inside the <code>Zipper</code> as specified so far, are <em>not unique</em>, as nothing prevents a value from appearing in both the <code>up</code> and the <code>down</code> components.</p>
+<p>The awake reader will have noticed that values inside the <code>Zipper</code> as
+specified so far, are <em>not unique</em>, as nothing prevents a value from
+appearing in both the <code>up</code> and the <code>down</code> components.</p>
 <p>So, we have to specify that the contents of those two fields are <em>disjoint</em>.</p>
-<p>One way to achieve this is by defining two measures <code>getUp</code> and <code>getDown</code> that return the relevant parts of the <code>Zipper</code></p>
+<p>One way to achieve this is by defining two measures <code>getUp</code> and <code>getDown</code>
+that return the relevant parts of the <code>Zipper</code></p>
 <pre><span class="hs-linenum">260: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">measure</span> <span class="hs-varid">getUp</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varid">a</span><span class="hs-varop">.</span> <span class="hs-layout">(</span><span class="hs-conid">Zipper</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> 
 <span class="hs-linenum">261: </span>    <span class="hs-varid">getUp</span> <span class="hs-layout">(</span><span class="hs-conid">Zipper</span> <span class="hs-varid">focus</span> <span class="hs-varid">up</span> <span class="hs-varid">down</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">up</span>
 <span class="hs-linenum">262: </span>  <span class="hs-keyword">@-}</span>
@@ -423,15 +483,19 @@ y:a
 <span class="hs-linenum">265: </span>    <span class="hs-varid">getDown</span> <span class="hs-layout">(</span><span class="hs-conid">Zipper</span> <span class="hs-varid">focus</span> <span class="hs-varid">up</span> <span class="hs-varid">down</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">down</span>
 <span class="hs-linenum">266: </span>  <span class="hs-keyword">@-}</span>
 </pre>
-<p>With these definitions, we create a type alias <code>UZipper</code> that states that the two list components are disjoint, and hence, that we have a <em>unique zipper</em> with no duplicates.</p>
+<p>With these definitions, we create a type alias <code>UZipper</code>
+that states that the two list components are disjoint, and hence,
+that we have a <em>unique zipper</em> with no duplicates.</p>
 <pre><span class="hs-linenum">274: </span><span class="hs-keyword">{-@</span> 
 <span class="hs-linenum">275: </span>  <span class="hs-keyword">type</span> <span class="hs-conid">UZipper</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Zipper</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-conid">DisjointElts</span> <span class="hs-layout">(</span><span class="hs-varid">getUp</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><span class="hs-varid">getDown</span> <span class="hs-varid">v</span><span class="hs-layout">)</span><span class="hs-layout">)</span><span class="hs-layout">}</span> 
 <span class="hs-linenum">276: </span>  <span class="hs-keyword">@-}</span>
 </pre>
 <h1 id="functions-on-unique-zippers">Functions on Unique Zippers</h1>
-<p>Now that we have defined a unique zipper, it is straightforward for LiquidHaskell to prove that operations on zippers preserve uniqueness.</p>
+<p>Now that we have defined a unique zipper, it is straightforward for
+LiquidHaskell to prove that operations on zippers preserve uniqueness.</p>
 <h2 id="differentiation">Differentiation</h2>
-<p>We can prove that a zipper that built from elements from a unique list is indeed unique.</p>
+<p>We can prove that a zipper that built from elements from a unique list is
+indeed unique.</p>
 <pre><span class="hs-linenum">293: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">differentiate</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">UList</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Maybe</span> <span class="hs-layout">(</span><span class="hs-conid">UZipper</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">294: </span><a class="annot" href="#"><span class="annottext">forall a.
 {VV : [a] | ((Set_emp (dups VV)))}
@@ -458,11 +522,18 @@ y:a
 -&gt; ys:[{VV : a&lt;p y&gt; | true}]&lt;p&gt;
 -&gt; {VV : [a]&lt;p&gt; | ((dups VV) == (if ((Set_mem y (listElts ys))) then (Set_cup (Set_sng y) (dups ys)) else (dups ys))) &amp;&amp; ((len VV) == (1 + (len ys))) &amp;&amp; ((listElts VV) == (Set_cup (Set_sng y) (listElts ys)))}</span><span class="hs-conop">:</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (not (((Set_mem x (listElts VV))))) &amp;&amp; ((Set_emp (dups VV))) &amp;&amp; (VV == r) &amp;&amp; ((len VV) &gt;= 0)}</span><span class="hs-varid">r</span></a>
 </pre>
-<p>Recall the types for <code>++</code> and <code>reverse</code> that we proved earlier – hover your mouse over the identifiers to refresh your memory. Those types are essential for establishing the type of <code>integrate</code>.</p>
+<p>Recall the types for <code>++</code> and <code>reverse</code> that we proved earlier – hover
+your mouse over the identifiers to refresh your memory. Those types are
+essential for establishing the type of <code>integrate</code>.</p>
 <ul>
-<li><p>By the definition of <code>UZipper</code> we know that <code>l</code> is a unique list and that <code>x</code> is not an element of <code>l</code>.</p></li>
-<li><p>Thus via the type of <code>reverse</code> we know that <code>reverse l</code> is also unique and disjoint from <code>x</code> and <code>r</code>.</p></li>
-<li><p>Finally, using the previously established type for <code>++</code> LiquidHaskell can prove that since <code>x : r</code> is a unique list with elements disjoint from <code>reverse l</code> the concatenation of the two lists is also a unique list.</p></li>
+<li><p>By the definition of <code>UZipper</code> we know that <code>l</code> is a unique list
+and that <code>x</code> is not an element of <code>l</code>.</p></li>
+<li><p>Thus via the type of <code>reverse</code> we know that <code>reverse l</code> is also
+unique and disjoint from <code>x</code> and <code>r</code>.</p></li>
+<li><p>Finally, using the previously established type for <code>++</code>
+LiquidHaskell can prove that since <code>x : r</code> is a unique
+list with elements disjoint from <code>reverse l</code> the concatenation
+of the two lists is also a unique list.</p></li>
 </ul>
 <p>With the exact same reasoning, we use the above list operations to create more zipper operations.</p>
 <h2 id="reverse-1">Reverse</h2>
@@ -521,7 +592,8 @@ y:a
 -&gt; {VV : (UniqueZipper.Zipper a) | ((Set_emp (Set_cap (listElts (getUp VV)) (listElts (getDown VV)))))}</span><span class="hs-varid">reverseZipper</span></a>
 </pre>
 <h2 id="filter-1">Filter</h2>
-<p>Finally, using the filter operation on lists allows LiquidHaskell to prove that filtering a zipper also preserves uniqueness.</p>
+<p>Finally, using the filter operation on lists allows LiquidHaskell to prove
+that filtering a zipper also preserves uniqueness.</p>
 <pre><span class="hs-linenum">361: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">filterZipper</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">UZipper</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Maybe</span> <span class="hs-layout">(</span><span class="hs-conid">UZipper</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">362: </span><a class="annot" href="#"><span class="annottext">forall a.
 (a -&gt; (GHC.Types.Bool))
@@ -559,9 +631,12 @@ y:a
 <h1 id="conclusion">Conclusion</h1>
 <p>That’s all for now! This post illustrated</p>
 <ol type="1">
-<li><p>How we can use set theory to express properties the values of the list, such as list uniqueness.</p></li>
-<li><p>How we can use LuquidHaskell to prove that these properties are preserved through list operations.</p></li>
-<li><p>How we can embed this properties in complicated data structures that use lists, such as a zipper.</p></li>
+<li><p>How we can use set theory to express properties the values of the list,
+such as list uniqueness.</p></li>
+<li><p>How we can use LuquidHaskell to prove that these properties are
+preserved through list operations.</p></li>
+<li><p>How we can embed this properties in complicated data structures that use
+lists, such as a zipper.</p></li>
 </ol>
 <pre><span class="hs-linenum">390: </span><span class="hs-comment">-- TODO: Dummy function to provide qualifier hint.</span>
 <span class="hs-linenum">391: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">q</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span>  <span class="hs-keyword">{v:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">|(not (Set_mem x (listElts v)))}</span> <span class="hs-keyword">@-}</span>

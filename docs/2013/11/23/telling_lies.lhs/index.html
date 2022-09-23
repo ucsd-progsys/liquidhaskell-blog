@@ -260,12 +260,17 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/termination.html">termination</a>
+                Tags: <a title="All pages tagged 'termination'." href="../../../../tags/termination.html">termination</a>
               
             </div>
 
             <br>
-			            <p>One crucial goal of a type system is to provide the guarantee, memorably phrased by Milner as <em>well-typed programs don’t go wrong</em>. The whole point of LiquidHaskell (and related systems) is to provide the above guarantee for expanded notions of “going wrong”. All this time, we’ve claimed (and believed) that LiquidHaskell provided such a guarantee.</p>
+			            <p>One crucial goal of a type system is to provide the guarantee,
+memorably phrased by Milner as <em>well-typed programs don’t go wrong</em>.
+The whole point of LiquidHaskell (and related systems) is to provide
+the above guarantee for expanded notions of “going wrong”.
+All this time, we’ve claimed (and believed) that LiquidHaskell
+provided such a guarantee.</p>
 <p>We were wrong.</p>
 <p>LiquidHaskell tells lies.</p>
 <!-- more -->
@@ -286,8 +291,10 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <li>a <strong>lie</strong> from LiquidHaskell that the program is safe.</li>
 </ol>
 <h2 id="the-going-wrong">The Going Wrong</h2>
-<p>Lets keep things simple with an old fashioned <code>div</code>-ision operator. A division by zero would be, clearly <em>going wrong</em>.</p>
-<p>To alert LiquidHaskell to this possibility, we encode “not going wrong” with the precondition that the denominator be non-zero.</p>
+<p>Lets keep things simple with an old fashioned <code>div</code>-ision operator.
+A division by zero would be, clearly <em>going wrong</em>.</p>
+<p>To alert LiquidHaskell to this possibility, we encode “not going wrong”
+with the precondition that the denominator be non-zero.</p>
 <pre><span class="hs-linenum">54: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">divide</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">d</span><span class="hs-conop">:</span><span class="hs-keyword">{v:</span><span class="hs-conid">Int</span> <span class="hs-keyword">| v /= 0}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">55: </span><a class="annot" href="#"><span class="annottext">(GHC.Types.Int)
 -&gt; {VV : (GHC.Types.Int) | (VV /= 0)} -&gt; (GHC.Types.Int)</span><span class="hs-definition">divide</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-varid">n</span></a> <span class="hs-num">0</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | false} -&gt; {VV : (GHC.Types.Int) | false}</span><span class="hs-varid">liquidError</span></a> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | ((len VV) &gt;= 0) &amp;&amp; ((sumLens VV) &gt;= 0)}</span><span class="hs-str">"no you didn't!"</span></a>
@@ -304,9 +311,18 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 -&gt; x2:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV == (x1 - x2))}</span><span class="hs-comment">-</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV == (1  :  int))}</span><span class="hs-num">1</span></a>
 <span class="hs-linenum">67: </span>      <span class="hs-keyglyph">|</span> <span class="hs-varid">otherwise</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">n:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV &gt;= 0) &amp;&amp; (VV &lt; n)}</span><span class="hs-varid">foo</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV == n)}</span><span class="hs-varid">n</span></a>
 </pre>
-<p>Now, <code>foo</code> should only be called with strictly positive values. In which case, the function returns a <code>Nat</code> that is strictly smaller than the input. The function diverges when called with <code>0</code> or negative inputs.</p>
-<p>Note that the signature of <code>foo</code> is slightly different, but nevertheless, legitimate, as <em>when</em> the function returns an output, the output is indeed a <code>Nat</code> that is <em>strictly less than</em> the input parameter <code>n</code>. Hence, LiquidHaskell happily checks that <code>foo</code> does indeed satisfy its given type.</p>
-<p>So far, nothing has gone wrong either in the program, or with LiquidHaskell, but consider this innocent little function:</p>
+<p>Now, <code>foo</code> should only be called with strictly positive values.
+In which case, the function returns a <code>Nat</code> that is strictly
+smaller than the input.
+The function diverges when called with <code>0</code> or negative inputs.</p>
+<p>Note that the signature of <code>foo</code> is slightly different, but
+nevertheless, legitimate, as <em>when</em> the function returns an
+output, the output is indeed a <code>Nat</code> that is <em>strictly less than</em>
+the input parameter <code>n</code>. Hence, LiquidHaskell happily checks
+that <code>foo</code> does indeed satisfy its given type.</p>
+<p>So far, nothing has gone wrong either in the program, or
+with LiquidHaskell, but consider this innocent little
+function:</p>
 <pre><span class="hs-linenum">86: </span><a class="annot" href="#"><span class="annottext">(GHC.Types.Int)</span><span class="hs-definition">explode</span></a> <span class="hs-keyglyph">=</span> <span class="hs-keyword">let</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV == (0  :  int))}</span><span class="hs-varid">z</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV == (0  :  int))}</span><span class="hs-num">0</span></a>
 <span class="hs-linenum">87: </span>          <span class="hs-keyword">in</span>  <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">x:{VV : (GHC.Types.Int) | (VV == 0) &amp;&amp; (VV == 1) &amp;&amp; (VV == TellingLies.explode) &amp;&amp; (VV == z) &amp;&amp; (VV &gt; 0) &amp;&amp; (VV &gt; TellingLies.explode) &amp;&amp; (VV &gt; z) &amp;&amp; (VV &lt; 0) &amp;&amp; (VV &lt; TellingLies.explode) &amp;&amp; (VV &lt; z)}
 -&gt; {VV : (GHC.Types.Int) | (VV == 0) &amp;&amp; (VV == 1) &amp;&amp; (VV == TellingLies.explode) &amp;&amp; (VV == x) &amp;&amp; (VV == z) &amp;&amp; (VV &gt; 0) &amp;&amp; (VV &gt; TellingLies.explode) &amp;&amp; (VV &gt; x) &amp;&amp; (VV &gt; z) &amp;&amp; (VV &lt; 0) &amp;&amp; (VV &lt; TellingLies.explode) &amp;&amp; (VV &lt; x) &amp;&amp; (VV &lt; z)}</span><span class="hs-keyglyph">\</span></a><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV == 0) &amp;&amp; (VV == 1) &amp;&amp; (VV == TellingLies.explode) &amp;&amp; (VV == z) &amp;&amp; (VV &gt; 0) &amp;&amp; (VV &gt; TellingLies.explode) &amp;&amp; (VV &gt; z) &amp;&amp; (VV &lt; 0) &amp;&amp; (VV &lt; TellingLies.explode) &amp;&amp; (VV &lt; z)}</span><span class="hs-varid">x</span></a> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV == (2013  :  int))}</span><span class="hs-num">2013</span></a> <a class="annot" href="#"><span class="annottext">(GHC.Types.Int)
@@ -314,7 +330,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 <p>Thanks to <em>lazy evaluation</em>, the call to <code>foo</code> is ignored, so evaluating <code>explode</code> leads to a crash! Ugh!</p>
 <h2 id="the-lie">The Lie</h2>
-<p>However, LiquidHaskell produces a polyannish prognosis and cheerfully declares the program <em>safe</em>.</p>
+<p>However, LiquidHaskell produces a polyannish prognosis and
+cheerfully declares the program <em>safe</em>.</p>
 <p>Huh?</p>
 <p>Well, LiquidHaskell deduces that</p>
 <ul>
@@ -325,10 +342,19 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 Of course, no such <code>x</code> exists! Or, rather, the SMT solver reasons
 <pre><span class="hs-linenum">108: </span>    <span class="hs-varid">z</span> <span class="hs-varop">==</span> <span class="hs-num">0</span> <span class="hs-varop">&amp;&amp;</span> <span class="hs-varid">x</span> <span class="hs-varop">&gt;=</span> <span class="hs-num">0</span> <span class="hs-varop">&amp;&amp;</span> <span class="hs-varid">x</span> <span class="hs-varop">&lt;</span> <span class="hs-varid">z</span>  <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">z</span> <span class="hs-varop">/=</span> <span class="hs-num">0</span>
 </pre>
-<p>as the hypotheses are inconsistent. In other words, LiquidHaskell deduces that the call to <code>divide</code> happens in an <em>impossible</em> environment, i.e. is dead code, and hence, the program is safe.</p>
-<p>In our defence, the above, sunny prognosis is not <em>totally misguided</em>. Indeed, if Haskell was like ML and had <em>strict evaluation</em> then indeed the program would be safe in that we would <em>not</em> go wrong i.e. would not crash with a divide-by-zero.</p>
-<p>But of course, thats a pretty lame excuse, since Haskell doesn’t have strict semantics. So looks like LiquidHaskell (and hence, we) have been caught red-handed.</p>
-<p>Well then, is there a way to prevent LiquidHaskell from telling lies? That is, can we get Milner’s <em>well-typed programs don’t go wrong</em> guarantee under lazy evaluation?</p>
+<p>as the hypotheses are inconsistent. In other words, LiquidHaskell
+deduces that the call to <code>divide</code> happens in an <em>impossible</em> environment,
+i.e. is dead code, and hence, the program is safe.</p>
+<p>In our defence, the above, sunny prognosis is not <em>totally misguided</em>.
+Indeed, if Haskell was like ML and had <em>strict evaluation</em> then
+indeed the program would be safe in that we would <em>not</em> go wrong
+i.e. would not crash with a divide-by-zero.</p>
+<p>But of course, thats a pretty lame excuse, since Haskell doesn’t have
+strict semantics. So looks like LiquidHaskell (and hence, we)
+have been caught red-handed.</p>
+<p>Well then, is there a way to prevent LiquidHaskell from telling lies?
+That is, can we get Milner’s <em>well-typed programs don’t go wrong</em>
+guarantee under lazy evaluation?</p>
 <p>Thankfully, there is.</p>
                 <hr>
                 <ul class="pager">

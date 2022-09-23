@@ -260,12 +260,23 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/basic.html">basic</a>
+                Tags: <a title="All pages tagged 'basic'." href="../../../../tags/basic.html">basic</a>
               
             </div>
 
             <br>
-			            <p>Computers are great at crunching numbers. However, if programmers aren’t careful, their machines can end up biting off more than they can chew: simple arithmetic operations over very large (or very tiny) inputs can <em>overflow</em> leading to bizarre crashes or vulnerabilities. For example, <a href="https://research.googleblog.com/2006/06/extra-extra-read-all-about-it-nearly.html">Joshua Bloch’s classic post</a> argues that nearly all binary searches are broken due to integer overflows. Lets see how we can teach LiquidHaskell to spot such overflows.</p>
+			            <p>Computers are great at crunching numbers.
+However, if programmers aren’t careful, their
+machines can end up biting off more than
+they can chew: simple arithmetic operations
+over very large (or very tiny) inputs can
+<em>overflow</em> leading to bizarre crashes
+or vulnerabilities. For example,
+<a href="https://research.googleblog.com/2006/06/extra-extra-read-all-about-it-nearly.html">Joshua Bloch’s classic post</a>
+argues that nearly all binary searches
+are broken due to integer overflows.
+Lets see how we can teach LiquidHaskell
+to spot such overflows.</p>
 <!-- more -->
 <div class="hidden">
 <pre><span class="hs-linenum">30: </span><span class="hs-keyword">module</span> <span class="hs-conid">Bounded</span> <span class="hs-keyword">where</span>
@@ -280,52 +291,83 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 </div>
 <h2 id="the-problem">1. The Problem</h2>
-<p>LiquidHaskell, like some programmers, likes to make believe that <code>Int</code> represents the set of integers. For example, you might define a function <code>plus</code> as:</p>
+<p>LiquidHaskell, like some programmers, likes to make believe
+that <code>Int</code> represents the set of integers. For example, you
+might define a function <code>plus</code> as:</p>
 <pre><span class="hs-linenum">51: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">plus</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Int</span> <span class="hs-keyword">| v == x + y}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">52: </span><span class="hs-definition">plus</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span>
 <span class="hs-linenum">53: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-definition">plus</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">y</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : Int | v == y}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-conid">Prelude</span></a><span class="hs-varop">.+</span> <span class="hs-varid">y</span>
 </pre>
-<p>The output type of the function states that the returned value is equal to the  result of adding the two inputs.</p>
-<p>The above signature lets us “prove” facts like addition by one yields a bigger number:</p>
+<p>The output type of the function states that the returned value
+is equal to the  result of adding the two inputs.</p>
+<p>The above signature lets us “prove” facts like addition by one
+yields a bigger number:</p>
 <pre><span class="hs-linenum">63: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">monoPlus</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Bool</span> <span class="hs-keyword">| v &lt;=&gt; true }</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">64: </span><span class="hs-definition">monoPlus</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span>
 <span class="hs-linenum">65: </span><a class="annot" href="#"><span class="annottext">Int -&gt; {v : Bool | v &lt;=&gt; true}</span><span class="hs-definition">monoPlus</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">x</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : Int | v == x}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2} | v == Bounded.plus}</span><span class="hs-varid">plus</span></a> <span class="hs-varid">x</span> <span class="hs-num">1</span>
 </pre>
-<p>Unfortunately, the signature for plus and hence, the above “fact” are both lies.</p>
-<p>LH <em>checks</em> <code>plus</code> as the same signature is <em>assumed</em> for the primitive <code>Int</code> addition operator <code>Prelude.+</code>. LH has to assume <em>some</em> signature for this “foreign” machine operation, and by default, LH assumes that machine addition behaves like logical addition.</p>
-<p>However, this assumption, and its consequences are only true upto a point:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1">λ<span class="op">&gt;</span>  monoPlus <span class="dv">0</span></a>
-<a class="sourceLine" id="cb1-2" title="2"><span class="dt">True</span></a>
-<a class="sourceLine" id="cb1-3" title="3">λ<span class="op">&gt;</span>  monoPlus <span class="dv">100</span></a>
-<a class="sourceLine" id="cb1-4" title="4"><span class="dt">True</span></a>
-<a class="sourceLine" id="cb1-5" title="5">λ<span class="op">&gt;</span>  monoPlus <span class="dv">10000</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="dt">True</span></a>
-<a class="sourceLine" id="cb1-7" title="7">λ<span class="op">&gt;</span>  monoPlus <span class="dv">1000000</span></a>
-<a class="sourceLine" id="cb1-8" title="8"><span class="dt">True</span></a></code></pre></div>
-<p>Once we get to <code>maxBound</code> at the very edge of <code>Int</code>, a tiny bump is enough to send us tumbling backwards into a twilight zone.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1">λ<span class="op">&gt;</span> monoPlus <span class="fu">maxBound</span></a>
-<a class="sourceLine" id="cb2-2" title="2"><span class="dt">False</span></a>
-<a class="sourceLine" id="cb2-3" title="3"></a>
-<a class="sourceLine" id="cb2-4" title="4">λ<span class="op">&gt;</span> plus <span class="fu">maxBound</span> <span class="dv">1</span></a>
-<a class="sourceLine" id="cb2-5" title="5"><span class="op">-</span><span class="dv">9223372036854775808</span></a></code></pre></div>
+<p>Unfortunately, the signature for plus and hence, the above
+“fact” are both lies.</p>
+<p>LH <em>checks</em> <code>plus</code> as the same signature is <em>assumed</em>
+for the primitive <code>Int</code> addition operator <code>Prelude.+</code>.
+LH has to assume <em>some</em> signature for this “foreign”
+machine operation, and by default, LH assumes that
+machine addition behaves like logical addition.</p>
+<p>However, this assumption, and its consequences are
+only true upto a point:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>λ<span class="op">&gt;</span>  monoPlus <span class="dv">0</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">True</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>λ<span class="op">&gt;</span>  monoPlus <span class="dv">100</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="dt">True</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>λ<span class="op">&gt;</span>  monoPlus <span class="dv">10000</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="dt">True</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>λ<span class="op">&gt;</span>  monoPlus <span class="dv">1000000</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="dt">True</span></span></code></pre></div>
+<p>Once we get to <code>maxBound</code> at the very edge of <code>Int</code>,
+a tiny bump is enough to send us tumbling backwards
+into a twilight zone.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>λ<span class="op">&gt;</span> monoPlus <span class="fu">maxBound</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">False</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>λ<span class="op">&gt;</span> plus <span class="fu">maxBound</span> <span class="dv">1</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="op">-</span><span class="dv">9223372036854775808</span></span></code></pre></div>
 <h2 id="keeping-int-in-their-place">2. Keeping Int In Their Place</h2>
-<p>The news isn’t all bad: the glass half full view is that for “reasonable” values like 10, 100, 10000 and 1000000, the machine’s arithmetic <em>is</em> the same as logical arithmetic. Lets see how to impart this wisdom to LH. We do this in two steps: define the <em>biggest</em> <code>Int</code> value, and then, use this value to type the arithmetic operations.</p>
+<p>The news isn’t all bad: the glass half full
+view is that for “reasonable” values
+like 10, 100, 10000 and 1000000, the
+machine’s arithmetic <em>is</em> the same as
+logical arithmetic. Lets see how to impart
+this wisdom to LH. We do this in two steps:
+define the <em>biggest</em> <code>Int</code> value, and then,
+use this value to type the arithmetic operations.</p>
 <p><strong>A. The Biggest Int</strong></p>
-<p>First, we need a way to talk about “the edge” – i.e. the largest <code>Int</code> value at which overflows occur.</p>
+<p>First, we need a way to talk about
+“the edge” – i.e. the largest <code>Int</code>
+value at which overflows occur.</p>
 <p>We could use the concrete number</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb3-1" title="1">λ<span class="op">&gt;</span><span class="ot"> maxBound ::</span> <span class="dt">Int</span></a>
-<a class="sourceLine" id="cb3-2" title="2"><span class="dv">9223372036854775807</span></a></code></pre></div>
-<p>However, instead of hardwiring a particular number, a more general strategy is to define a symbolic constant <code>maxInt</code> to represent <em>any</em> arbitrary overflow value and thus, make the type checking robust to different machine integer widths.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>λ<span class="op">&gt;</span><span class="ot"> maxBound ::</span> <span class="dt">Int</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="dv">9223372036854775807</span></span></code></pre></div>
+<p>However, instead of hardwiring a particular number,
+a more general strategy is to define a symbolic
+constant <code>maxInt</code> to represent <em>any</em> arbitrary
+overflow value and thus, make the type checking
+robust to different machine integer widths.</p>
 <pre><span class="hs-linenum">135: </span><span class="hs-comment">-- defines an Int constant called `maxInt`</span>
 <span class="hs-linenum">136: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">measure</span> <span class="hs-varid">maxInt</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>To tell LH that <code>maxInt</code> is the “biggest” <code>Int</code>, we write a predicate that describes values bounded by <code>maxInt</code>:</p>
+<p>To tell LH that <code>maxInt</code> is the “biggest” <code>Int</code>,
+we write a predicate that describes values bounded
+by <code>maxInt</code>:</p>
 <pre><span class="hs-linenum">144: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">predicate</span> <span class="hs-conid">Bounded</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">=</span> <span class="hs-num">0</span> <span class="hs-varop">&lt;</span> <span class="hs-conid">N</span> <span class="hs-varop">+</span> <span class="hs-varid">maxInt</span> <span class="hs-varop">&amp;&amp;</span> <span class="hs-conid">N</span> <span class="hs-varop">&lt;</span> <span class="hs-varid">maxInt</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>Thus, <code>Bounded n</code> means that the number <code>n</code> is in the range <code>[-maxInt, maxInt]</code>.</p>
+<p>Thus, <code>Bounded n</code> means that the number <code>n</code> is in
+the range <code>[-maxInt, maxInt]</code>.</p>
 <p><strong>B. Bounded Machine Arithmetic</strong></p>
-<p>Next, we can assign the machine arithmetic operations types that properly capture the possibility of arithmetic overflows. Here are <em>two</em> possible specifications.</p>
-<p><strong>Strict: Thou Shalt Not Overflow</strong> A <em>strict</em> specification simply prohibits any overflow:</p>
+<p>Next, we can assign the machine arithmetic operations
+types that properly capture the possibility of arithmetic
+overflows. Here are <em>two</em> possible specifications.</p>
+<p><strong>Strict: Thou Shalt Not Overflow</strong> A <em>strict</em> specification
+simply prohibits any overflow:</p>
 <pre><span class="hs-linenum">160: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">plusStrict</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-keyword">{Int|Bounded(x+y)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Int</span><span class="hs-keyword">|v = x+y}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">161: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:{y : Int | 0 &lt; (x1 + y) + maxInt
                         &amp;&amp; x1 + y &lt; maxInt} -&gt; {v : Int | v == x1 + x2}</span><span class="hs-definition">plusStrict</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">{y : Int | 0 &lt; (x + y) + maxInt
@@ -333,14 +375,23 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
            &amp;&amp; x + v &lt; maxInt
            &amp;&amp; v == y}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-conid">Prelude</span></a><span class="hs-varop">.+</span> <span class="hs-varid">y</span>
 </pre>
-<p>The inputs <code>x</code> and <code>y</code> <em>must</em> be such that the result is <code>Bounded</code>, and in that case, the output value is indeed their logical sum.</p>
-<p><strong>Lazy: Overflow at Thine Own Risk</strong> Instead, a <em>lazy</em> specification could permit overflows but gives no guarantees about the output when they occur.</p>
+<p>The inputs <code>x</code> and <code>y</code> <em>must</em> be such that the result is <code>Bounded</code>,
+and in that case, the output value is indeed their logical sum.</p>
+<p><strong>Lazy: Overflow at Thine Own Risk</strong> Instead, a <em>lazy</em>
+specification could permit overflows but gives no
+guarantees about the output when they occur.</p>
 <pre><span class="hs-linenum">172: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">plusLazy</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Int</span><span class="hs-keyword">|Bounded(x+y) =&gt; v = x+y}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">173: </span><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | 0 &lt; (x1 + x2) + maxInt
                                &amp;&amp; x1 + x2 &lt; maxInt =&gt; v == x1 + x2}</span><span class="hs-definition">plusLazy</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">y</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : Int | v == y}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 + x2}</span><span class="hs-conid">Prelude</span></a><span class="hs-varop">.+</span> <span class="hs-varid">y</span>
 </pre>
-<p>The lazy specification says that while <code>plusLazy</code> can be called with any values you like, the result is the logical sum <em>only if there is no overflow</em>.</p>
-<p>To understand the difference between the two specifications, lets revisit the <code>monoPlus</code> property using the new machine-arithmetic sensitive signatures:</p>
+<p>The lazy specification says that while <code>plusLazy</code>
+can be called with any values you like, the
+result is the logical sum
+<em>only if there is no overflow</em>.</p>
+<p>To understand the difference between the two
+specifications, lets revisit the <code>monoPlus</code>
+property using the new machine-arithmetic
+sensitive signatures:</p>
 <pre><span class="hs-linenum">188: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">monoPlusStrict</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Bool</span> <span class="hs-keyword">| v &lt;=&gt; true }</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">189: </span><a class="annot" href="#"><span class="annottext">Int -&gt; {v : Bool | v &lt;=&gt; true}</span><span class="hs-definition">monoPlusStrict</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">x</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : Int | v == x}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <span class="hs-error"><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:{v : Int | 0 &lt; (x1 + v) + maxInt
                              &amp;&amp; x1 + v &lt; maxInt} -&gt; {v : Int | v == x1 + x2} | v == Bounded.plusStrict}</span><span class="hs-varid">plusStrict</span></a></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-varid">x</span></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-num">1</span></span>
@@ -349,16 +400,31 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">192: </span><a class="annot" href="#"><span class="annottext">Int -&gt; {v : Bool | v &lt;=&gt; true}</span><span class="hs-definition">monoPlusLazy</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">x</span></a> <span class="hs-keyglyph">=</span> <span class="hs-error"><a class="annot" href="#"><span class="annottext">{v : Int | v == x}</span><span class="hs-varid">x</span></a></span><span class="hs-error"> </span><span class="hs-error"><a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a></span><span class="hs-error"> </span><span class="hs-error"><a class="annot" href="#"><span class="annottext">{v : x1:Int -&gt; x2:Int -&gt; {v : Int | 0 &lt; (x1 + x2) + maxInt
                                     &amp;&amp; x1 + x2 &lt; maxInt =&gt; v == x1 + x2} | v == Bounded.plusLazy}</span><span class="hs-varid">plusLazy</span></a></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-varid">x</span></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-num">1</span></span>
 </pre>
-<p>Both are rejected by LH, since, as we saw earlier, the functions <em>do not</em> always evaluate to <code>True</code>. However, in the strict version the error is at the possibly overflowing call to <code>plusStrict</code>. In the lazy version, the call to <code>plusLazy</code> is accepted, but as the returned value is some arbitrary <code>Int</code> (not the logical <code>x+1</code>), the comparison may return <code>False</code> hence the output is not always <code>True</code>.</p>
-<p><strong>Exercise:</strong> Can you fix the specification for <code>monoPlusStrict</code> and <code>monoPlusLazy</code> to get LH to verify the implementation?</p>
+<p>Both are rejected by LH, since, as we saw earlier,
+the functions <em>do not</em> always evaluate to <code>True</code>.
+However, in the strict version the error is at the
+possibly overflowing call to <code>plusStrict</code>.
+In the lazy version, the call to <code>plusLazy</code> is
+accepted, but as the returned value is some
+arbitrary <code>Int</code> (not the logical <code>x+1</code>), the
+comparison may return <code>False</code> hence the output
+is not always <code>True</code>.</p>
+<p><strong>Exercise:</strong> Can you fix the specification
+for <code>monoPlusStrict</code> and <code>monoPlusLazy</code> to
+get LH to verify the implementation?</p>
 <h2 id="a-typeclass-for-machine-arithmetic">3. A Typeclass for Machine Arithmetic</h2>
-<p>Its a bit inconvenient to write <code>plusStrict</code> and <code>plusLazy</code>, and really, we’d just like to write <code>+</code> and <code>-</code> and so on. We can do so, by tucking the above specifications into a <em>bounded numeric</em> typeclass whose signatures capture machine arithmetic. First, we define a <code>BoundedNum</code> variant of <code>Num</code></p>
+<p>Its a bit inconvenient to write <code>plusStrict</code> and <code>plusLazy</code>,
+and really, we’d just like to write <code>+</code> and <code>-</code> and so on.
+We can do so, by tucking the above specifications into
+a <em>bounded numeric</em> typeclass whose signatures capture machine
+arithmetic. First, we define a <code>BoundedNum</code> variant of <code>Num</code></p>
 <pre><span class="hs-linenum">220: </span><span class="hs-keyword">class</span> <span class="hs-conid">BoundedNum</span> <span class="hs-varid">a</span> <span class="hs-keyword">where</span>
 <span class="hs-linenum">221: </span>  <span class="hs-layout">(</span><span class="hs-varop">+</span><span class="hs-layout">)</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
 <span class="hs-linenum">222: </span>  <span class="hs-layout">(</span><span class="hs-comment">-</span><span class="hs-layout">)</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span>
 <span class="hs-linenum">223: </span>  <span class="hs-comment">-- other operations ...</span>
 </pre>
-<p>and now, we can define its <code>Int</code> instance just as wrappers around the <code>Prelude</code> operations:</p>
+<p>and now, we can define its <code>Int</code> instance just as wrappers
+around the <code>Prelude</code> operations:</p>
 <pre><span class="hs-linenum">230: </span><span class="hs-keyword">instance</span> <span class="hs-conid">BoundedNum</span> <span class="hs-conid">Int</span> <span class="hs-keyword">where</span>
 <span class="hs-linenum">231: </span>  <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:{y : Int | 0 &lt; (x1 + y) + maxInt
                         &amp;&amp; x1 + y &lt; maxInt} -&gt; {v : Int | v == x1 + x2}</span><span class="hs-varop">+</span></a> <a class="annot" href="#"><span class="annottext">{y : Int | 0 &lt; (x + y) + maxInt
@@ -371,23 +437,44 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
            &amp;&amp; x - v &lt; maxInt
            &amp;&amp; v == y}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Int | v == x1 - x2}</span><span class="hs-conid">Prelude</span></a><span class="hs-varop">.-</span> <span class="hs-varid">y</span>
 </pre>
-<p>Finally, we can tell LH that the above above instance obeys the (strict) specifications for machine arithmetic:</p>
+<p>Finally, we can tell LH that the above above instance obeys the
+(strict) specifications for machine arithmetic:</p>
 <pre><span class="hs-linenum">239: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">instance</span> <span class="hs-conid">BoundedNum</span> <span class="hs-conid">Int</span> <span class="hs-keyword">where</span>
 <span class="hs-linenum">240: </span>      <span class="hs-varop">+</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-keyword">{Int | Bounded (x+y)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Int</span> <span class="hs-keyword">| v == x+y }</span><span class="hs-layout">;</span>
 <span class="hs-linenum">241: </span>      <span class="hs-comment">-</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-keyword">{Int | Bounded (x-y)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Int</span> <span class="hs-keyword">| v == x-y }</span>
 <span class="hs-linenum">242: </span>  <span class="hs-keyword">@-}</span>
 </pre>
-<p>With the above instance in scope, we can just use the plain <code>+</code> operator and have LH flag potential overflows:</p>
+<p>With the above instance in scope, we can just use the plain <code>+</code>
+operator and have LH flag potential overflows:</p>
 <pre><span class="hs-linenum">249: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">mono</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Bool</span> <span class="hs-keyword">| v &lt;=&gt; true}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">250: </span><a class="annot" href="#"><span class="annottext">Int -&gt; {v : Bool | v &lt;=&gt; true}</span><span class="hs-definition">mono</span></a> <a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">x</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : Int | v == x}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x1:Int -&gt; x2:Int -&gt; {v : Bool | v &lt;=&gt; x1 &lt; x2}</span><span class="hs-varop">&lt;</span></a> <span class="hs-error"><a class="annot" href="#"><span class="annottext">Int</span><span class="hs-varid">x</span></a></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-varop">+</span></span><span class="hs-error"> </span><span class="hs-error"><span class="hs-num">1</span></span>
 </pre>
 <h2 id="an-application-binary-search">4. An Application: Binary Search</h2>
-<p>The above seems a bit paranoid. Do overflows <em>really</em> matter? And if they do, is it really practical to check for them using the above?</p>
-<p><a href="https://research.googleblog.com/2006/06/extra-extra-read-all-about-it-nearly.html">Joshua Bloch’s</a> famous article describes a tricky overflow bug in an implementation of binary-search that lay hidden in plain sight in classic textbooks and his own implementation in the JDK for nearly a decade. Gabriel Gonzalez wrote a lovely <a href="http://www.haskellforall.com/2015/12/compile-time-memory-safety-using-liquid.html">introduction to LH</a> using binary-search as an example, and a careful reader <a href="https://www.reddit.com/r/haskell/comments/3ysh9k/haskell_for_all_compiletime_memory_safety_using/cyg8g60/">pointed out</a> that it had the same overflow bug!</p>
-<p>Lets see how we might spot and fix such bugs using <code>BoundedNum</code>. (<em>Hover over the images to animate</em>.)</p>
+<p>The above seems a bit paranoid. Do overflows <em>really</em> matter?
+And if they do, is it really practical to check for them using
+the above?</p>
+<p><a href="https://research.googleblog.com/2006/06/extra-extra-read-all-about-it-nearly.html">Joshua Bloch’s</a> famous article describes a
+tricky overflow bug in an implementation of binary-search
+that lay hidden in plain sight in classic textbooks and his
+own implementation in the JDK for nearly a decade.
+Gabriel Gonzalez wrote a lovely <a href="http://www.haskellforall.com/2015/12/compile-time-memory-safety-using-liquid.html">introduction to LH</a>
+using binary-search as an example, and a careful reader
+<a href="https://www.reddit.com/r/haskell/comments/3ysh9k/haskell_for_all_compiletime_memory_safety_using/cyg8g60/">pointed out</a> that it had the same
+overflow bug!</p>
+<p>Lets see how we might spot and fix such bugs using <code>BoundedNum</code>.
+(<em>Hover over the images to animate</em>.)</p>
 <div class="row">
 <div class="col-md-4">
-<p><strong>A. Off by One</strong> Lets begin by just using the default <code>Num Int</code> which ignores overflow. As Gabriel explains, LH flags a bunch of errors if we start the search with <code>loop x v 0 n</code> as the resulting search can access <code>v</code> at any index between <code>0</code> and <code>n</code> inclusive, which may lead to an out of bounds at <code>n</code>. We can fix the off-by-one by correcting the upper bound to <code>n-1</code>, at which point LH reports the code free of errors.</p>
+<p><strong>A. Off by One</strong> Lets begin by just using
+the default <code>Num Int</code> which ignores overflow.
+As Gabriel explains, LH flags a bunch of errors
+if we start the search with <code>loop x v 0 n</code> as
+the resulting search can access <code>v</code> at any
+index between <code>0</code> and <code>n</code> inclusive, which
+may lead to an out of bounds at <code>n</code>.
+We can fix the off-by-one by correcting the
+upper bound to <code>n-1</code>, at which point LH
+reports the code free of errors.</p>
 </div>
 <div class="col-md-8">
 <p><img id="splash-binarySearch-A" class="center-block anim" png="/liquidhaskell-blog/static/img/splash-binarySearch-A.png" src="../../../../liquidhaskell-blog/static/img/splash-binarySearch-A.png"></p>
@@ -399,12 +486,23 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p><img id="splash-binarySearch-B" class="center-block anim" png="/liquidhaskell-blog/static/img/splash-binarySearch-B.png" src="../../../../liquidhaskell-blog/static/img/splash-binarySearch-B.png"></p>
 </div>
 <div class="col-md-4">
-<p><strong>B. Lots of Overflows</strong> To spot arithmetic overflows, we need only hide the default <code>Prelude</code> and instead import the <code>BoundedNum</code> instance described above. Upon doing so, LH flags a whole bunch of potential errors – essentially <em>all</em> the arithmetic operations which seems rather dire!</p>
+<p><strong>B. Lots of Overflows</strong> To spot arithmetic overflows, we need
+only hide the default <code>Prelude</code> and instead import the <code>BoundedNum</code>
+instance described above. Upon doing so, LH flags a whole bunch of
+potential errors – essentially <em>all</em> the arithmetic operations which
+seems rather dire!</p>
 </div>
 </div>
 <div class="row">
 <div class="col-md-4">
-<p><strong>C. Vector Sizes are Bounded</strong> Of course, things aren’t <em>so</em> bad. LH is missing the information that the size of any <code>Vector</code> must be <code>Bounded</code>. Once we inform LH about this invariant with the <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/README.md#invariants"><code>using</code> directive</a>, it infers that as the <code>lo</code> and <code>hi</code> indices are upper-bounded by the <code>Vector</code>’s size, all the arithmetic on them is also <code>Bounded</code> and hence, free of overflows.</p>
+<p><strong>C. Vector Sizes are Bounded</strong> Of course, things
+aren’t <em>so</em> bad. LH is missing the information that
+the size of any <code>Vector</code> must be <code>Bounded</code>. Once we
+inform LH about this invariant with the
+<a href="https://github.com/ucsd-progsys/liquidhaskell/blob/develop/README.md#invariants"><code>using</code> directive</a>, it infers that
+as the <code>lo</code> and <code>hi</code> indices are upper-bounded by
+the <code>Vector</code>’s size, all the arithmetic on them is
+also <code>Bounded</code> and hence, free of overflows.</p>
 </div>
 <div class="col-md-8">
 <p><img id="splash-binarySearch-C" class="center-block anim" png="/liquidhaskell-blog/static/img/splash-binarySearch-C.png" src="../../../../liquidhaskell-blog/static/img/splash-binarySearch-C.png"></p>
@@ -416,7 +514,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p><img id="splash-binarySearch-D" class="center-block anim" png="/liquidhaskell-blog/static/img/splash-binarySearch-D.png" src="../../../../liquidhaskell-blog/static/img/splash-binarySearch-D.png"></p>
 </div>
 <div class="col-md-4">
-<p><strong>D. Staying In The Middle</strong> Well, <em>almost</em> all. The one pesky pink highlight that remains is exactly the bug that Bloch made famous. Namely: the addition used to compute the new midpoint between <code>lo</code> and <code>hi</code> could overflow e.g. if the array was large and both those indices were near the end. To ensure the machine doesn’t choke, we follow Bloch’s suggestion and re-jigger the computation to instead compute the midpoint by splitting the difference between <code>hi</code> and <code>lo</code>! the code is now free of arithmetic overflows and truly memory safe.</p>
+<p><strong>D. Staying In The Middle</strong>
+Well, <em>almost</em> all. The one pesky pink highlight that
+remains is exactly the bug that Bloch made famous. Namely:
+the addition used to compute the new midpoint between <code>lo</code>
+and <code>hi</code> could overflow e.g. if the array was large and both
+those indices were near the end. To ensure the machine doesn’t
+choke, we follow Bloch’s suggestion and re-jigger the computation
+to instead compute the midpoint by splitting the difference
+between <code>hi</code> and <code>lo</code>! the code is now free of arithmetic
+overflows and truly memory safe.</p>
 </div>
 </div>
                 <hr>

@@ -260,12 +260,20 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/measures.html">measures</a>
+                Tags: <a title="All pages tagged 'measures'." href="../../../../tags/measures.html">measures</a>
               
             </div>
 
             <br>
-			            <p><a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">Previously</a> we <a href="../../../../blog/2013/01/27/refinements101-reax.lhs/">saw</a> some examples of how refinements could be used to encode invariants about basic <code>Int</code> values. Today, let’s see how refinements allow us specify and verify <em>structural invariants</em> about recursive data types like lists. In particular, we will learn about at a new mechanism called a <code>measure</code>, use measures to describe the <strong>length</strong> of a list, and use the resulting refinement types to obtain compile-time assurances that canonical list manipulating operations like <code>head</code>, <code>tail</code>, <code>foldl1</code> and (incomplete) pattern matches will not <em>blow up</em> at run-time.</p>
+			            <p><a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">Previously</a> we <a href="../../../../blog/2013/01/27/refinements101-reax.lhs/">saw</a> some examples of how refinements
+could be used to encode invariants about basic <code>Int</code> values. Today, let’s
+see how refinements allow us specify and verify <em>structural invariants</em>
+about recursive data types like lists. In particular, we will
+learn about at a new mechanism called a <code>measure</code>,
+use measures to describe the <strong>length</strong> of a list, and
+use the resulting refinement types to obtain compile-time assurances
+that canonical list manipulating operations like <code>head</code>, <code>tail</code>, <code>foldl1</code>
+and (incomplete) pattern matches will not <em>blow up</em> at run-time.</p>
 <!-- more -->
 <pre><span class="hs-linenum">26: </span><span class="hs-keyword">module</span> <span class="hs-conid">ListLengths</span> <span class="hs-keyword">where</span>
 <span class="hs-linenum">27: </span>
@@ -275,13 +283,21 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">31: </span><span class="hs-keyword">import</span> <span class="hs-conid">Data</span><span class="hs-varop">.</span><span class="hs-conid">Hashable</span> 
 </pre>
 <h2 id="measuring-the-length-of-a-list">Measuring the Length of a List</h2>
-<p>To begin, we need some instrument by which to measure the length of a list. To this end, let’s introduce a new mechanism called <strong>measures</strong> which define auxiliary (or so-called <strong>ghost</strong>) properties of data values. These properties are useful for specification and verification, but <strong>don’t actually exist at run-time</strong>. That is, measures will appear in specifications but <em>never</em> inside code.</p>
+<p>To begin, we need some instrument by which to measure the length of a list.
+To this end, let’s introduce a new mechanism called <strong>measures</strong> which
+define auxiliary (or so-called <strong>ghost</strong>) properties of data values.
+These properties are useful for specification and verification, but
+<strong>don’t actually exist at run-time</strong>.
+That is, measures will appear in specifications but <em>never</em> inside code.</p>
 Let’s reuse this mechanism, this time, providing a <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/master/include/GHC/Base.spec">definition</a> for the measure
 <pre><span class="hs-linenum">48: </span><span class="hs-definition">measure</span> <span class="hs-varid">len</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varid">a</span><span class="hs-varop">.</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">GHC</span><span class="hs-varop">.</span><span class="hs-conid">Types</span><span class="hs-varop">.</span><span class="hs-conid">Int</span>
 <span class="hs-linenum">49: </span><span class="hs-definition">len</span> <span class="hs-layout">(</span><span class="hs-conid">[]</span><span class="hs-layout">)</span>     <span class="hs-keyglyph">=</span> <span class="hs-num">0</span>
 <span class="hs-linenum">50: </span><span class="hs-definition">len</span> <span class="hs-layout">(</span><span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-varid">ys</span><span class="hs-layout">)</span>   <span class="hs-keyglyph">=</span> <span class="hs-num">1</span> <span class="hs-varop">+</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">ys</span><span class="hs-layout">)</span> 
 </pre>
-The description of <code>len</code> above should be quite easy to follow. Underneath the covers, LiquidHaskell transforms the above description into refined versions of the types for the constructors <code>(:)</code> and <code>[]</code>, Something like
+The description of <code>len</code> above should be quite easy to follow. Underneath the
+covers, LiquidHaskell transforms the above description into refined versions
+of the types for the constructors <code>(:)</code> and <code>[]</code>,
+Something like
 <pre><span class="hs-linenum">57: </span><span class="hs-keyword">data</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">where</span> 
 <span class="hs-linenum">58: </span>  <span class="hs-conid">[]</span>  <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varid">a</span><span class="hs-varop">.</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-num">0</span> <span class="hs-layout">}</span>
 <span class="hs-linenum">59: </span>  <span class="hs-layout">(</span><span class="hs-conop">:</span><span class="hs-layout">)</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">forall</span> <span class="hs-varid">a</span><span class="hs-varop">.</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">ys</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-num">1</span> <span class="hs-varop">+</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">ys</span><span class="hs-layout">)</span> <span class="hs-layout">}</span> 
@@ -303,25 +319,36 @@ The description of <code>len</code> above should be quite easy to follow. Undern
                              (len([VV]) = 2),
                              (len([VV]) &gt;= 0)}</span><span class="hs-varid">ys</span></a>
 </pre>
-<p>Dually, when we <em>de-construct</em> the lists, LiquidHaskell is able to relate the type of the outer list with its constituents. For example,</p>
+<p>Dually, when we <em>de-construct</em> the lists, LiquidHaskell is able to relate
+the type of the outer list with its constituents. For example,</p>
 <pre><span class="hs-linenum">79: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">zs'</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span><span class="hs-keyglyph">[</span><span class="hs-conid">String</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">| (len v) = 2 }</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">80: </span><a class="annot" href="#"><span class="annottext">{VV : [[(GHC.Types.Char)]] | (len([VV]) = 2)}</span><span class="hs-definition">zs'</span></a> <span class="hs-keyglyph">=</span> <span class="hs-keyword">case</span> <a class="annot" href="#"><span class="annottext">{VV : [[(GHC.Types.Char)]] | (VV = zs),
                              (len([VV]) = 3),
                              (len([VV]) &gt;= 0)}</span><span class="hs-varid">zs</span></a> <span class="hs-keyword">of</span> 
 <span class="hs-linenum">81: </span>        <span class="hs-varid">h</span> <span class="hs-conop">:</span> <span class="hs-varid">t</span> <span class="hs-keyglyph">-&gt;</span> <a class="annot" href="#"><span class="annottext">{VV : [[(GHC.Types.Char)]] | (VV = t),(len([VV]) &gt;= 0)}</span><span class="hs-varid">t</span></a>
 </pre>
-<p>Here, from the use of the <code>:</code> in the pattern, LiquidHaskell can determine that <code>(len zs) = 1 + (len t)</code>; by combining this fact with the nugget that <code>(len zs) = 3</code> LiquidHaskell concludes that <code>t</code>, and hence, <code>zs'</code> contains two elements.</p>
+<p>Here, from the use of the <code>:</code> in the pattern, LiquidHaskell can determine
+that <code>(len zs) = 1 + (len t)</code>; by combining this fact with the nugget
+that <code>(len zs) = 3</code> LiquidHaskell concludes that <code>t</code>, and hence, <code>zs'</code>
+contains two elements.</p>
 <h2 id="reasoning-about-lengths">Reasoning about Lengths</h2>
-<p>Let’s flex our new vocabulary by uttering types that describe the behavior of the usual list functions.</p>
-<p>First up: a version of the <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/master/include/GHC/List.lhs#L125">standard</a> <code>length</code> function, slightly simplified for exposition.</p>
+<p>Let’s flex our new vocabulary by uttering types that describe the
+behavior of the usual list functions.</p>
+<p>First up: a version of the <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/master/include/GHC/List.lhs#L125">standard</a>
+<code>length</code> function, slightly simplified for exposition.</p>
 <pre><span class="hs-linenum">99: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">length</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Int</span> <span class="hs-keyword">| v = (len xs)}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">100: </span><span class="hs-definition">length</span> <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span>
 <span class="hs-linenum">101: </span><a class="annot" href="#"><span class="annottext">xs:[a] -&gt; {VV : (GHC.Types.Int) | (VV = len([xs]))}</span><span class="hs-definition">length</span></a> <span class="hs-conid">[]</span>     <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x:(GHC.Prim.Int#) -&gt; {VV : (GHC.Types.Int) | (VV = (x  :  int))}</span><span class="hs-num">0</span></a>
 <span class="hs-linenum">102: </span><span class="hs-definition">length</span> <span class="hs-layout">(</span><span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-varid">xs</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = (1  :  int))}</span><span class="hs-num">1</span></a> <a class="annot" href="#"><span class="annottext">x:(GHC.Types.Int)
 -&gt; y:(GHC.Types.Int) -&gt; {VV : (GHC.Types.Int) | (VV = (x + y))}</span><span class="hs-varop">+</span></a> <a class="annot" href="#"><span class="annottext">xs:[a] -&gt; {VV : (GHC.Types.Int) | (VV = len([xs]))}</span><span class="hs-varid">length</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a>
 </pre>
-<p><strong>Note:</strong> Recall that <code>measure</code> values don’t actually exist at run-time. However, functions like <code>length</code> are useful in that they allow us to effectively <em>pull</em> or <em>materialize</em> the ghost values from the refinement world into the actual code world (since the value returned by <code>length</code> is logically equal to the <code>len</code> of the input list.)</p>
-<p>Similarly, we can speak and have confirmed, the types for the usual list-manipulators like</p>
+<p><strong>Note:</strong> Recall that <code>measure</code> values don’t actually exist at run-time.
+However, functions like <code>length</code> are useful in that they allow us to
+effectively <em>pull</em> or <em>materialize</em> the ghost values from the refinement
+world into the actual code world (since the value returned by <code>length</code> is
+logically equal to the <code>len</code> of the input list.)</p>
+<p>Similarly, we can speak and have confirmed, the types for the usual
+list-manipulators like</p>
 <pre><span class="hs-linenum">115: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">map</span>      <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">b</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-keyglyph">[</span><span class="hs-varid">b</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">| (len v) = (len xs)}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">116: </span><a class="annot" href="#"><span class="annottext">(a -&gt; b)
 -&gt; x1:[a] -&gt; {VV : [b] | (len([VV]) = len([x1])),(len([VV]) &gt;= 0)}</span><span class="hs-definition">map</span></a> <span class="hs-keyword">_</span> <span class="hs-conid">[]</span>     <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [{VV : a | false}] | (len([VV]) = 0)}</span><span class="hs-conid">[]</span></a> 
@@ -351,13 +378,19 @@ The description of <code>len</code> above should be quite easy to follow. Undern
                (len([VV]) = (len([x3]) + len([x4]))),
                (len([VV]) &gt;= 0)}</span><span class="hs-varid">append</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = ys),(len([VV]) &gt;= 0)}</span><span class="hs-varid">ys</span></a>
 </pre>
-<p>We will return to the above at some later date. Right now, let’s look at some interesting programs that LiquidHaskell can prove safe, by reasoning about the size of various lists.</p>
+<p>We will return to the above at some later date. Right now, let’s look at
+some interesting programs that LiquidHaskell can prove safe, by reasoning
+about the size of various lists.</p>
 <h2 id="example-1-safely-catching-a-list-by-its-tail-or-head">Example 1: Safely Catching A List by Its Tail (or Head)</h2>
-Now, let’s see how we can use these new incantations to banish, forever, certain irritating kinds of errors. Recall how we always summon functions like <code>head</code> and <code>tail</code> with a degree of trepidation, unsure whether the arguments are empty, which will awaken certain beasts
+Now, let’s see how we can use these new incantations to banish, forever,
+certain irritating kinds of errors.
+Recall how we always summon functions like <code>head</code> and <code>tail</code> with a degree of trepidation, unsure whether the arguments are empty, which will awaken certain beasts
 <pre><span class="hs-linenum">150: </span><span class="hs-conid">Prelude</span><span class="hs-varop">&gt;</span> <span class="hs-varid">head</span> <span class="hs-conid">[]</span>
 <span class="hs-linenum">151: </span><span class="hs-varop">***</span> <span class="hs-conid">Exception</span><span class="hs-conop">:</span> <span class="hs-conid">Prelude</span><span class="hs-varop">.</span><span class="hs-varid">head</span><span class="hs-conop">:</span> <span class="hs-varid">empty</span> <span class="hs-varid">list</span>
 </pre>
-<p>LiquidHaskell allows us to use these functions with confidence and surety! First off, let’s define a predicate alias that describes non-empty lists:</p>
+<p>LiquidHaskell allows us to use these functions with
+confidence and surety! First off, let’s define a predicate
+alias that describes non-empty lists:</p>
 <pre><span class="hs-linenum">159: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">predicate</span> <span class="hs-conid">NonNull</span> <span class="hs-conid">X</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-conid">X</span><span class="hs-layout">)</span> <span class="hs-varop">&gt;</span> <span class="hs-num">0</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 </pre>
 <p>Now, we can type the potentially dangerous <code>head</code> as:</p>
@@ -365,15 +398,20 @@ Now, let’s see how we can use these new incantations to banish, forever, certa
 <span class="hs-linenum">166: </span><a class="annot" href="#"><span class="annottext">{VV : [a] | (len([VV]) &gt; 0)} -&gt; a</span><span class="hs-definition">head</span></a> <span class="hs-layout">(</span><span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-keyword">_</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a>
 <span class="hs-linenum">167: </span><span class="hs-definition">head</span> <span class="hs-conid">[]</span>    <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | false} -&gt; {VV : a | false}</span><span class="hs-varid">liquidError</span></a> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"Fear not! 'twill ne'er come to pass"</span></a>
 </pre>
-<p>As with the case of <a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">divide-by-zero</a>, LiquidHaskell deduces that the second equation is <em>dead code</em> since the precondition (input) type states that the length of the input is strictly positive, which <em>precludes</em> the case where the parameter is <code>[]</code>.</p>
+<p>As with the case of <a href="../../../../blog/2013/01/01/refinement-types-101.lhs/">divide-by-zero</a>, LiquidHaskell deduces that
+the second equation is <em>dead code</em> since the precondition (input) type
+states that the length of the input is strictly positive, which <em>precludes</em>
+the case where the parameter is <code>[]</code>.</p>
 <p>Similarly, we can write</p>
 <pre><span class="hs-linenum">178: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">tail</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">| (NonNull v)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">179: </span><a class="annot" href="#"><span class="annottext">{VV : [a] | (len([VV]) &gt; 0)} -&gt; [a]</span><span class="hs-definition">tail</span></a> <span class="hs-layout">(</span><span class="hs-keyword">_</span><span class="hs-conop">:</span><span class="hs-varid">xs</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a>
 <span class="hs-linenum">180: </span><span class="hs-definition">tail</span> <span class="hs-conid">[]</span>     <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | false}
 -&gt; {VV : [{VV : a | false}] | false}</span><span class="hs-varid">liquidError</span></a> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"Relaxeth! this too shall ne'er be"</span></a>
 </pre>
-<p>Once again, LiquidHaskell will use the precondition to verify that the <code>liquidError</code> is never invoked.</p>
-<p>Let’s use the above to write a function that eliminates stuttering, that is which converts <code>"ssstringssss liiiiiike thisss"</code> to <code>"strings like this"</code>.</p>
+<p>Once again, LiquidHaskell will use the precondition to verify that the
+<code>liquidError</code> is never invoked.</p>
+<p>Let’s use the above to write a function that eliminates stuttering, that
+is which converts <code>"ssstringssss liiiiiike thisss"</code> to <code>"strings like this"</code>.</p>
 <pre><span class="hs-linenum">190: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">eliminateStutter</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Eq</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">191: </span><a class="annot" href="#"><span class="annottext">(GHC.Classes.Eq a) -&gt; [a] -&gt; [a]</span><span class="hs-definition">eliminateStutter</span></a> <a class="annot" href="#"><span class="annottext">[a]</span><span class="hs-varid">xs</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">({VV : [a] | (len([VV]) &gt; 0)} -&gt; a)
 -&gt; xs:[{VV : [a] | (len([VV]) &gt; 0)}]
@@ -412,9 +450,23 @@ Now, let’s see how we can use these new incantations to banish, forever, certa
             (len([VV]) &lt;= len([zs]))}</span><span class="hs-varid">zs</span></a><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(a -&gt; (GHC.Types.Bool)) -&gt; [a] -&gt; ([a] , [a])</span><span class="hs-varid">span</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">x:a
 -&gt; y:a -&gt; {VV : (GHC.Types.Bool) | ((? Prop([VV])) &lt;=&gt; (x = y))}</span><span class="hs-varop">==</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a>
 </pre>
-<p>which gathers consecutive equal elements in the list into a single list. By using the fact that <em>each element</em> in the output returned by <code>groupEq</code> is in fact of the form <code>x:ys</code>, LiquidHaskell infers that <code>groupEq</code> returns a <em>list of non-empty lists</em>. (Hover over the <code>groupEq</code> identifier in the code above to see this.) Next, by automatically instantiating the type parameter for the <code>map</code> in <code>eliminateStutter</code> to <code>(len v) &gt; 0</code> LiquidHaskell deduces <code>head</code> is only called on non-empty lists, thereby verifying the safety of <code>eliminateStutter</code>. (Hover your mouse over <code>map</code> above to see the instantiated type for it!)</p>
+<p>which gathers consecutive equal elements in the list into a single list.
+By using the fact that <em>each element</em> in the output returned by
+<code>groupEq</code> is in fact of the form <code>x:ys</code>, LiquidHaskell infers that
+<code>groupEq</code> returns a <em>list of non-empty lists</em>.
+(Hover over the <code>groupEq</code> identifier in the code above to see this.)
+Next, by automatically instantiating the type parameter for the <code>map</code>
+in <code>eliminateStutter</code> to <code>(len v) &gt; 0</code> LiquidHaskell deduces <code>head</code>
+is only called on non-empty lists, thereby verifying the safety of
+<code>eliminateStutter</code>. (Hover your mouse over <code>map</code> above to see the
+instantiated type for it!)</p>
 <h2 id="example-2-risers">Example 2: Risers</h2>
-<p>The above examples of <code>head</code> and <code>tail</code> are simple, but non-empty lists pop up in many places, and it is rather convenient to have the type system track non-emptiness without having to make up special types. Let’s look at a more interesting example, popularized by <a href="http://neilmitchell.blogspot.com/2008/03/sorting-at-speed.html">Neil Mitchell</a> which is a key step in an efficient sorting procedure, which we may return to in the future when we discuss sorting algorithms.</p>
+<p>The above examples of <code>head</code> and <code>tail</code> are simple, but non-empty lists pop
+up in many places, and it is rather convenient to have the type system
+track non-emptiness without having to make up special types. Let’s look at a
+more interesting example, popularized by <a href="http://neilmitchell.blogspot.com/2008/03/sorting-at-speed.html">Neil Mitchell</a>
+which is a key step in an efficient sorting procedure, which we may return
+to in the future when we discuss sorting algorithms.</p>
 <pre><span class="hs-linenum">224: </span><span class="hs-definition">risers</span>           <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">225: </span><a class="annot" href="#"><span class="annottext">(GHC.Classes.Ord a)
 -&gt; zs:[a] -&gt; {VV : [[a]] | ((len([zs]) &gt; 0) =&gt; (len([VV]) &gt; 0))}</span><span class="hs-definition">risers</span></a> <span class="hs-conid">[]</span>        <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [{VV : [{VV : a | false}] | false}] | (len([VV]) = 0)}</span><span class="hs-conid">[]</span></a>
@@ -453,27 +505,39 @@ Now, let’s see how we can use these new incantations to banish, forever, certa
                  (len([VV]) &gt; 0)}
 -&gt; ([a] , {VV : [[a]] | (len([VV]) &gt;= 0)})</span><span class="hs-varop">$</span></a> <a class="annot" href="#"><span class="annottext">zs:[a] -&gt; {VV : [[a]] | ((len([zs]) &gt; 0) =&gt; (len([VV]) &gt; 0))}</span><span class="hs-varid">risers</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : a | (VV = y)}</span><span class="hs-varid">y</span></a><a class="annot" href="#"><span class="annottext">y:a -&gt; ys:[a] -&gt; {VV : [a] | (len([VV]) = (1 + len([ys])))}</span><span class="hs-conop">:</span></a><a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = etc),(len([VV]) &gt;= 0)}</span><span class="hs-varid">etc</span></a><span class="hs-layout">)</span>
 </pre>
-<p>The bit that should cause some worry is <code>safeSplit</code> which simply returns the <code>head</code> and <code>tail</code> of its input, if they exist, and otherwise, crashes and burns</p>
+<p>The bit that should cause some worry is <code>safeSplit</code> which
+simply returns the <code>head</code> and <code>tail</code> of its input, if they
+exist, and otherwise, crashes and burns</p>
 <pre><span class="hs-linenum">237: </span><a class="annot" href="#"><span class="annottext">{VV : [a] | (len([VV]) &gt; 0)} -&gt; (a , {VV : [a] | (len([VV]) &gt;= 0)})</span><span class="hs-definition">safeSplit</span></a> <span class="hs-layout">(</span><span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-varid">xs</span><span class="hs-layout">)</span>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:a -&gt; b -&gt; (a , b)</span><span class="hs-layout">(</span></a><a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a><span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a><span class="hs-layout">)</span>
 <span class="hs-linenum">238: </span><span class="hs-definition">safeSplit</span> <span class="hs-keyword">_</span>       <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | false}
 -&gt; {VV : ({VV : a | false} , {VV : [{VV : a | false}] | false}) | false}</span><span class="hs-varid">liquidError</span></a> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"don't worry, be happy"</span></a>
 </pre>
 <p>How can we verify that <code>safeSplit</code> <em>will not crash</em> ?</p>
-<p>The matter is complicated by the fact that since <code>risers</code> <em>does</em> sometimes return an empty list, we cannot blithely specify that its output type has a <code>NonNull</code> refinement.</p>
+<p>The matter is complicated by the fact that since <code>risers</code>
+<em>does</em> sometimes return an empty list, we cannot blithely
+specify that its output type has a <code>NonNull</code> refinement.</p>
 <p>Once again, logic rides to our rescue!</p>
-<p>The crucial property upon which the safety of <code>risers</code> rests is that when the input list is non-empty, the output list returned by risers is <em>also</em> non-empty. It is quite easy to clue LiquidHaskell in on this, namely through a type specification:</p>
+<p>The crucial property upon which the safety of <code>risers</code> rests
+is that when the input list is non-empty, the output list
+returned by risers is <em>also</em> non-empty. It is quite easy to clue
+LiquidHaskell in on this, namely through a type specification:</p>
 <pre><span class="hs-linenum">255: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">risers</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> 
 <span class="hs-linenum">256: </span>           <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">zs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> 
 <span class="hs-linenum">257: </span>           <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span> <span class="hs-keyglyph">[</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">| ((NonNull zs) =&gt; (NonNull v)) }</span> <span class="hs-keyword">@-}</span> 
 </pre>
-<p>Note how we relate the output’s non-emptiness to the input’s non-emptiness,through the (dependent) refinement type. With this specification in place, LiquidHaskell is pleased to verify <code>risers</code> (i.e. the call to <code>safeSplit</code>).</p>
+<p>Note how we relate the output’s non-emptiness to the input’s
+non-emptiness,through the (dependent) refinement type. With this
+specification in place, LiquidHaskell is pleased to verify <code>risers</code>
+(i.e. the call to <code>safeSplit</code>).</p>
 <h2 id="example-3-mapreduce">Example 3: MapReduce</h2>
 <p>Here’s a longer example that illustrates this: a toy <em>map-reduce</em> implementation.</p>
-<p>First, let’s write a function <code>keyMap</code> that expands a list of inputs into a list of key-value pairs:</p>
+<p>First, let’s write a function <code>keyMap</code> that expands a list of inputs into a
+list of key-value pairs:</p>
 <pre><span class="hs-linenum">274: </span><span class="hs-definition">keyMap</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-varid">k</span><span class="hs-layout">,</span> <span class="hs-varid">v</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-varid">k</span><span class="hs-layout">,</span> <span class="hs-varid">v</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">275: </span><a class="annot" href="#"><span class="annottext">(a -&gt; {VV : [(b , c)] | (len([VV]) &gt;= 0)}) -&gt; [a] -&gt; [(b , c)]</span><span class="hs-definition">keyMap</span></a> <a class="annot" href="#"><span class="annottext">a -&gt; {VV : [(b , c)] | (len([VV]) &gt;= 0)}</span><span class="hs-varid">f</span></a> <a class="annot" href="#"><span class="annottext">[a]</span><span class="hs-varid">xs</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(a -&gt; [(b , c)]) -&gt; [a] -&gt; [(b , c)]</span><span class="hs-varid">concatMap</span></a> <a class="annot" href="#"><span class="annottext">a -&gt; {VV : [(b , c)] | (len([VV]) &gt;= 0)}</span><span class="hs-varid">f</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a>
 </pre>
-<p>Next, let’s write a function <code>group</code> that gathers the key-value pairs into a <code>Map</code> from <em>keys</em> to the lists of values with that same key.</p>
+<p>Next, let’s write a function <code>group</code> that gathers the key-value pairs into a
+<code>Map</code> from <em>keys</em> to the lists of values with that same key.</p>
 <pre><span class="hs-linenum">282: </span><a class="annot" href="#"><span class="annottext">(GHC.Classes.Eq a)
 -&gt; (Data.Hashable.Class.Hashable a)
 -&gt; [(a , b)]
@@ -489,7 +553,8 @@ Now, let’s see how we can use these new incantations to banish, forever, certa
 -&gt; (Data.HashMap.Base.HashMap a {VV : [b] | (len([VV]) &gt; 0)})
 -&gt; (Data.HashMap.Base.HashMap a {VV : [b] | (len([VV]) &gt; 0)})</span><span class="hs-varid">inserts</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = k)}</span><span class="hs-varid">k</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = v)}</span><span class="hs-varid">v</span></a> <a class="annot" href="#"><span class="annottext">{VV : (Data.HashMap.Base.HashMap a {VV : [b] | (len([VV]) &gt; 0)}) | (VV = m)}</span><span class="hs-varid">m</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">(Data.HashMap.Base.HashMap {VV : a | false} {VV : [{VV : b | false}] | false})</span><span class="hs-conid">M</span></a><span class="hs-varop">.</span><span class="hs-varid">empty</span> <a class="annot" href="#"><span class="annottext">{VV : [(a , b)] | (VV = kvs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">kvs</span></a> 
 </pre>
-<p>The function <code>inserts</code> simply adds the new value <code>v</code> to the list of previously known values <code>lookupDefault [] k m</code> for the key <code>k</code>.</p>
+<p>The function <code>inserts</code> simply adds the new value <code>v</code> to the list of
+previously known values <code>lookupDefault [] k m</code> for the key <code>k</code>.</p>
 <pre><span class="hs-linenum">289: </span><a class="annot" href="#"><span class="annottext">(GHC.Classes.Eq a)
 -&gt; (Data.Hashable.Class.Hashable a)
 -&gt; a
@@ -504,7 +569,8 @@ Now, let’s see how we can use these new incantations to banish, forever, certa
 -&gt; (Data.HashMap.Base.HashMap b {VV : [a] | (len([VV]) &gt;= 0)})
 -&gt; {VV : [a] | (len([VV]) &gt;= 0)}</span><span class="hs-conid">M</span></a><span class="hs-varop">.</span><span class="hs-varid">lookupDefault</span> <a class="annot" href="#"><span class="annottext">{VV : [{VV : a | false}] | (len([VV]) = 0),(len([VV]) &gt;= 0)}</span><span class="hs-conid">[]</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = k)}</span><span class="hs-varid">k</span></a> <a class="annot" href="#"><span class="annottext">{VV : (Data.HashMap.Base.HashMap a {VV : [b] | (len([VV]) &gt; 0)}) | (VV = m)}</span><span class="hs-varid">m</span></a>
 </pre>
-<p>Finally, a function that <em>reduces</em> the list of values for a given key in the table to a single value:</p>
+<p>Finally, a function that <em>reduces</em> the list of values for a given
+key in the table to a single value:</p>
 <pre><span class="hs-linenum">297: </span><span class="hs-definition">reduce</span>    <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">v</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">v</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">M</span><span class="hs-varop">.</span><span class="hs-conid">HashMap</span> <span class="hs-varid">k</span> <span class="hs-keyglyph">[</span><span class="hs-varid">v</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">M</span><span class="hs-varop">.</span><span class="hs-conid">HashMap</span> <span class="hs-varid">k</span> <span class="hs-varid">v</span>
 <span class="hs-linenum">298: </span><a class="annot" href="#"><span class="annottext">(x2:a -&gt; x3:a -&gt; {VV : a | (VV &gt; x2),(VV &gt; x3)})
 -&gt; (Data.HashMap.Base.HashMap b {VV : [a] | (len([VV]) &gt; 0)})
@@ -582,13 +648,28 @@ Now, let’s see how we can use these new incantations to banish, forever, certa
 <span class="hs-linenum">337: </span>                   <span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"fox"</span></a><span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"jumped"</span></a><span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"over"</span></a>
 <span class="hs-linenum">338: </span>                   <span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"the"</span></a><span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"lazy"</span></a>  <span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"cow"</span></a>   <span class="hs-keyglyph">]</span>
 </pre>
-<p><strong>Look Ma! No Types:</strong> LiquidHaskell will gobble the whole thing up, and verify that none of the undesirable <code>liquidError</code> calls are triggered. By the way, notice that we didn’t write down any types for <code>mapReduce</code> and friends. The main invariant, from which safety follows is that the <code>Map</code> returned by the <code>group</code> function binds each key to a <em>non-empty</em> list of values. LiquidHaskell deduces this invariant by inferring suitable types for <code>group</code>, <code>inserts</code>, <code>foldl1</code> and <code>reduce</code>, thereby relieving us of that tedium. In short, by riding on the broad and high shoulders of SMT and abstract interpretation, LiquidHaskell makes a little typing go a long way.</p>
+<p><strong>Look Ma! No Types:</strong> LiquidHaskell will gobble the whole thing up, and
+verify that none of the undesirable <code>liquidError</code> calls are triggered. By
+the way, notice that we didn’t write down any types for <code>mapReduce</code> and
+friends. The main invariant, from which safety follows is that the <code>Map</code>
+returned by the <code>group</code> function binds each key to a <em>non-empty</em> list of
+values. LiquidHaskell deduces this invariant by inferring suitable types
+for <code>group</code>, <code>inserts</code>, <code>foldl1</code> and <code>reduce</code>, thereby relieving us of that
+tedium. In short, by riding on the broad and high shoulders of SMT and
+abstract interpretation, LiquidHaskell makes a little typing go a long way.</p>
 <h2 id="conclusions">Conclusions</h2>
 <p>Well folks, thats all for now. I trust this article gave you a sense of</p>
 <ol type="1">
-<li><p>How we can describe certain <em>structural properties</em> of data types, such as the length of a list,</p></li>
-<li><p>How we might use refinements over these properties to describe key invariants and establish, at compile-time, the safety of operations that might blow up on unexpected values at run-time, and perhaps, most importantly,</p></li>
-<li><p>How we can achieve the above, whilst just working with good old lists, without having to <a href="http://blog.jbapple.com/2008/01/extra-type-safety-using-polymorphic.html">make up new types</a> (which have the unfortunate effect of cluttering programs with their attendant new functions) in order to enforce special invariants.</p></li>
+<li><p>How we can describe certain <em>structural properties</em> of data types,
+such as the length of a list,</p></li>
+<li><p>How we might use refinements over these properties to describe key
+invariants and establish, at compile-time, the safety of operations that
+might blow up on unexpected values at run-time, and perhaps, most
+importantly,</p></li>
+<li><p>How we can achieve the above, whilst just working with good old lists,
+without having to <a href="http://blog.jbapple.com/2008/01/extra-type-safety-using-polymorphic.html">make up new types</a> (which have the
+unfortunate effect of cluttering programs with their attendant new
+functions) in order to enforce special invariants.</p></li>
 </ol>
                 <hr>
                 <ul class="pager">

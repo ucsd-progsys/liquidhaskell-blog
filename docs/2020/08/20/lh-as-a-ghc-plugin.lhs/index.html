@@ -260,7 +260,7 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/basic.html">basic</a>
+                Tags: <a title="All pages tagged 'basic'." href="../../../../tags/basic.html">basic</a>
               
             </div>
 
@@ -268,16 +268,30 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 			            <div class="hidden">
 
 </div>
-<p>I enjoy working with LH. However, I’d be the very first to confess that it has been incredibly tedious to get to work on <em>existing</em> code bases, for various reasons.</p>
+<p>I enjoy working with LH. However, I’d be the very first to confess
+that it has been incredibly tedious to get to work on <em>existing</em> code
+bases, for various reasons.</p>
 <ol type="1">
-<li><p>LH ran <em>one file at a time</em>; it was a hassle to <strong>systematically analyze</strong> all the modules in a single package.</p></li>
-<li><p>LH had <em>no notion of packages</em>; it was impossible to <strong>import specifications</strong> across packages.</p></li>
-<li><p>LH had <em>no integration</em> with the standard compilation cycle; it was difficult to get robust, <strong>development-time feedback</strong> using <code>ghci</code> based tools.</p></li>
+<li><p>LH ran <em>one file at a time</em>; it was a hassle to <strong>systematically analyze</strong>
+all the modules in a single package.</p></li>
+<li><p>LH had <em>no notion of packages</em>; it was impossible to <strong>import specifications</strong>
+across packages.</p></li>
+<li><p>LH had <em>no integration</em> with the standard compilation cycle; it was difficult
+to get robust, <strong>development-time feedback</strong> using <code>ghci</code> based tools.</p></li>
 </ol>
 <p>I’m delighted to announce the release of <a href="http://ucsd-progsys.github.io/liquidhaskell/">LH version 0.8.10.2</a>.</p>
-<p>Thanks to the ingenuity and tireless efforts of our friends <a href="http://www.alfredodinapoli.com/">Alfredo Di Napoli</a> and <a href="https://www.andres-loeh.de/">Andres Loh</a> at <a href="http://www.well-typed.com/">Well-Typed</a> this new version solves all three of the above problems in a single stroke, making it vastly simpler (dare I say, quite straightforward!) to run LH on your Haskell code.</p>
+<p>Thanks to the ingenuity and tireless efforts of our friends <a href="http://www.alfredodinapoli.com/">Alfredo Di Napoli</a>
+and <a href="https://www.andres-loeh.de/">Andres Loh</a> at <a href="http://www.well-typed.com/">Well-Typed</a> this new version
+solves all three of the above problems in a single stroke, making it vastly simpler
+(dare I say, quite straightforward!) to run LH on your Haskell code.</p>
 <!-- more -->
-<p>Alfredo and Andres’ key insight was that all the above problems could be solved if LH could be re-engineered as a <a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/extending_ghc.html#compiler-plugins">GHC Compiler Plugin</a> using hooks that GHC exposes to integrate external checkers during compilation. I strongly encourage you to check out Alfredo’s talk at the <a href="https://icfp20.sigplan.org/details/hiw-2020-papers/1/Liquid-Haskell-as-a-GHC-Plugin">Haskell Implementor’s Workshop</a> if you want to learn more about the rather non-trivial mechanics of how this plugin was engineered. However, in this post, lets look at <em>how</em> and <em>why</em> to use the plugin, in particular, how the plugin lets us</p>
+<p>Alfredo and Andres’ key insight was that all the above problems could be solved if
+LH could be re-engineered as a <a href="https://downloads.haskell.org/~ghc/latest/docs/html/users_guide/extending_ghc.html#compiler-plugins">GHC Compiler Plugin</a>
+using hooks that GHC exposes to integrate external checkers during compilation.
+I strongly encourage you to check out Alfredo’s talk at the <a href="https://icfp20.sigplan.org/details/hiw-2020-papers/1/Liquid-Haskell-as-a-GHC-Plugin">Haskell Implementor’s Workshop</a>
+if you want to learn more about the rather non-trivial mechanics of how this plugin was engineered.
+However, in this post, lets look at <em>how</em> and <em>why</em> to use the plugin,
+in particular, how the plugin lets us</p>
 <ol type="1">
 <li><p>Use GHC’s dependency resolution to analyze entire packages with minimal recompilation;</p></li>
 <li><p>Ship refined type specifications for old or new packages, and have them be verified at client code;</p></li>
@@ -285,21 +299,23 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </ol>
 <p>all of which ultimately, I hope, make Liquid Haskell easier to use.</p>
 <h2 id="analyzing-packages">1. Analyzing Packages</h2>
-<p>First, lets see a small “demo” of how to <em>use</em> the plugin to compile a small <a href="https://github.com/ucsd-progsys/lh-plugin-demo"><code>lh-plugin-demo</code></a> package with two modules</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb1-1" title="1"><span class="kw">module</span> <span class="dt">Demo.Lib</span> <span class="kw">where</span></a>
-<a class="sourceLine" id="cb1-2" title="2"></a>
-<a class="sourceLine" id="cb1-3" title="3"><span class="co">{-@ type Pos = {v:Int | 0 &lt; v} @-}</span></a>
-<a class="sourceLine" id="cb1-4" title="4"></a>
-<a class="sourceLine" id="cb1-5" title="5"><span class="co">{-@ incr :: Pos -&gt; Pos @-}</span></a>
-<a class="sourceLine" id="cb1-6" title="6"><span class="ot">incr ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
-<a class="sourceLine" id="cb1-7" title="7">incr x <span class="ot">=</span> x <span class="op">-</span> <span class="dv">1</span></a></code></pre></div>
+<p>First, lets see a small “demo” of how to <em>use</em> the plugin to compile
+a small <a href="https://github.com/ucsd-progsys/lh-plugin-demo"><code>lh-plugin-demo</code></a>
+package with two modules</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Demo.Lib</span> <span class="kw">where</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ type Pos = {v:Int | 0 &lt; v} @-}</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">{-@ incr :: Pos -&gt; Pos @-}</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ot">incr ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>incr x <span class="ot">=</span> x <span class="op">-</span> <span class="dv">1</span></span></code></pre></div>
 <p>which defines a function <code>incr</code> that consumes and returns positive integers, and</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">module</span> <span class="dt">Demo.Client</span> <span class="kw">where</span></a>
-<a class="sourceLine" id="cb2-2" title="2"></a>
-<a class="sourceLine" id="cb2-3" title="3"><span class="kw">import</span> <span class="dt">Demo.Lib</span></a>
-<a class="sourceLine" id="cb2-4" title="4"></a>
-<a class="sourceLine" id="cb2-5" title="5"><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
-<a class="sourceLine" id="cb2-6" title="6">bump n <span class="ot">=</span> incr n</a></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Demo.Client</span> <span class="kw">where</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Demo.Lib</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>bump n <span class="ot">=</span> incr n</span></code></pre></div>
 <p>which imports <code>Demo.Lib</code> and uses <code>incr</code>.</p>
 <h3 id="updating-.cabal-to-compile-with-the-lh-plugin">Updating <code>.cabal</code> to compile with the LH plugin</h3>
 <p>To “check” this code with LH we need only tell GHC to use it as a plugin, in two steps.</p>
@@ -313,7 +329,16 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <li>Second, tell GHC to use the plugin</li>
 </ol>
 <pre><code>  ghc-options: -fplugin=LiquidHaskell</code></pre>
-<p>That’s it. Now, everytime you (re-)build the code, GHC will <em>automatically</em> run LH on the changed modules! If you use <code>stack</code> you may have to specify a few more dependencies, as the various packages are not (yet) on stackage, as shown in the <a href="https://github.com/ucsd-progsys/lh-plugin-demo/blob/main/stack.yaml">demo <code>stack.yaml</code></a>. No extra dependencies are needede if you use <code>cabal-v2</code>. In both cases, you can use the respective files <a href="https://github.com/ucsd-progsys/lh-plugin-demo/blob/main/stack.yaml.github"><code>stack.yaml</code></a> and <a href="https://github.com/ucsd-progsys/lh-plugin-demo/blob/main/cabal.project.github"><code>cabal.project</code></a> point to specific git snapshots if you want to use the most recent versions. If you clone the repo and run, e.g. <code>cabal v2-build</code> or <code>stack build</code> you’ll get the following result, after the relevant dependencies are downloaded and built of course…</p>
+<p>That’s it. Now, everytime you (re-)build the code, GHC will <em>automatically</em>
+run LH on the changed modules! If you use <code>stack</code> you may have to specify
+a few more dependencies, as the various packages are not (yet) on stackage,
+as shown in the <a href="https://github.com/ucsd-progsys/lh-plugin-demo/blob/main/stack.yaml">demo <code>stack.yaml</code></a>.
+No extra dependencies are needede if you use <code>cabal-v2</code>. In both cases,
+you can use the respective files <a href="https://github.com/ucsd-progsys/lh-plugin-demo/blob/main/stack.yaml.github"><code>stack.yaml</code></a>
+and <a href="https://github.com/ucsd-progsys/lh-plugin-demo/blob/main/cabal.project.github"><code>cabal.project</code></a>
+point to specific git snapshots if you want to use the most recent versions.
+If you clone the repo and run, e.g. <code>cabal v2-build</code> or <code>stack build</code> you’ll get the following result, after the relevant dependencies
+are downloaded and built of course…</p>
 <pre><code>rjhala@khao-soi ~/r/lh-demo (main)&gt; stack build
 lh-plugin-demo&gt; configure (lib)
 Configuring lh-plugin-demo-0.1.0.0...
@@ -338,8 +363,9 @@ Building library for lh-plugin-demo-0.1.0.0..
   |
 7 | incr x = x - 1
   | ^^^^^^^^^^^^^^</code></pre>
-<p>oops, of course that <code>(-)</code> should be a <code>(+)</code> if we want the output to also be <em>positive</em> so lets edit the code to</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb6-1" title="1">incr x <span class="ot">=</span> x <span class="op">+</span> <span class="dv">1</span></a></code></pre></div>
+<p>oops, of course that <code>(-)</code> should be a <code>(+)</code> if we want the output to also be <em>positive</em> so
+lets edit the code to</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>incr x <span class="ot">=</span> x <span class="op">+</span> <span class="dv">1</span></span></code></pre></div>
 <p>and now we get</p>
 <pre><code>rjhala@khao-soi ~/r/lh-plugin-demo (main)&gt; stack build
 lh-plugin-demo&gt; configure (lib)
@@ -369,10 +395,12 @@ Building library for lh-plugin-demo-0.1.0.0..
   |
 6 | bump n = incr n
   |               ^</code></pre>
-<p>That is, during the build, LH complains that <code>incr</code> is being called with a value <code>n</code> that is not strictly positive as required by <code>incr</code>. To fix the code, we can edit it in various ways, e.g. to only call <code>incr</code> if <code>n &gt; 0</code></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb8-1" title="1">bump n </a>
-<a class="sourceLine" id="cb8-2" title="2">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
-<a class="sourceLine" id="cb8-3" title="3">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dv">0</span></a></code></pre></div>
+<p>That is, during the build, LH complains that <code>incr</code> is being called with a value <code>n</code>
+that is not strictly positive as required by <code>incr</code>. To fix the code, we can edit it
+in various ways, e.g. to only call <code>incr</code> if <code>n &gt; 0</code></p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>bump n </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dv">0</span></span></code></pre></div>
 <p>and now the code builds successfully</p>
 <pre><code>rjhala@khao-soi ~/r/lh-plugin-demo (main)&gt; stack build
 lh-plugin-demo&gt; configure (lib)
@@ -391,16 +419,23 @@ Registering library for lh-plugin-demo-0.1.0.0..</code></pre>
 <ul>
 <li><p>A plain <code>stack build</code> or <code>cabal v2-build</code> takes care of all the installing <em>and</em> checking!</p></li>
 <li><p>No need to separately <em>install</em> LH; its part of the regular build.</p></li>
-<li><p>GHC’s recompilation machinery ensures that only the relevant modules are checked, e.g. the second time round, LH did not need to analyze <code>Lib.hs</code> only <code>Client.hs</code></p></li>
+<li><p>GHC’s recompilation machinery ensures that only the relevant
+modules are checked, e.g. the second time round, LH did not need
+to analyze <code>Lib.hs</code> only <code>Client.hs</code></p></li>
 </ul>
 <h2 id="shipping-specifications-with-packages">2. Shipping Specifications with Packages</h2>
-<p>While the above is nice, in principle it could have been done with some clever <code>makefile</code> trickery (perhaps?). What I’m much more excited about is that now, for the first time, you can <em>ship refinement type specifications within plain Haskell packages</em>.</p>
-<p>For example, consider a different <a href="https://github.com/ucsd-progsys/lh-plugin-demo-client">lh-plugin-demo-client</a> package that uses <code>incr</code> from <code>lh-plugin-demo</code>:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb10-1" title="1"><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
-<a class="sourceLine" id="cb10-2" title="2">bump n</a>
-<a class="sourceLine" id="cb10-3" title="3">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
-<a class="sourceLine" id="cb10-4" title="4">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> incr (<span class="dv">0</span> <span class="op">-</span> n)</a></code></pre></div>
-<p>Again, the <code>lh-plugin-demo-client.cabal</code> file need only specify the various dependencies:</p>
+<p>While the above is nice, in principle it could have been done
+with some clever <code>makefile</code> trickery (perhaps?). What I’m much
+more excited about is that now, for the first time, you can
+<em>ship refinement type specifications within plain Haskell packages</em>.</p>
+<p>For example, consider a different <a href="https://github.com/ucsd-progsys/lh-plugin-demo-client">lh-plugin-demo-client</a>
+package that uses <code>incr</code> from <code>lh-plugin-demo</code>:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>bump n</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> incr (<span class="dv">0</span> <span class="op">-</span> n)</span></code></pre></div>
+<p>Again, the <code>lh-plugin-demo-client.cabal</code> file need only specify the various
+dependencies:</p>
 <pre><code>  build-depends:
       liquid-base,
       liquidhaskell,
@@ -434,10 +469,10 @@ Building library for lh-plugin-demo-client-0.1.0.0..
 8 |   | otherwise = incr (0 - n)
   |                      ^^^^^^^</code></pre>
 <p>(Whoops another off by one error, lets fix it!)</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode haskell"><code class="sourceCode haskell"><a class="sourceLine" id="cb14-1" title="1"><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></a>
-<a class="sourceLine" id="cb14-2" title="2">bump n</a>
-<a class="sourceLine" id="cb14-3" title="3">  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</a>
-<a class="sourceLine" id="cb14-4" title="4">  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> incr (<span class="dv">1</span> <span class="op">-</span> n)</a></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ot">bump ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">Int</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>bump n</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">0</span>     <span class="ot">=</span> incr n</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> incr (<span class="dv">1</span> <span class="op">-</span> n)</span></code></pre></div>
 <p>and now all is well</p>
 <pre><code>rjhala@khao-soi ~/r/lh-plugin-demo-client (main)&gt; stack build --fast
 lh-plugin-demo-client&gt; configure (lib)
@@ -454,26 +489,43 @@ Installing library in ...
 Registering library for lh-plugin-demo-client-0.1.0.0..</code></pre>
 <h3 id="prelude-specifications">Prelude Specifications</h3>
 <p>Did you notice the strange <code>liquid-base</code> dependency in the cabal files?</p>
-<p>Previously, LH came installed with a “built-in” set of specifications for various <code>prelude</code> modules. This was <em>hacked</em> inside LH in a rather unfortunate manner, which made these specifications very difficult to extend.</p>
-<p>Moving forward, all the refinement specifications e.g. for <code>GHC.List</code> or <code>Data.Vector</code> or <code>Data.Set</code> or <code>Data.Bytestring</code> simply live in packages that <em>mirror</em> the original versions, e.g. <code>liquid-base</code>, <code>liquid-vector</code>, <code>liquid-containers</code>, <code>liquid-bytestring</code>. Each <code>liquid-X</code> package directly <em>re-exports</em> all the contents of the corresponding <code>X</code> package, but with any additional refinement type specifications.</p>
-<p>Thus, all the refined types for various prelude operations like <code>(+)</code> or <code>(-)</code> or <code>head</code> and so on, now ship with <code>liquid-base</code> and we add that dependency <strong>instead of</strong> base. Similarly, if you want to verify that <em>your</em> code has no <code>vector</code>-index overflow errors, you simply build with <code>liquid-vector</code> <strong>instead of</strong> <code>vector</code>! Of course, in an ideal, and hopefully not too distant future, we’d directly include the refinement types inside <code>vector</code>, <code>containers</code> or <code>bytestring</code> respectively.</p>
+<p>Previously, LH came installed with a “built-in” set of specifications for
+various <code>prelude</code> modules. This was <em>hacked</em> inside LH in a rather unfortunate
+manner, which made these specifications very difficult to extend.</p>
+<p>Moving forward, all the refinement specifications e.g. for <code>GHC.List</code> or <code>Data.Vector</code>
+or <code>Data.Set</code> or <code>Data.Bytestring</code> simply live in packages that <em>mirror</em> the original
+versions, e.g. <code>liquid-base</code>, <code>liquid-vector</code>, <code>liquid-containers</code>, <code>liquid-bytestring</code>.
+Each <code>liquid-X</code> package directly <em>re-exports</em> all the contents of the corresponding <code>X</code>
+package, but with any additional refinement type specifications.</p>
+<p>Thus, all the refined types for various prelude operations like <code>(+)</code> or <code>(-)</code> or <code>head</code>
+and so on, now ship with <code>liquid-base</code> and we add that dependency <strong>instead of</strong> base.
+Similarly, if you want to verify that <em>your</em> code has no <code>vector</code>-index overflow errors,
+you simply build with <code>liquid-vector</code> <strong>instead of</strong> <code>vector</code>! Of course, in an ideal,
+and hopefully not too distant future, we’d directly include the refinement types inside
+<code>vector</code>, <code>containers</code> or <code>bytestring</code> respectively.</p>
 <h3 id="benefits-1">Benefits</h3>
 <p>So to recap, the plugin offers several nice benefits with respect to <em>shipping specifications</em></p>
 <ul>
 <li><p>Refined signatures are bundled together with packages,</p></li>
-<li><p>Importing packages with refined signatures automatically ensures those signatures are checked on client code,</p></li>
-<li><p>You can (optionally) use refined versions of <code>prelude</code> signatures, and hence, even write refined versions of your favorite <em>custom preludes</em>.</p></li>
+<li><p>Importing packages with refined signatures automatically ensures those signatures are
+checked on client code,</p></li>
+<li><p>You can (optionally) use refined versions of <code>prelude</code> signatures, and hence, even
+write refined versions of your favorite <em>custom preludes</em>.</p></li>
 </ul>
 <h2 id="editor-tooling">3. Editor Tooling</h2>
 <p>I saved <em>my</em> favorite part for the end.</p>
-<p>What I have enjoyed the most about the plugin is that now (almost) all the GHC-based tools that I use in my regular Haskell development workflow, automatically incorporate LH too! For example, reloading a module in <code>ghci</code> automatically re-runs LH on that file.</p>
+<p>What I have enjoyed the most about the plugin is that now (almost) all the GHC-based
+tools that I use in my regular Haskell development workflow, automatically incorporate
+LH too! For example, reloading a module in <code>ghci</code> automatically re-runs LH on that file.</p>
 <h3 id="ghcid"><code>ghcid</code></h3>
-<p>This means, that the mega robust, editor-independent <code>ghcid</code> now automatically produces LH type errors when you save a file. Here’s <code>ghcid</code> running in a terminal.</p>
+<p>This means, that the mega robust, editor-independent <code>ghcid</code> now automatically
+produces LH type errors when you save a file. Here’s <code>ghcid</code> running in a terminal.</p>
 <figure>
-<img src="../../../../static/img/plugin-ghcid.gif" alt="ghcid" /><figcaption>ghcid</figcaption>
+<img src="../../../../static/img/plugin-ghcid.gif" alt="ghcid" /><figcaption aria-hidden="true">ghcid</figcaption>
 </figure>
 <h3 id="vscode"><code>vscode</code></h3>
-<p>Editor plugins now produce little red squiggles for LH errors too. Here’s <code>code</code> with the <code>Simple GHC (Haskell) Integration</code> plugin</p>
+<p>Editor plugins now produce little red squiggles for LH errors too.
+Here’s <code>code</code> with the <code>Simple GHC (Haskell) Integration</code> plugin</p>
 <p><img src="../../../../static/img/plugin-vscode.gif" /></p>
 <h3 id="emacs"><code>emacs</code></h3>
 <p>Here’s <code>doom-emacs</code> with the <code>dante</code> plugin</p>
@@ -483,23 +535,34 @@ Registering library for lh-plugin-demo-client-0.1.0.0..</code></pre>
 <p><img src="../../../../static/img/plugin-vim.png" /></p>
 <h3 id="benefits-2">Benefits</h3>
 <ul>
-<li>Some of this <em>was</em> possible before: we had to write special LH modes for different editors – special thanks to <a href="https://github.com/alanz">Alan Zimmerman’s</a> fantastic haskell-ide-engine!. However, now we can simply work with the increasingly more robust GHCi and Language-Server based tools already available for major editors and IDEs.</li>
+<li>Some of this <em>was</em> possible before: we had to write special LH modes for different
+editors – special thanks to <a href="https://github.com/alanz">Alan Zimmerman’s</a> fantastic
+haskell-ide-engine!. However, now we can simply work with the increasingly more robust
+GHCi and Language-Server based tools already available for major editors and IDEs.</li>
 </ul>
 <h2 id="caveats">4. Caveats</h2>
 <p>Of course, all the above is quite new, and so there are a few things to watch out for.</p>
 <ul>
-<li><p>First, for certain kinds of code, LH can take much longer than GHC to check a file. This means, it may actually be too slow to run on every save, and you may want to tweak your <code>.cabal</code> file to <em>only</em> run the plugin during particular builds, not on every file update.</p></li>
-<li><p>Second, the <code>liquid-X</code> machinery is designed to allow drop in replacements for various base packages; it appears to work well in our testing, but if you try it, do let us know if you hit some odd problems that we may not have anticipated.</p></li>
+<li><p>First, for certain kinds of code, LH can take much longer than GHC to check a file.
+This means, it may actually be too slow to run on every save, and you may want to
+tweak your <code>.cabal</code> file to <em>only</em> run the plugin during particular builds, not on
+every file update.</p></li>
+<li><p>Second, the <code>liquid-X</code> machinery is designed to allow drop in replacements for various
+base packages; it appears to work well in our testing, but if you try it, do let us know
+if you hit some odd problems that we may not have anticipated.</p></li>
 </ul>
 <h2 id="summary">Summary</h2>
-<p>Hopefully the above provides an overview of the new plugin mode: how it can be used, and what things it enables. In particular, by virtue of being a GHC plugin, LH can now</p>
+<p>Hopefully the above provides an overview of the new plugin mode: how it can be used,
+and what things it enables. In particular, by virtue of being a GHC plugin, LH can now</p>
 <ol type="1">
 <li><p>Run on entire Haskell packages;</p></li>
 <li><p>Export and import specifications across packages;</p></li>
 <li><p>Provide errors via existing GHC/i based editor tooling.</p></li>
 </ol>
 <p>All of which, I hope, makes it a lot easier to run LH on your code.</p>
-<p>Our most profound thanks to the <a href="https://nsf.gov/">National Science Foundation</a>: this work was made possible by the support provided by grant 1917854: “FMitF: Track II: Refinement Types in the Haskell Ecosystem”.</p>
+<p>Our most profound thanks to the <a href="https://nsf.gov/">National Science Foundation</a>:
+this work was made possible by the support provided by grant 1917854:
+“FMitF: Track II: Refinement Types in the Haskell Ecosystem”.</p>
                 <hr>
                 <ul class="pager">
                     

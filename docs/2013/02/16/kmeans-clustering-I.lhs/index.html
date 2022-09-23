@@ -260,14 +260,21 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/basic.html">basic</a>, <a href="../../../../tags/measures.html">measures</a>
+                Tags: <a title="All pages tagged 'basic'." href="../../../../tags/basic.html">basic</a>, <a title="All pages tagged 'measures'." href="../../../../tags/measures.html">measures</a>
               
             </div>
 
             <br>
-			            <p><a href="../../../../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">Last time</a> we introduced a new specification mechanism called a <em>measure</em> and demonstrated how to use it to encode the <em>length</em> of a list. We saw how measures could be used to verify that functions like <code>head</code> and <code>tail</code> were only called with non-empty lists (whose length was strictly positive). As several folks pointed out, once LiquidHaskell can reason about lengths, it can do a lot more than just analyze non-emptiness.</p>
+			            <p><a href="../../../../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">Last time</a> we introduced a new specification mechanism called a
+<em>measure</em> and demonstrated how to use it to encode the <em>length</em> of a list.
+We saw how measures could be used to verify that functions like <code>head</code> and
+<code>tail</code> were only called with non-empty lists (whose length was strictly
+positive). As several folks pointed out, once LiquidHaskell can reason about
+lengths, it can do a lot more than just analyze non-emptiness.</p>
 <p>Indeed!</p>
-<p>Over the next <em>two</em> posts, lets see how one might implement a Kmeans algorithm that clusters <code>n</code>-dimensional points groups, and how LiquidHaskell can help us write and enforce various dimensionality invariants along the way.</p>
+<p>Over the next <em>two</em> posts, lets see how one might implement a Kmeans
+algorithm that clusters <code>n</code>-dimensional points groups, and how LiquidHaskell
+can help us write and enforce various dimensionality invariants along the way.</p>
 <!-- more -->
 <!-- For example, XXX pointed out that we can use the type system to give an *upper* bound on the size of a list, e.g. using lists
      upper bounded by a gigantic `MAX_INT` value as a proxy for finite lists. -->
@@ -277,21 +284,30 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">36: </span><span class="hs-keyword">import</span> <span class="hs-conid">Data</span><span class="hs-varop">.</span><span class="hs-conid">List</span>                                <span class="hs-layout">(</span><span class="hs-varid">span</span><span class="hs-layout">)</span>
 <span class="hs-linenum">37: </span><span class="hs-keyword">import</span> <span class="hs-conid">Language</span><span class="hs-varop">.</span><span class="hs-conid">Haskell</span><span class="hs-varop">.</span><span class="hs-conid">Liquid</span><span class="hs-varop">.</span><span class="hs-conid">Prelude</span>          <span class="hs-layout">(</span><span class="hs-varid">liquidError</span><span class="hs-layout">)</span>
 </pre>
-<p>Rather than reinvent the wheel, we will modify an existing implementation of K-Means, <a href="http://hackage.haskell.org/package/kmeans">available on hackage</a>. This may not be the most efficient implementation, but its a nice introduction to the algorithm, and the general invariants will hold for more sophisticated implementations.</p>
+<p>Rather than reinvent the wheel, we will modify an existing implementation
+of K-Means, <a href="http://hackage.haskell.org/package/kmeans">available on hackage</a>. This may not be the
+most efficient implementation, but its a nice introduction to the algorithm,
+and the general invariants will hold for more sophisticated implementations.</p>
 <p>We have broken this entry into two convenient, bite-sized chunks:</p>
 <ul>
 <li><p><strong>Part I</strong> Introduces the basic types and list operations needed by KMeans,</p></li>
 <li><p><strong>Part II</strong> Describes how the operations are used in the KMeans implementation.</p></li>
 </ul>
 <h2 id="the-game-clustering-points">The Game: Clustering Points</h2>
-<p>The goal of <a href="http://en.wikipedia.org/wiki/K-means_clustering">K-Means clustering</a> is the following. Given</p>
+<p>The goal of <a href="http://en.wikipedia.org/wiki/K-means_clustering">K-Means clustering</a>
+is the following. Given</p>
 <ul>
-<li><p><strong>Input</strong> : A set of <em>points</em> represented by <em>n-dimensional points</em> in <em>Euclidian</em> space, return</p></li>
-<li><p><strong>Output</strong> : A partitioning of the points, into K clusters, in a manner that minimizes sum of distances between each point and its cluster center.</p></li>
+<li><p><strong>Input</strong> : A set of <em>points</em> represented by <em>n-dimensional points</em>
+in <em>Euclidian</em> space, return</p></li>
+<li><p><strong>Output</strong> : A partitioning of the points, into K clusters, in a manner that
+minimizes sum of distances between each point and its cluster center.</p></li>
 </ul>
 <h2 id="the-players-types">The Players: Types</h2>
 <p>Lets make matters concrete by creating types for the different elements of the algorithm.</p>
-<p><strong>1. Fixed-Length Lists</strong> We will represent n-dimensional points using good old Haskell lists, refined with a predicate that describes the dimensionality (i.e. length.) To simplify matters, lets package this into a <em>type alias</em> that denotes lists of a given length <code>N</code>.</p>
+<p><strong>1. Fixed-Length Lists</strong> We will represent n-dimensional points using
+good old Haskell lists, refined with a predicate that describes the
+dimensionality (i.e. length.) To simplify matters, lets package this
+into a <em>type alias</em> that denotes lists of a given length <code>N</code>.</p>
 <pre><span class="hs-linenum">75: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">List</span> <span class="hs-varid">a</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span> <span class="hs-conop">:</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">N</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
 <p><strong>2. Points</strong> Next, we can represent an <code>N</code>-dimensional point as list of <code>Double</code> of length <code>N</code>,</p>
@@ -303,12 +319,24 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <p><strong>4. Clustering</strong> And finally, a clustering is a list of (non-empty) clusters.</p>
 <pre><span class="hs-linenum">93: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">Clustering</span> <span class="hs-varid">a</span>  <span class="hs-keyglyph">=</span> <span class="hs-keyglyph">[</span><span class="hs-layout">(</span><span class="hs-conid">NonEmptyList</span> <span class="hs-varid">a</span><span class="hs-layout">)</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p><strong>Notation:</strong> When defining refinement type aliases, we use uppercase variables like <code>N</code> to distinguish value- parameters from the lowercase type parameters like <code>a</code>.</p>
-<p><strong>Aside:</strong> By the way, if you are familiar with the <em>index-style</em> length encoding e.g. as found in <a href="http://www.cs.bu.edu/~hwxi/DML/DML.html">DML</a> or <a href="http://code.haskell.org/Agda/examples/Vec.agda">Agda</a>, then its worth noting that despite appearances, our <code>List</code> and <code>Point</code> definitions are <em>not</em> indexed. We’re just using the indices to define abbreviations for the refinement predicates, and we have deliberately chosen the predicates to facilitate SMT based checking and inference.</p>
+<p><strong>Notation:</strong> When defining refinement type aliases, we use uppercase variables like <code>N</code>
+to distinguish value- parameters from the lowercase type parameters like <code>a</code>.</p>
+<p><strong>Aside:</strong> By the way, if you are familiar with the <em>index-style</em> length
+encoding e.g. as found in <a href="http://www.cs.bu.edu/~hwxi/DML/DML.html">DML</a> or <a href="http://code.haskell.org/Agda/examples/Vec.agda">Agda</a>, then its worth
+noting that despite appearances, our <code>List</code> and <code>Point</code> definitions are
+<em>not</em> indexed. We’re just using the indices to define abbreviations for the
+refinement predicates, and we have deliberately chosen the predicates to
+facilitate SMT based checking and inference.</p>
 <h1 id="basic-operations-on-points-and-clusters">Basic Operations on Points and Clusters</h1>
-<p>Ok, with the types firmly in hand, let us go forth and develop the KMeans clustering implementation. We will use a variety of small helper functions (of the kind found in <code>Data.List</code>.) Lets get started by looking at them through our newly <em>refined</em> eyes.</p>
+<p>Ok, with the types firmly in hand, let us go forth and develop the KMeans
+clustering implementation. We will use a variety of small helper functions
+(of the kind found in <code>Data.List</code>.) Lets get started by looking at them
+through our newly <em>refined</em> eyes.</p>
 <h2 id="grouping">Grouping</h2>
-<p>The first such function is <a href="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-List.html#v:groupBy">groupBy</a>. We can refine its type so that instead of just producing a <code>[[a]]</code> we know that it produces a <code>Clustering a</code> which is a list of <em>non-empty</em> lists.</p>
+<p>The first such function is <a href="http://hackage.haskell.org/packages/archive/base/latest/doc/html/Data-List.html#v:groupBy">groupBy</a>. We can
+refine its type so that instead of just producing a <code>[[a]]</code>
+we know that it produces a <code>Clustering a</code> which is a list
+of <em>non-empty</em> lists.</p>
 <pre><span class="hs-linenum">124: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">groupBy</span>       <span class="hs-keyglyph">::</span><span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Clustering</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">125: </span><a class="annot" href="#"><span class="annottext">(a -&gt; a -&gt; (GHC.Types.Bool))
 -&gt; [a] -&gt; {VV : [{VV : [a] | (len([VV]) &gt; 0)}] | (len([VV]) &gt;= 0)}</span><span class="hs-definition">groupBy</span></a> <span class="hs-keyword">_</span>  <span class="hs-conid">[]</span>     <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [{VV : [{VV : a | false}] | false}] | (len([VV]) = 0)}</span><span class="hs-conid">[]</span></a>
@@ -324,7 +352,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
             (len([VV]) &gt;= 0)}</span><span class="hs-varid">zs</span></a>
 <span class="hs-linenum">127: </span>  <span class="hs-keyword">where</span> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = ys),(len([VV]) = len([ys])),(len([VV]) &gt;= 0)}</span><span class="hs-varid">ys</span></a><span class="hs-layout">,</span><a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = zs),(len([VV]) = len([zs])),(len([VV]) &gt;= 0)}</span><span class="hs-varid">zs</span></a><span class="hs-layout">)</span>   <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">(a -&gt; (GHC.Types.Bool)) -&gt; [a] -&gt; ([a] , [a])</span><span class="hs-varid">span</span></a> <span class="hs-layout">(</span><a class="annot" href="#"><span class="annottext">a -&gt; a -&gt; (GHC.Types.Bool)</span><span class="hs-varid">eq</span></a> <a class="annot" href="#"><span class="annottext">{VV : a | (VV = x)}</span><span class="hs-varid">x</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a>
 </pre>
-<p>Intuitively, its pretty easy to see how LiquidHaskell verifies the refined specification:</p>
+<p>Intuitively, its pretty easy to see how LiquidHaskell verifies the refined
+specification:</p>
 <ul>
 <li>Each element of the output list is of the form <code>x:ys</code></li>
 <li>For any list <code>ys</code> the length is non-negative, i.e. <code>(len ys) &gt;= 0</code></li>
@@ -335,8 +364,12 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <pre><span class="hs-linenum">143: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">partition</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">size</span><span class="hs-conop">:</span><span class="hs-conid">PosInt</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Clustering</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">144: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">PosInt</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-varop">&gt;</span> <span class="hs-num">0</span> <span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>which is given a <em>strictly positive</em> integer argument, a list of <code>a</code> values, and returns a <code>Clustering a</code>, that is, a list of non-empty lists. (Each inner list has a length that is less than <code>size</code>, but we shall elide this for simplicity.)</p>
-<p>The function is implemented in a straightforward manner, using the library functions <code>take</code> and <code>drop</code></p>
+<p>which is given a <em>strictly positive</em> integer argument,
+a list of <code>a</code> values, and returns a <code>Clustering a</code>,
+that is, a list of non-empty lists. (Each inner list has a length
+that is less than <code>size</code>, but we shall elide this for simplicity.)</p>
+<p>The function is implemented in a straightforward manner, using the
+library functions <code>take</code> and <code>drop</code></p>
 <pre><span class="hs-linenum">156: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt; 0)}
 -&gt; [a] -&gt; {VV : [{VV : [a] | (len([VV]) &gt; 0)}] | (len([VV]) &gt;= 0)}</span><span class="hs-definition">partition</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV &gt; 0)}</span><span class="hs-varid">size</span></a> <span class="hs-conid">[]</span>       <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [{VV : [{VV : a | false}] | false}] | (len([VV]) = 0)}</span><span class="hs-conid">[]</span></a>
 <span class="hs-linenum">157: </span><span class="hs-definition">partition</span> <span class="hs-varid">size</span> <span class="hs-varid">ys</span><span class="hs-keyglyph">@</span><span class="hs-layout">(</span><span class="hs-keyword">_</span><span class="hs-conop">:</span><span class="hs-keyword">_</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = zs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">zs</span></a> <a class="annot" href="#"><span class="annottext">y:{VV : [a] | (len([VV]) &gt; 0)}
@@ -351,15 +384,21 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 -&gt; xs:[a]
 -&gt; {VV : [a] | (len([VV]) = ((len([xs]) &lt; n) ? 0 : (len([xs]) - n)))}</span><span class="hs-varid">drop</span></a> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Int) | (VV = size),(VV &gt; 0)}</span><span class="hs-varid">size</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (len([VV]) &gt;= 0)}</span><span class="hs-varid">ys</span></a>
 </pre>
-<p>To verify that a valid <code>Clustering</code> is produced, LiquidHaskell needs only verify that the list <code>zs</code> above is non-empty, by suitably connecting the properties of the inputs <code>size</code> and <code>ys</code> with the output.</p>
+<p>To verify that a valid <code>Clustering</code> is produced, LiquidHaskell needs only
+verify that the list <code>zs</code> above is non-empty, by suitably connecting the
+properties of the inputs <code>size</code> and <code>ys</code> with the output.</p>
 We have <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/master/include/GHC/List.lhs#L334">verified elsewhere</a> that
 <pre><span class="hs-linenum">168: </span><span class="hs-definition">take</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">n</span><span class="hs-conop">:</span><span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-varop">&gt;=</span> <span class="hs-num">0</span> <span class="hs-layout">}</span>
 <span class="hs-linenum">169: </span>     <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">170: </span>     <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-keyword">if</span> <span class="hs-layout">(</span><span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span> <span class="hs-varop">&lt;</span> <span class="hs-varid">n</span><span class="hs-layout">)</span> <span class="hs-keyword">then</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span> <span class="hs-keyword">else</span> <span class="hs-varid">n</span><span class="hs-layout">)</span> <span class="hs-layout">}</span>
 </pre>
-<p>In other words, the output list’s length is the <em>smaller of</em> the input list’s length and <code>n</code>. Thus, since both <code>size</code> and the <code>(len ys)</code> are greater than <code>1</code>, LiquidHaskell deduces that the list returned by <code>take size ys</code> has a length greater than <code>1</code>, i.e., is non-empty.</p>
+<p>In other words, the output list’s length is the <em>smaller of</em> the input
+list’s length and <code>n</code>. Thus, since both <code>size</code> and the <code>(len ys)</code> are
+greater than <code>1</code>, LiquidHaskell deduces that the list returned by <code>take size ys</code> has a length greater than <code>1</code>, i.e., is non-empty.</p>
 <h2 id="zipping">Zipping</h2>
-<p>To compute the <em>Euclidean distance</em> between two points, we will use the <code>zipWith</code> function. We must make sure that it is invoked on points with the same number of dimensions, so we write</p>
+<p>To compute the <em>Euclidean distance</em> between two points, we will use
+the <code>zipWith</code> function. We must make sure that it is invoked on points
+with the same number of dimensions, so we write</p>
 <pre><span class="hs-linenum">186: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">zipWith</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">b</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">c</span><span class="hs-layout">)</span>
 <span class="hs-linenum">187: </span>            <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-varid">b</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-varid">c</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">188: </span><a class="annot" href="#"><span class="annottext">(a -&gt; b -&gt; c)
@@ -375,12 +414,18 @@ We have <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/master/inclu
                (len([VV]) &gt;= 0)}</span><span class="hs-varid">zipWith</span></a> <a class="annot" href="#"><span class="annottext">a -&gt; b -&gt; c</span><span class="hs-varid">f</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = as),(len([VV]) &gt;= 0)}</span><span class="hs-keyword">as</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = bs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">bs</span></a>
 <span class="hs-linenum">189: </span><span class="hs-definition">zipWith</span> <span class="hs-keyword">_</span> <span class="hs-conid">[]</span> <span class="hs-conid">[]</span>         <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : [{VV : a | false}] | (len([VV]) = 0)}</span><span class="hs-conid">[]</span></a>
 </pre>
-<p>The type stipulates that the second input list and the output have the same length as the first input. Furthermore, it rules out the case where one list is empty and the other is not, as in that case the former’s length is zero while the latter’s is not.</p>
+<p>The type stipulates that the second input list and the output have
+the same length as the first input. Furthermore, it rules out the
+case where one list is empty and the other is not, as in that case
+the former’s length is zero while the latter’s is not.</p>
 <h2 id="transposing">Transposing</h2>
-<p>The last basic operation that we will require is a means to <em>transpose</em> a <code>Matrix</code>, which itself is just a list of lists:</p>
+<p>The last basic operation that we will require is a means to
+<em>transpose</em> a <code>Matrix</code>, which itself is just a list of lists:</p>
 <pre><span class="hs-linenum">204: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">Matrix</span> <span class="hs-varid">a</span> <span class="hs-conid">Rows</span> <span class="hs-conid">Cols</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-varid">a</span> <span class="hs-conid">Cols</span><span class="hs-layout">)</span> <span class="hs-conid">Rows</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>The <code>transpose</code> operation flips the rows and columns. I confess that I can never really understand matrices without concrete examples, and even then, barely.</p>
+<p>The <code>transpose</code> operation flips the rows and columns. I confess that I
+can never really understand matrices without concrete examples,
+and even then, barely.</p>
 So, lets say we have a <em>matrix</em>
 <pre><span class="hs-linenum">212: </span><span class="hs-definition">m1</span>  <span class="hs-keyglyph">::</span> <span class="hs-conid">Matrix</span> <span class="hs-conid">Int</span> <span class="hs-num">4</span> <span class="hs-num">2</span>
 <span class="hs-linenum">213: </span><span class="hs-definition">m1</span>  <span class="hs-keyglyph">=</span>  <span class="hs-keyglyph">[</span> <span class="hs-keyglyph">[</span><span class="hs-num">1</span><span class="hs-layout">,</span> <span class="hs-num">2</span><span class="hs-keyglyph">]</span>
@@ -393,8 +438,13 @@ then the matrix <code>m2 = transpose 2 3 m1</code> should be
 <span class="hs-linenum">221: </span><span class="hs-definition">m2</span>  <span class="hs-keyglyph">=</span>  <span class="hs-keyglyph">[</span> <span class="hs-keyglyph">[</span><span class="hs-num">1</span><span class="hs-layout">,</span> <span class="hs-num">3</span><span class="hs-layout">,</span> <span class="hs-num">5</span><span class="hs-layout">,</span> <span class="hs-num">7</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">222: </span>       <span class="hs-layout">,</span> <span class="hs-keyglyph">[</span><span class="hs-num">2</span><span class="hs-layout">,</span> <span class="hs-num">4</span><span class="hs-layout">,</span> <span class="hs-num">6</span><span class="hs-layout">,</span> <span class="hs-num">8</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">]</span>
 </pre>
-<p>We will use a <code>Matrix a m n</code> to represent a <em>single cluster</em> of <code>m</code> points each of which has <code>n</code> dimensions. We will transpose the matrix to make it easy to <em>sum</em> and <em>average</em> the points along <em>each</em> dimension, in order to compute the <em>center</em> of the cluster.</p>
-<p>As you can work out from the above, the code for <code>transpose</code> is quite straightforward: each <em>output row</em> is simply the list of <code>head</code>s of the <em>input rows</em>:</p>
+<p>We will use a <code>Matrix a m n</code> to represent a <em>single cluster</em> of <code>m</code> points
+each of which has <code>n</code> dimensions. We will transpose the matrix to make it
+easy to <em>sum</em> and <em>average</em> the points along <em>each</em> dimension, in order to
+compute the <em>center</em> of the cluster.</p>
+<p>As you can work out from the above, the code for <code>transpose</code> is quite
+straightforward: each <em>output row</em> is simply the list of <code>head</code>s of
+the <em>input rows</em>:</p>
 <pre><span class="hs-linenum">235: </span><span class="hs-definition">transpose</span>       <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyglyph">[</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">236: </span>
 <span class="hs-linenum">237: </span><a class="annot" href="#"><span class="annottext">c:(GHC.Types.Int)
@@ -430,7 +480,8 @@ then the matrix <code>m2 = transpose 2 3 m1</code> should be
 <pre><span class="hs-linenum">250: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">transpose</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">c</span><span class="hs-conop">:</span><span class="hs-conid">Int</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">r</span><span class="hs-conop">:</span><span class="hs-conid">PosInt</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Matrix</span> <span class="hs-varid">a</span> <span class="hs-varid">r</span> <span class="hs-varid">c</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Matrix</span> <span class="hs-varid">a</span> <span class="hs-varid">c</span> <span class="hs-varid">r</span> <span class="hs-keyword">@-}</span>
 </pre>
 <p>Try to work it out for yourself on pencil and paper.</p>
-<p>If you like you can get a hint by seeing how LiquidHaskell figures it out. Lets work <em>backwards</em>.</p>
+<p>If you like you can get a hint by seeing how LiquidHaskell figures it out.
+Lets work <em>backwards</em>.</p>
 LiquidHaskell verifies the output type by inferring that
 <pre><span class="hs-linenum">259: </span><span class="hs-definition">row0'</span>        <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-varid">a</span> <span class="hs-varid">r</span><span class="hs-layout">)</span>
 <span class="hs-linenum">260: </span><span class="hs-definition">row1s'</span>       <span class="hs-keyglyph">::</span> <span class="hs-conid">List</span> <span class="hs-layout">(</span><span class="hs-conid">List</span> <span class="hs-varid">a</span> <span class="hs-varid">r</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><span class="hs-varid">c</span> <span class="hs-comment">-</span> <span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-comment">-- i.e. Matrix a (c - 1) r</span>
@@ -462,12 +513,22 @@ the type of <code>rest</code> is
 which is just
 <pre><span class="hs-linenum">297: </span><span class="hs-definition">rest</span>         <span class="hs-keyglyph">::</span> <span class="hs-conid">Matrix</span> <span class="hs-varid">a</span> <span class="hs-varid">r</span> <span class="hs-layout">(</span><span class="hs-varid">c</span><span class="hs-comment">-</span><span class="hs-num">1</span><span class="hs-layout">)</span>
 </pre>
-<p>Now, LiquidHaskell deduces <code>row1s' :: Matrix a (c-1) r</code> by inductively plugging in the output type of the recursive call, thereby checking the function’s signature.</p>
+<p>Now, LiquidHaskell deduces <code>row1s' :: Matrix a (c-1) r</code> by inductively
+plugging in the output type of the recursive call, thereby checking the
+function’s signature.</p>
 <p><em>Whew!</em> That was a fair bit of work, wasn’t it!</p>
-<p>Happily, we didn’t have to do <em>any</em> of it. Instead, using the SMT solver, LiquidHaskell ploughs through calculations like that and guarantees to us that <code>transpose</code> indeed flips the dimensions of the inner and outer lists.</p>
-<p><strong>Aside: Comprehensions vs. Map</strong> Incidentally, the code above is essentially that of <code>transpose</code> <a href="http://hackage.haskell.org/packages/archive/base/latest/doc/html/src/Data-List.html#transpose">from the Prelude</a> with some extra local variables for exposition. You could instead use a <code>map head</code> and <code>map tail</code> and I encourage you to go ahead and <a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/demo/#?demo=KMeansHelper.hs">see for yourself.</a></p>
+<p>Happily, we didn’t have to do <em>any</em> of it. Instead, using the SMT solver,
+LiquidHaskell ploughs through calculations like that and guarantees to us
+that <code>transpose</code> indeed flips the dimensions of the inner and outer lists.</p>
+<p><strong>Aside: Comprehensions vs. Map</strong> Incidentally, the code above is essentially
+that of <code>transpose</code> <a href="http://hackage.haskell.org/packages/archive/base/latest/doc/html/src/Data-List.html#transpose">from the Prelude</a> with some extra
+local variables for exposition. You could instead use a <code>map head</code> and <code>map tail</code>
+and I encourage you to go ahead and <a href="http://goto.ucsd.edu/~rjhala/liquid/haskell/demo/#?demo=KMeansHelper.hs">see for yourself.</a></p>
 <h2 id="intermission">Intermission</h2>
-<p>Time for a break – <a href="http://www.youtube.com/watch?v=8uDuls5TyNE">go see a cat video!</a> – or skip it, stretch your legs, and return post-haste for the <a href="../../../../blog/2013/02/17/kmeans-clustering-II.lhs/">next installment</a>, in which we will use the types and functions described above, to develop the clustering algorithm.</p>
+<p>Time for a break – <a href="http://www.youtube.com/watch?v=8uDuls5TyNE">go see a cat video!</a> – or skip it, stretch your
+legs, and return post-haste for the <a href="../../../../blog/2013/02/17/kmeans-clustering-II.lhs/">next installment</a>, in which
+we will use the types and functions described above, to develop the clustering
+algorithm.</p>
                 <hr>
                 <ul class="pager">
                     

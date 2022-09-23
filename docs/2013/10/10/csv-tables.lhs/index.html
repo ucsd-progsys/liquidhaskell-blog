@@ -260,12 +260,17 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/measures.html">measures</a>
+                Tags: <a title="All pages tagged 'measures'." href="../../../../tags/measures.html">measures</a>
               
             </div>
 
             <br>
-			            <p>Most demonstrations for verification techniques involve programs with complicated invariants and properties. However, these methods can often be rather useful for describing simple but important aspects of APIs or programs with more humble goals. I saw a rather <a href="http://www.reddit.com/r/scala/comments/1nhzi2/using_shapelesss_sized_type_to_eliminate_real/">nice example</a> of using Scala’s <code>Shapeless</code> library for preventing off-by-one errors in CSV processing code. Here’s the same, short, example rephrased with LiquidHaskell.</p>
+			            <p>Most demonstrations for verification techniques involve programs with complicated
+invariants and properties. However, these methods can often be rather useful for
+describing simple but important aspects of APIs or programs with more humble
+goals. I saw a rather <a href="http://www.reddit.com/r/scala/comments/1nhzi2/using_shapelesss_sized_type_to_eliminate_real/">nice example</a> of using Scala’s
+<code>Shapeless</code> library for preventing off-by-one errors in CSV processing
+code. Here’s the same, short, example rephrased with LiquidHaskell.</p>
 <!-- more -->
 <pre><span class="hs-linenum">23: </span><span class="hs-keyword">module</span> <span class="hs-conid">CSV</span> <span class="hs-keyword">where</span>
 <span class="hs-linenum">24: </span>
@@ -274,7 +279,8 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 <h2 id="the-type">The Type</h2>
 <p>Suppose you wanted to represent <em>tables</em> as a list of comma-separated values.</p>
-<p>For example, here’s a table listing the articles and prices at the coffee shop I’m sitting in right now:</p>
+<p>For example, here’s a table listing the articles and prices at the coffee shop
+I’m sitting in right now:</p>
 <table border="1">
 <tr>
 <th>
@@ -334,7 +340,9 @@ Americano
 <span class="hs-linenum">78: </span>                 <span class="hs-keyglyph">]</span>
 </pre>
 <h2 id="the-errors">The Errors</h2>
-<p>Our <code>CSV</code> type supports tables with an arbitrary number of <code>headers</code> and <code>rows</code> but of course, we’d like to ensure that each <code>row</code> has data for <em>each</em> header, that is, we don’t end up with tables like this one</p>
+<p>Our <code>CSV</code> type supports tables with an arbitrary number of <code>headers</code> and
+<code>rows</code> but of course, we’d like to ensure that each <code>row</code> has data for <em>each</em>
+header, that is, we don’t end up with tables like this one</p>
 <pre><span class="hs-linenum">89: </span><span class="hs-comment">-- Eeks, we missed the header name!</span>
 <span class="hs-linenum">90: </span>
 <span class="hs-linenum">91: </span><a class="annot" href="#"><span class="annottext">(CSV.CSV)</span><span class="hs-definition">csvBad1</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:[[(GHC.Types.Char)]]
@@ -357,17 +365,23 @@ Americano
 <span class="hs-linenum">107: </span>              <span class="hs-error"><span class="hs-layout">,</span></span> <a class="annot" href="#"><span class="annottext">{VV : [{VV : [(GHC.Types.Char)] | ((len VV) &gt;= 0)}]&lt;\_ VV -&gt; ((len VV) &gt;= 0)&gt; | (((null VV)) &lt;=&gt; false) &amp;&amp; ((len VV) &gt;= 0)}</span><span class="hs-keyglyph">[</span></a><a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | ((len VV) &gt;= 0)}</span><span class="hs-str">"Cris"</span></a> <span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | ((len VV) &gt;= 0)}</span><span class="hs-str">"29"</span></a>   <span class="hs-keyglyph">]</span> 
 <span class="hs-linenum">108: </span>              <span class="hs-error"><span class="hs-keyglyph">]</span></span>
 </pre>
-<p>Alas, both the above are valid inhabitants of the Haskell <code>CSV</code> type, and so, sneak past GHC.</p>
+<p>Alas, both the above are valid inhabitants of the Haskell <code>CSV</code> type, and
+so, sneak past GHC.</p>
 <h2 id="the-invariant">The Invariant</h2>
-<p>Thus, we want to <em>refine</em> the <code>CSV</code> type to specify that the <em>number</em> of elements in each row is <em>exactly</em> the same as the <em>number</em> of headers.</p>
+<p>Thus, we want to <em>refine</em> the <code>CSV</code> type to specify that the <em>number</em> of
+elements in each row is <em>exactly</em> the same as the <em>number</em> of headers.</p>
 <p>To do so, we merely write a refined data type definition:</p>
 <pre><span class="hs-linenum">123: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">data</span> <span class="hs-conid">CSV</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">Csv</span> <span class="hs-layout">{</span> <span class="hs-varid">headers</span> <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-conid">String</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">124: </span>                   <span class="hs-layout">,</span> <span class="hs-varid">rows</span>    <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-conid">String</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-varid">len</span> <span class="hs-varid">headers</span><span class="hs-layout">)</span><span class="hs-layout">}</span><span class="hs-keyglyph">]</span>
 <span class="hs-linenum">125: </span>                   <span class="hs-layout">}</span>
 <span class="hs-linenum">126: </span>  <span class="hs-keyword">@-}</span>
 </pre>
-<p>Here <code>len</code> is a <em>measure</em> <a href="../../../../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">denoting the length of a list</a>. Thus, <code>(len headers)</code> is the number of headers in the table, and the refinement on the <code>rows</code> field states that <em>each</em> <code>row</code> is a list of <code>String</code>s, with exactly the same number of elements as the number of <code>headers</code>.</p>
-<p>We can now have our arbitrary-arity tables, but LiquidHaskell will make sure that we don’t miss entries here or there.</p>
+<p>Here <code>len</code> is a <em>measure</em> <a href="../../../../blog/2013/01/31/safely-catching-a-list-by-its-tail.lhs/">denoting the length of a list</a>.
+Thus, <code>(len headers)</code> is the number of headers in the table, and the
+refinement on the <code>rows</code> field states that <em>each</em> <code>row</code> is a list of <code>String</code>s,
+with exactly the same number of elements as the number of <code>headers</code>.</p>
+<p>We can now have our arbitrary-arity tables, but LiquidHaskell will
+make sure that we don’t miss entries here or there.</p>
 <pre><span class="hs-linenum">138: </span><span class="hs-comment">-- All is well! </span>
 <span class="hs-linenum">139: </span>
 <span class="hs-linenum">140: </span><a class="annot" href="#"><span class="annottext">(CSV.CSV)</span><span class="hs-definition">csvGood</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:[[(GHC.Types.Char)]]
@@ -380,7 +394,8 @@ Americano
 <span class="hs-linenum">145: </span>              <span class="hs-keyglyph">]</span>
 </pre>
 <h2 id="bonus-points">Bonus Points</h2>
-<p>How would you modify the specification to prevent table with degenerate entries like this one?</p>
+<p>How would you modify the specification to prevent table with degenerate entries
+like this one?</p>
 <pre><span class="hs-linenum">155: </span><a class="annot" href="#"><span class="annottext">(CSV.CSV)</span><span class="hs-definition">deg</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:[[(GHC.Types.Char)]]
 -&gt; [{VV : [[(GHC.Types.Char)]] | ((len VV) == (len x1))}]
 -&gt; (CSV.CSV)</span><span class="hs-conid">Csv</span></a> <a class="annot" href="#"><span class="annottext">{VV : [{VV : [(GHC.Types.Char)] | ((len VV) &gt;= 0)}]&lt;\_ VV -&gt; ((len VV) &gt;= 0)&gt; | (((null VV)) &lt;=&gt; false) &amp;&amp; ((len VV) &gt;= 0)}</span><span class="hs-keyglyph">[</span></a>  <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | ((len VV) &gt;= 0)}</span><span class="hs-str">"Id"</span></a><span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | ((len VV) &gt;= 0)}</span><span class="hs-str">"Name"</span></a><span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | ((len VV) &gt;= 0)}</span><span class="hs-str">"Days"</span></a><span class="hs-keyglyph">]</span>

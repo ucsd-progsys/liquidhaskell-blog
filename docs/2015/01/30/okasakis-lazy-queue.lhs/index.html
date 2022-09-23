@@ -260,13 +260,22 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/measures.html">measures</a>
+                Tags: <a title="All pages tagged 'measures'." href="../../../../tags/measures.html">measures</a>
               
             </div>
 
             <br>
-			            <p>The “Hello World!” example for fancy type systems is probably the sized vector or list <code>append</code> function (“The output has size equal to the <em>sum</em> of the inputs!”). One the one hand, it is perfect: simple enough to explain without pages of code, yet complex enough to show off whats cool about dependency. On the other hand, like the sweater I’m sporting right now, it’s a bit well-worn and worse, was never wholly convincing (“Why do I <em>care</em> what the <em>size</em> of the output list is anyway?”)</p>
-<p>Recently, I came across a nice example that is almost as simple, but is also well motivated: Okasaki’s beautiful <a href="http://www.westpoint.edu/eecs/SiteAssets/SitePages/Faculty%20Publication%20Documents/Okasaki/jfp95queue.pdf">Lazy Amortized Queues</a>. This structure leans heavily on an invariant to provide fast <em>insertion</em> and <em>deletion</em>. Let’s see how to enforce that invariant with LiquidHaskell.</p>
+			            <p>The “Hello World!” example for fancy type systems is probably the sized vector
+or list <code>append</code> function (“The output has size equal to the <em>sum</em> of the
+inputs!”). One the one hand, it is perfect: simple enough to explain without
+pages of code, yet complex enough to show off whats cool about dependency. On
+the other hand, like the sweater I’m sporting right now, it’s a bit well-worn and
+worse, was never wholly convincing (“Why do I <em>care</em> what the <em>size</em> of the
+output list is anyway?”)</p>
+<p>Recently, I came across a nice example that is almost as simple, but is also
+well motivated: Okasaki’s beautiful <a href="http://www.westpoint.edu/eecs/SiteAssets/SitePages/Faculty%20Publication%20Documents/Okasaki/jfp95queue.pdf">Lazy Amortized Queues</a>. This
+structure leans heavily on an invariant to provide fast <em>insertion</em> and
+<em>deletion</em>. Let’s see how to enforce that invariant with LiquidHaskell.</p>
 <!-- more -->
 <div class="hidden">
 <pre><span class="hs-linenum">30: </span><span class="hs-keyword">{-@</span> <span class="hs-conid">LIQUID</span> <span class="hs-str">"--no-termination"</span> <span class="hs-keyword">@-}</span>
@@ -290,39 +299,58 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 </pre>
 </div>
 <h2 id="queues">Queues</h2>
-<p>A <a href="http://en.wikipedia.org/wiki/Queue_%28abstract_data_type%29">queue</a> is a structure into which we can <code>insert</code> and <code>remove</code> data such that the order in which the data is removed is the same as the order in which it was inserted.</p>
+<p>A <a href="http://en.wikipedia.org/wiki/Queue_%28abstract_data_type%29">queue</a> is a structure into which we can <code>insert</code> and <code>remove</code> data
+such that the order in which the data is removed is the same as the order in which
+it was inserted.</p>
 <figure>
-<img src="../../../../static/img/queue.png" alt="A Queue" /><figcaption>A Queue</figcaption>
+<img src="../../../../static/img/queue.png" alt="A Queue" /><figcaption aria-hidden="true">A Queue</figcaption>
 </figure>
-<p>To implement a queue <em>efficiently</em> one needs to have rapid access to both the “head” as well as the “tail” because we <code>remove</code> elements from former and <code>insert</code> elements into the latter. This is quite straightforward with explicit pointers and mutation – one uses an old school linked list and maintains pointers to the head and the tail. But can we implement the structure efficiently without having stoop so low?</p>
+<p>To implement a queue <em>efficiently</em> one needs to have rapid access to both
+the “head” as well as the “tail” because we <code>remove</code> elements from former
+and <code>insert</code> elements into the latter. This is quite straightforward with
+explicit pointers and mutation – one uses an old school linked list and
+maintains pointers to the head and the tail. But can we implement the
+structure efficiently without having stoop so low?</p>
 <h2 id="queues-pair-of-lists">Queues = Pair of Lists</h2>
-<p>Almost two decades ago, Chris Okasaki came up with a very cunning way to implement queues using a <em>pair</em> of lists – let’s call them <code>front</code> and <code>back</code> which represent the corresponding parts of the Queue.</p>
+<p>Almost two decades ago, Chris Okasaki came up with a very cunning way
+to implement queues using a <em>pair</em> of lists – let’s call them <code>front</code>
+and <code>back</code> which represent the corresponding parts of the Queue.</p>
 <ul>
 <li>To <code>insert</code> elements, we just <em>cons</em> them onto the <code>back</code> list,</li>
 <li>To <code>remove</code> elements, we just <em>un-cons</em> them from the <code>front</code> list.</li>
 </ul>
 <figure>
-<img src="../../../../static/img/queue-lists.png" alt="A Queue is Two Lists" /><figcaption>A Queue is Two Lists</figcaption>
+<img src="../../../../static/img/queue-lists.png" alt="A Queue is Two Lists" /><figcaption aria-hidden="true">A Queue is Two Lists</figcaption>
 </figure>
-<p>The catch is that we need to shunt elements from the back to the front every so often, e.g. when</p>
+<p>The catch is that we need to shunt elements from the back to the
+front every so often, e.g. when</p>
 <ol type="1">
 <li>a <code>remove</code> call is triggered, and</li>
 <li>the <code>front</code> list is empty,</li>
 </ol>
 <p>We can transfer the elements from the <code>back</code> to the <code>front</code>.</p>
 <figure>
-<img src="../../../../static/img/queue-rotate.png" alt="Transferring Elements from Back to Front" /><figcaption>Transferring Elements from Back to Front</figcaption>
+<img src="../../../../static/img/queue-rotate.png" alt="Transferring Elements from Back to Front" /><figcaption aria-hidden="true">Transferring Elements from Back to Front</figcaption>
 </figure>
-<p>Okasaki observed that every element is only moved <em>once</em> from the front to the back; hence, the time for <code>insert</code> and <code>lookup</code> could be <code>O(1)</code> when <em>amortized</em> over all the operations. Awesome, right?!</p>
-<p>Almost. Some set of unlucky <code>remove</code> calls (which occur when the <code>front</code> is empty) are stuck paying the bill. They have a rather high latency up to <code>O(n)</code> where <code>n</code> is the total number of operations. Oops.</p>
+<p>Okasaki observed that every element is only moved <em>once</em> from the
+front to the back; hence, the time for <code>insert</code> and <code>lookup</code> could be
+<code>O(1)</code> when <em>amortized</em> over all the operations. Awesome, right?!</p>
+<p>Almost. Some set of unlucky <code>remove</code> calls (which occur when
+the <code>front</code> is empty) are stuck paying the bill. They have a
+rather high latency up to <code>O(n)</code> where <code>n</code> is the total number
+of operations. Oops.</p>
 <h2 id="queue-balanced-lazy-lists">Queue = Balanced Lazy Lists</h2>
-<p>This is where Okasaki’s beautiful insights kick in. Okasaki observed that all we need to do is to enforce a simple invariant:</p>
+<p>This is where Okasaki’s beautiful insights kick in. Okasaki
+observed that all we need to do is to enforce a simple invariant:</p>
 <p><strong>Invariant:</strong> Size of <code>front</code> &gt;= Size of <code>back</code></p>
-<p>Now, if the lists are <em>lazy</em> i.e. only constructed as the head value is demanded, then a single <code>remove</code> needs only a tiny <code>O(log n)</code> in the worst case, and so no single <code>remove</code> is stuck paying the bill.</p>
-<p>Let’s see how to represent these Queues and ensure the crucial invariant(s) with LiquidHaskell. What we need are the following ingredients:</p>
+<p>Now, if the lists are <em>lazy</em> i.e. only constructed as the head
+value is demanded, then a single <code>remove</code> needs only a tiny <code>O(log n)</code>
+in the worst case, and so no single <code>remove</code> is stuck paying the bill.</p>
+<p>Let’s see how to represent these Queues and ensure the crucial invariant(s)
+with LiquidHaskell. What we need are the following ingredients:</p>
 <ol type="1">
 <li><p>A type for <code>List</code>s, and a way to track their <code>size</code>,</p></li>
-<li><p>A type for <code>Queue</code>s which encodes the <em>balance</em> invariant – ``front longer than back",</p></li>
+<li><p>A type for <code>Queue</code>s which encodes the <em>balance</em> invariant – ``front longer than back”,</p></li>
 <li><p>A way to implement the <code>insert</code>, <code>remove</code> and <code>transfer</code> operations.</p></li>
 </ol>
 <h2 id="sized-lists">Sized Lists</h2>
@@ -331,7 +359,10 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 x1:(LazyQueue.SList a)
 -&gt; {v : GHC.Types.Int | v == size x1 &amp;&amp; v &gt;= 0}</span><span class="hs-varid">size</span></a> <span class="hs-keyglyph">::</span> <span class="hs-conid">Int</span><span class="hs-layout">,</span> <a class="annot" href="#"><span class="annottext">forall a. (LazyQueue.SList a) -&gt; [a]</span><span class="hs-varid">elems</span></a> <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span><span class="hs-layout">}</span>
 </pre>
-<p>We have a special field that saves the <code>size</code> because otherwise, we have a linear time computation that wrecks Okasaki’s careful analysis. (Actually, he presents a variant which does <em>not</em> require saving the size as well, but that’s for another day.)</p>
+<p>We have a special field that saves the <code>size</code> because otherwise, we
+have a linear time computation that wrecks Okasaki’s careful
+analysis. (Actually, he presents a variant which does <em>not</em> require
+saving the size as well, but that’s for another day.)</p>
 <p>But how can we be sure that <code>size</code> is indeed the <em>real size</em> of <code>elems</code>?</p>
 <p>Let’s write a function to <em>measure</em> the real size:</p>
 <pre><span class="hs-linenum">140: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">measure</span> <span class="hs-varid">realSize</span> <span class="hs-keyword">@-}</span>
@@ -340,7 +371,8 @@ x1:(LazyQueue.SList a)
 <span class="hs-linenum">143: </span><span class="hs-definition">realSize</span> <span class="hs-layout">(</span><span class="hs-keyword">_</span><span class="hs-conop">:</span><span class="hs-varid">xs</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v == (1  :  int)}</span><span class="hs-num">1</span></a> <a class="annot" href="#"><span class="annottext">x1:GHC.Types.Int
 -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 + x2}</span><span class="hs-varop">+</span></a> <a class="annot" href="#"><span class="annottext">forall a. x1:[a] -&gt; {VV : GHC.Types.Int | VV == realSize x1}</span><span class="hs-varid">realSize</span></a> <a class="annot" href="#"><span class="annottext">{v : [a] | v == xs &amp;&amp; len v &gt;= 0}</span><span class="hs-varid">xs</span></a>
 </pre>
-<p>and now, we can simply specify a <em>refined</em> type for <code>SList</code> that ensures that the <em>real</em> size is saved in the <code>size</code> field:</p>
+<p>and now, we can simply specify a <em>refined</em> type for <code>SList</code> that ensures
+that the <em>real</em> size is saved in the <code>size</code> field:</p>
 <pre><span class="hs-linenum">150: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">data</span> <span class="hs-conid">SList</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">SL</span> <span class="hs-layout">{</span>
 <span class="hs-linenum">151: </span>       <span class="hs-varid">size</span>  <span class="hs-keyglyph">::</span> <span class="hs-conid">Nat</span> 
 <span class="hs-linenum">152: </span>     <span class="hs-layout">,</span> <span class="hs-varid">elems</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">realSize</span> <span class="hs-varid">v</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">size</span><span class="hs-layout">}</span>
@@ -356,7 +388,8 @@ x1:(LazyQueue.SList a)
 -&gt; x2:{v : [a] | realSize v == x1}
 -&gt; {v : (LazyQueue.SList a) | elems v == x2 &amp;&amp; size v == x1}</span><span class="hs-conid">SL</span></a> <a class="annot" href="#"><span class="annottext">{v : GHC.Types.Int | v == (1  :  int)}</span><span class="hs-num">1</span></a> <span class="hs-error"><a class="annot" href="#"><span class="annottext">{v : [a] | null v &lt;=&gt; true &amp;&amp; realSize v == 0 &amp;&amp; len v == 0 &amp;&amp; len v &gt;= 0}</span><span class="hs-conid">[]</span></a></span>         <span class="hs-comment">-- rejected</span>
 </pre>
-<p>It is helpful to define a few aliases for <code>SList</code>s of a size <code>N</code> and non-empty <code>SList</code>s:</p>
+<p>It is helpful to define a few aliases for <code>SList</code>s of a size <code>N</code> and
+non-empty <code>SList</code>s:</p>
 <pre><span class="hs-linenum">169: </span><span class="hs-comment">-- | SList of size N</span>
 <span class="hs-linenum">170: </span>
 <span class="hs-linenum">171: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">SListN</span> <span class="hs-varid">a</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">SList</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">size</span> <span class="hs-varid">v</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">N</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
@@ -396,7 +429,8 @@ x1:{v : (LazyQueue.SList a) | size v &gt; 0}
 <span class="hs-linenum">197: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">hd</span>           <span class="hs-keyglyph">::</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-conid">NEList</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">198: </span><a class="annot" href="#"><span class="annottext">forall a. {v : (LazyQueue.SList a) | size v &gt; 0} -&gt; a</span><span class="hs-definition">hd</span></a> <span class="hs-layout">(</span><span class="hs-conid">SL</span> <span class="hs-keyword">_</span> <span class="hs-layout">(</span><span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-keyword">_</span><span class="hs-layout">)</span><span class="hs-layout">)</span>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : a | VV == x}</span><span class="hs-varid">x</span></a> 
 </pre>
-<p>Don’t worry, they are perfectly <em>safe</em> as LiquidHaskell will make sure we <em>only</em> call these operators on non-empty <code>SList</code>s. For example,</p>
+<p>Don’t worry, they are perfectly <em>safe</em> as LiquidHaskell will make
+sure we <em>only</em> call these operators on non-empty <code>SList</code>s. For example,</p>
 <pre><span class="hs-linenum">205: </span><a class="annot" href="#"><span class="annottext">{v : [GHC.Types.Char] | len v &gt;= 0}</span><span class="hs-definition">okHd</span></a>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | size v &gt; 0}
 -&gt; {v : [GHC.Types.Char] | len v &gt;= 0}</span><span class="hs-varid">hd</span></a> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | v == LazyQueue.okList &amp;&amp; size v &gt; 0}</span><span class="hs-varid">okList</span></a>       <span class="hs-comment">-- accepted</span>
 <span class="hs-linenum">206: </span>
@@ -405,7 +439,8 @@ x1:{v : (LazyQueue.SList a) | size v &gt; 0}
 -&gt; {v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | size v == size x1 - 1}</span><span class="hs-varid">tl</span></a></span><span class="hs-error"> </span><span class="hs-error"><a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList {v : [GHC.Types.Char] | len v &gt;= 0}) | v == LazyQueue.okList &amp;&amp; size v &gt; 0}</span><span class="hs-varid">okList</span></a></span><span class="hs-layout">)</span>  <span class="hs-comment">-- rejected</span>
 </pre>
 <h2 id="queue-type">Queue Type</h2>
-<p>Now, it is quite straightforward to define the <code>Queue</code> type, as a pair of lists, <code>front</code> and <code>back</code>, such that the latter is always smaller than the former:</p>
+<p>Now, it is quite straightforward to define the <code>Queue</code> type, as a pair of lists,
+<code>front</code> and <code>back</code>, such that the latter is always smaller than the former:</p>
 <pre><span class="hs-linenum">218: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">data</span> <span class="hs-conid">Queue</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">=</span> <span class="hs-conid">Q</span> <span class="hs-layout">{</span>
 <span class="hs-linenum">219: </span>       <span class="hs-varid">front</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">SList</span> <span class="hs-varid">a</span> 
 <span class="hs-linenum">220: </span>     <span class="hs-layout">,</span> <span class="hs-varid">back</span>  <span class="hs-keyglyph">::</span> <span class="hs-conid">SListLE</span> <span class="hs-varid">a</span> <span class="hs-layout">(</span><span class="hs-varid">size</span> <span class="hs-varid">front</span><span class="hs-layout">)</span>
@@ -433,19 +468,23 @@ x1:(LazyQueue.Queue a) -&gt; {VV : GHC.Types.Int | VV == qsize x1}</span><span c
 -&gt; x2:GHC.Types.Int -&gt; {v : GHC.Types.Int | v == x1 + x2}</span><span class="hs-varop">+</span></a> <a class="annot" href="#"><span class="annottext">x1:(LazyQueue.SList a)
 -&gt; {v : GHC.Types.Int | v == size x1 &amp;&amp; v &gt;= 0}</span><span class="hs-varid">size</span></a> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | v == r &amp;&amp; size v &lt;= size l}</span><span class="hs-varid">r</span></a>
 </pre>
-<p>This will prove helpful to define <code>Queue</code>s of a given size <code>N</code> and non-empty <code>Queue</code>s (from which values can be safely removed.)</p>
+<p>This will prove helpful to define <code>Queue</code>s of a given size <code>N</code> and
+non-empty <code>Queue</code>s (from which values can be safely removed.)</p>
 <pre><span class="hs-linenum">251: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">QueueN</span> <span class="hs-varid">a</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Queue</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">|</span> <span class="hs-conid">N</span> <span class="hs-keyglyph">=</span> <span class="hs-varid">qsize</span> <span class="hs-varid">v</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">252: </span><span class="hs-keyword">{-@</span> <span class="hs-keyword">type</span> <span class="hs-conid">NEQueue</span> <span class="hs-varid">a</span>  <span class="hs-keyglyph">=</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Queue</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">|</span> <span class="hs-num">0</span> <span class="hs-varop">&lt;</span> <span class="hs-varid">qsize</span> <span class="hs-varid">v</span><span class="hs-layout">}</span> <span class="hs-keyword">@-}</span>
 </pre>
 <h2 id="queue-operations">Queue Operations</h2>
-<p>Almost there! Now all that remains is to define the <code>Queue</code> API. The code below is more or less identical to Okasaki’s (I prefer <code>front</code> and <code>back</code> to his <code>left</code> and <code>right</code>.)</p>
+<p>Almost there! Now all that remains is to define the <code>Queue</code> API. The
+code below is more or less identical to Okasaki’s (I prefer <code>front</code>
+and <code>back</code> to his <code>left</code> and <code>right</code>.)</p>
 <p><strong>The Empty Queue</strong> is simply one where both <code>front</code> and <code>back</code> are <code>nil</code>.</p>
 <pre><span class="hs-linenum">267: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">emp</span> <span class="hs-keyglyph">::</span> <span class="hs-conid">QueueN</span> <span class="hs-varid">a</span> <span class="hs-num">0</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">268: </span><a class="annot" href="#"><span class="annottext">forall a. {v : (LazyQueue.Queue a) | 0 == qsize v}</span><span class="hs-definition">emp</span></a> <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:(LazyQueue.SList a)
 -&gt; x2:{v : (LazyQueue.SList a) | size v &lt;= size x1}
 -&gt; {v : (LazyQueue.Queue a) | qsize v == size x1 + size x2 &amp;&amp; front v == x1 &amp;&amp; back v == x2}</span><span class="hs-conid">Q</span></a> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | size v == 0}</span><span class="hs-varid">nil</span></a> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | size v == 0}</span><span class="hs-varid">nil</span></a>
 </pre>
-<p><strong>To Insert</strong> an element we just <code>cons</code> it to the <code>back</code> list, and call the <em>smart constructor</em> <code>makeq</code> to ensure that the balance invariant holds:</p>
+<p><strong>To Insert</strong> an element we just <code>cons</code> it to the <code>back</code> list, and call
+the <em>smart constructor</em> <code>makeq</code> to ensure that the balance invariant holds:</p>
 <pre><span class="hs-linenum">275: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">insert</span>       <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">q</span><span class="hs-conop">:</span><span class="hs-conid">Queue</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">QueueN</span> <span class="hs-varid">a</span> <span class="hs-keyword">{qsize q + 1}</span>   <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">276: </span><a class="annot" href="#"><span class="annottext">forall a.
 a
@@ -456,7 +495,9 @@ a
 -&gt; x2:(LazyQueue.SList a)
 -&gt; {v : (LazyQueue.SList a) | size v == size v + 1}</span><span class="hs-varop">`cons`</span></a> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | v == b &amp;&amp; size v &lt;= size f}</span><span class="hs-varid">b</span></a><span class="hs-layout">)</span>
 </pre>
-<p><strong>To Remove</strong> an element we pop it off the <code>front</code> by using <code>hd</code> and <code>tl</code>. Notice that the <code>remove</code> is only called on non-empty <code>Queue</code>s, which together with the key balance invariant, ensures that the calls to <code>hd</code> and <code>tl</code> are safe.</p>
+<p><strong>To Remove</strong> an element we pop it off the <code>front</code> by using <code>hd</code> and <code>tl</code>.
+Notice that the <code>remove</code> is only called on non-empty <code>Queue</code>s, which together
+with the key balance invariant, ensures that the calls to <code>hd</code> and <code>tl</code> are safe.</p>
 <pre><span class="hs-linenum">284: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">remove</span>       <span class="hs-keyglyph">::</span> <span class="hs-varid">q</span><span class="hs-conop">:</span><span class="hs-conid">NEQueue</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-varid">a</span><span class="hs-layout">,</span> <span class="hs-conid">QueueN</span> <span class="hs-varid">a</span> <span class="hs-keyword">{qsize q - 1}</span><span class="hs-layout">)</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">285: </span><a class="annot" href="#"><span class="annottext">forall a.
 x1:{v : (LazyQueue.Queue a) | 0 &lt; qsize v}
@@ -469,7 +510,11 @@ x1:a
 -&gt; {v : (LazyQueue.SList a) | size v == size x1 - 1}</span><span class="hs-varid">tl</span></a> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | v == f}</span><span class="hs-varid">f</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | v == b &amp;&amp; size v &lt;= size f}</span><span class="hs-varid">b</span></a><span class="hs-layout">)</span>
 </pre>
 <p><em>Aside:</em> Why didn’t we (or Okasaki) use a pattern match here?</p>
-<p><strong>To Ensure the Invariant</strong> we use the smart constructor <code>makeq</code>, which is where the heavy lifting, such as it is, happens. The constructor takes two lists, the front <code>f</code> and back <code>b</code> and if they are balanced, directly returns the <code>Queue</code>, and otherwise transfers the elements from <code>b</code> over using <code>rot</code>ate.</p>
+<p><strong>To Ensure the Invariant</strong> we use the smart constructor <code>makeq</code>,
+which is where the heavy lifting, such as it is, happens. The
+constructor takes two lists, the front <code>f</code> and back <code>b</code> and if they
+are balanced, directly returns the <code>Queue</code>, and otherwise transfers
+the elements from <code>b</code> over using <code>rot</code>ate.</p>
 <pre><span class="hs-linenum">297: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">makeq</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">f</span><span class="hs-conop">:</span><span class="hs-conid">SList</span> <span class="hs-varid">a</span>
 <span class="hs-linenum">298: </span>          <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">b</span><span class="hs-conop">:</span><span class="hs-conid">SListLE</span> <span class="hs-varid">a</span> <span class="hs-keyword">{size f + 1 }</span>
 <span class="hs-linenum">299: </span>          <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">QueueN</span> <span class="hs-varid">a</span> <span class="hs-keyword">{size f + size b}</span>
@@ -492,7 +537,11 @@ x1:(LazyQueue.SList a)
 -&gt; x3:(LazyQueue.SList a)
 -&gt; {v : (LazyQueue.SList a) | size v == size x1 + size x2 + size x3}</span><span class="hs-varid">rot</span></a> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | v == f}</span><span class="hs-varid">f</span></a> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | v == b &amp;&amp; size v &lt;= size f + 1}</span><span class="hs-varid">b</span></a> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | size v == 0}</span><span class="hs-varid">nil</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | size v == 0}</span><span class="hs-varid">nil</span></a>
 </pre>
-<p><strong>The Rotate</strong> function is only called when the <code>back</code> is one larger than the <code>front</code> (we never let things drift beyond that). It is arranged so that it the <code>hd</code> is built up fast, before the entire computation finishes; which, combined with laziness provides the efficient worst-case guarantee.</p>
+<p><strong>The Rotate</strong> function is only called when the <code>back</code> is one larger
+than the <code>front</code> (we never let things drift beyond that). It is
+arranged so that it the <code>hd</code> is built up fast, before the entire
+computation finishes; which, combined with laziness provides the
+efficient worst-case guarantee.</p>
 <pre><span class="hs-linenum">313: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">rot</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">f</span><span class="hs-conop">:</span><span class="hs-conid">SList</span> <span class="hs-varid">a</span>
 <span class="hs-linenum">314: </span>        <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">b</span><span class="hs-conop">:</span><span class="hs-conid">SListN</span> <span class="hs-keyword">_</span> <span class="hs-keyword">{1 + size f}</span>
 <span class="hs-linenum">315: </span>        <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">a</span><span class="hs-conop">:</span><span class="hs-conid">SList</span> <span class="hs-keyword">_</span>
@@ -521,7 +570,13 @@ x1:(LazyQueue.SList a)
 -&gt; {v : (LazyQueue.SList a) | size v == size v + 1}</span><span class="hs-varop">`cons`</span></a> <a class="annot" href="#"><span class="annottext">{v : (LazyQueue.SList a) | v == a}</span><span class="hs-varid">a</span></a><span class="hs-layout">)</span>
 </pre>
 <h2 id="conclusion">Conclusion</h2>
-<p>Well there you have it; Okasaki’s beautiful lazy Queue, with the invariants easily expressed and checked with LiquidHaskell. I find this example particularly interesting because the refinements express invariants that are critical for efficiency, and furthermore the code introspects on the <code>size</code> in order to guarantee the invariants. Plus, it’s just marginally more complicated than <code>append</code> and so, (I hope!) was easy to follow.</p>
+<p>Well there you have it; Okasaki’s beautiful lazy Queue, with the
+invariants easily expressed and checked with LiquidHaskell. I find
+this example particularly interesting because the refinements express
+invariants that are critical for efficiency, and furthermore the code
+introspects on the <code>size</code> in order to guarantee the invariants. Plus,
+it’s just marginally more complicated than <code>append</code> and so, (I hope!)
+was easy to follow.</p>
                 <hr>
                 <ul class="pager">
                     

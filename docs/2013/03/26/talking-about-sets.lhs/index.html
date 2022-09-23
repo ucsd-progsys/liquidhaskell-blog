@@ -260,13 +260,20 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 
             <div class="info">
               
-                Tags: <a href="../../../../tags/basic.html">basic</a>, <a href="../../../../tags/measures.html">measures</a>, <a href="../../../../tags/sets.html">sets</a>
+                Tags: <a title="All pages tagged 'basic'." href="../../../../tags/basic.html">basic</a>, <a title="All pages tagged 'measures'." href="../../../../tags/measures.html">measures</a>, <a title="All pages tagged 'sets'." href="../../../../tags/sets.html">sets</a>
               
             </div>
 
             <br>
-			            <p>In the posts so far, we’ve seen how LiquidHaskell allows you to use SMT solvers to specify and verify <em>numeric</em> invariants – denominators that are non-zero, integer indices that are within the range of an array, vectors that have the right number of dimensions and so on.</p>
-<p>However, SMT solvers are not limited to numbers, and in fact, support rather expressive logics. In the next couple of posts, let’s see how LiquidHaskell uses SMT to talk about <strong>sets of values</strong>, for example, the contents of a list, and to specify and verify properties about those sets.</p>
+			            <p>In the posts so far, we’ve seen how LiquidHaskell allows you to use SMT
+solvers to specify and verify <em>numeric</em> invariants – denominators
+that are non-zero, integer indices that are within the range of an
+array, vectors that have the right number of dimensions and so on.</p>
+<p>However, SMT solvers are not limited to numbers, and in fact, support
+rather expressive logics. In the next couple of posts, let’s see how
+LiquidHaskell uses SMT to talk about <strong>sets of values</strong>, for example,
+the contents of a list, and to specify and verify properties about
+those sets.</p>
 <!-- more -->
 <pre><span class="hs-linenum">27: </span><span class="hs-keyword">module</span> <span class="hs-conid">TalkingAboutSets</span> <span class="hs-keyword">where</span>
 <span class="hs-linenum">28: </span>
@@ -275,14 +282,19 @@ if (window.navigator.appName == "Microsoft Internet Explorer") {
 <span class="hs-linenum">31: </span>
 </pre>
 <h1 id="talking-about-sets-in-logic">Talking about Sets (In Logic)</h1>
-<p>First, we need a way to talk about sets in the refinement logic. We could roll our own special Haskell type, but why not just use the <code>Set a</code> type from <code>Data.Set</code>.</p>
-<p>The <code>import Data.Set</code> , also instructs LiquidHaskell to import in the various specifications defined for the <code>Data.Set</code> module that we have <em>predefined</em> in <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/master/include/Data/Set.spec">Data/Set.spec</a></p>
+<p>First, we need a way to talk about sets in the refinement logic. We could
+roll our own special Haskell type, but why not just use the <code>Set a</code> type
+from <code>Data.Set</code>.</p>
+<p>The <code>import Data.Set</code> , also instructs LiquidHaskell to import in the various
+specifications defined for the <code>Data.Set</code> module that we have <em>predefined</em>
+in <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/master/include/Data/Set.spec">Data/Set.spec</a></p>
 Let’s look at the specifications.
 <pre><span class="hs-linenum">46: </span><span class="hs-keyword">module</span> <span class="hs-varid">spec</span> <span class="hs-conid">Data</span><span class="hs-varop">.</span><span class="hs-conid">Set</span> <span class="hs-keyword">where</span>
 <span class="hs-linenum">47: </span>
 <span class="hs-linenum">48: </span><span class="hs-definition">embed</span> <span class="hs-conid">Set</span> <span class="hs-keyword">as</span> <span class="hs-conid">Set_Set</span>
 </pre>
-<p>The <code>embed</code> directive tells LiquidHaskell to model the <strong>Haskell</strong> type constructor <code>Set</code> with the <strong>SMT</strong> type constructor <code>Set_Set</code>.</p>
+<p>The <code>embed</code> directive tells LiquidHaskell to model the <strong>Haskell</strong>
+type constructor <code>Set</code> with the <strong>SMT</strong> type constructor <code>Set_Set</code>.</p>
 First, we define the logical operators (i.e. <code>measure</code>s)
 <pre><span class="hs-linenum">55: </span><span class="hs-definition">measure</span> <span class="hs-conid">Set_sng</span>  <span class="hs-keyglyph">::</span> <span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span>                    <span class="hs-comment">-- ^ singleton</span>
 <span class="hs-linenum">56: </span><span class="hs-definition">measure</span> <span class="hs-conid">Set_cup</span>  <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span>   <span class="hs-comment">-- ^ union</span>
@@ -302,10 +314,16 @@ That is, just like the SMT solver “knows that”
 the SMT solver also “knows that”
 <pre><span class="hs-linenum">78: </span><span class="hs-layout">(</span><span class="hs-conid">Set_sng</span> <span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-varop">==</span> <span class="hs-layout">(</span><span class="hs-conid">Set_cap</span> <span class="hs-layout">(</span><span class="hs-conid">Set_sng</span> <span class="hs-num">1</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><span class="hs-conid">Set_cup</span> <span class="hs-layout">(</span><span class="hs-conid">Set_sng</span> <span class="hs-num">2</span><span class="hs-layout">)</span> <span class="hs-layout">(</span><span class="hs-conid">Set_sng</span> <span class="hs-num">1</span><span class="hs-layout">)</span><span class="hs-layout">)</span><span class="hs-layout">)</span>
 </pre>
-<p>This is because, the above formulas belong to a decidable Theory of Sets which can be reduced to McCarthy’s more general <a href="http://www-formal.stanford.edu/jmc/towards.ps">Theory of Arrays</a>. See <a href="http://research.microsoft.com/en-us/um/people/leonardo/fmcad09.pdf">this recent paper</a> if you want to learn more about how modern SMT solvers “know” the above equality holds…</p>
+<p>This is because, the above formulas belong to a decidable Theory of Sets
+which can be reduced to McCarthy’s more general <a href="http://www-formal.stanford.edu/jmc/towards.ps">Theory of Arrays</a>.
+See <a href="http://research.microsoft.com/en-us/um/people/leonardo/fmcad09.pdf">this recent paper</a> if you want to learn more about how modern SMT
+solvers “know” the above equality holds…</p>
 <h1 id="talking-about-sets-in-code">Talking about Sets (In Code)</h1>
-<p>Of course, the above operators exist purely in the realm of the refinement logic, beyond the grasp of the programmer.</p>
-<p>To bring them down (or up, or left or right) within reach of Haskell code, we can simply <em>assume</em> that the various public functions in <code>Data.Set</code> do the <em>Right Thing</em> i.e. produce values that reflect the logical set operations:</p>
+<p>Of course, the above operators exist purely in the realm of the
+refinement logic, beyond the grasp of the programmer.</p>
+<p>To bring them down (or up, or left or right) within reach of Haskell code,
+we can simply <em>assume</em> that the various public functions in <code>Data.Set</code> do
+the <em>Right Thing</em> i.e. produce values that reflect the logical set operations:</p>
 First, the functions that create <code>Set</code> values
 <pre><span class="hs-linenum">97: </span><span class="hs-definition">empty</span>     <span class="hs-keyglyph">::</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-conid">Set_emp</span> <span class="hs-varid">v</span><span class="hs-layout">)</span><span class="hs-layout">}</span>
 <span class="hs-linenum">98: </span><span class="hs-definition">singleton</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">|</span> <span class="hs-varid">v</span> <span class="hs-keyglyph">=</span> <span class="hs-layout">(</span><span class="hs-conid">Set_sng</span> <span class="hs-varid">x</span><span class="hs-layout">)</span><span class="hs-layout">}</span>
@@ -341,16 +359,25 @@ And finally, the predicates on <code>Set</code> values:
 <span class="hs-linenum">131: </span>                    <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> 
 <span class="hs-linenum">132: </span>                    <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">{</span><span class="hs-varid">v</span><span class="hs-conop">:</span><span class="hs-conid">Bool</span> <span class="hs-keyglyph">|</span> <span class="hs-layout">(</span><span class="hs-conid">Prop</span> <span class="hs-varid">v</span><span class="hs-layout">)</span> <span class="hs-varop">&lt;=&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Set_mem</span> <span class="hs-varid">x</span> <span class="hs-varid">xs</span><span class="hs-layout">)</span><span class="hs-layout">}</span>
 </pre>
-<p><strong>Note:</strong> Of course we shouldn’t and needn’t really <em>assume</em>, but should and will <em>guarantee</em> that the functions from <code>Data.Set</code> implement the above types. But thats a story for another day…</p>
+<p><strong>Note:</strong> Of course we shouldn’t and needn’t really <em>assume</em>, but should and
+will <em>guarantee</em> that the functions from <code>Data.Set</code> implement the above types.
+But thats a story for another day…</p>
 <h1 id="proving-theorems-with-liquidhaskell">Proving Theorems With LiquidHaskell</h1>
-<p>OK, let’s take our refined operators from <code>Data.Set</code> out for a spin! One pleasant consequence of being able to precisely type the operators from <code>Data.Set</code> is that we have a pleasant interface for using the SMT solver to <em>prove theorems</em> about sets, while remaining firmly rooted in Haskell.</p>
+<p>OK, let’s take our refined operators from <code>Data.Set</code> out for a spin!
+One pleasant consequence of being able to precisely type the operators
+from <code>Data.Set</code> is that we have a pleasant interface for using the SMT
+solver to <em>prove theorems</em> about sets, while remaining firmly rooted in
+Haskell.</p>
 <p>First, let’s write a simple function that asserts that its input is <code>True</code></p>
 <pre><span class="hs-linenum">151: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">boolAssert</span> <span class="hs-keyglyph">::</span> <span class="hs-keyword">{v:</span> <span class="hs-conid">Bool</span> <span class="hs-keyword">| (Prop v)}</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-conid">Bool</span> <span class="hs-keyword">| (Prop v)}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">152: </span><a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Bool) | (? Prop([VV]))}
 -&gt; {VV : (GHC.Types.Bool) | (? Prop([VV]))}</span><span class="hs-definition">boolAssert</span></a> <span class="hs-conid">True</span>   <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">{VV : (GHC.Types.Bool) | (? Prop([VV])),(VV = True)}</span><span class="hs-conid">True</span></a>
 <span class="hs-linenum">153: </span><span class="hs-definition">boolAssert</span> <span class="hs-conid">False</span>  <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">[(GHC.Types.Char)] -&gt; {VV : (GHC.Types.Bool) | false}</span><span class="hs-varid">error</span></a> <a class="annot" href="#"><span class="annottext">{VV : [(GHC.Types.Char)] | (len([VV]) &gt;= 0)}</span><span class="hs-str">"boolAssert: False? Never!"</span></a>
 </pre>
-<p>Now, we can use <code>boolAssert</code> to write some simple properties. (Yes, these do indeed look like QuickCheck properties – but here, instead of generating tests and executing the code, the type system is proving to us that the properties will <em>always</em> evaluate to <code>True</code>)</p>
+<p>Now, we can use <code>boolAssert</code> to write some simple properties. (Yes, these do
+indeed look like QuickCheck properties – but here, instead of generating
+tests and executing the code, the type system is proving to us that the
+properties will <em>always</em> evaluate to <code>True</code>)</p>
 <p>Let’s check that <code>intersection</code> is commutative …</p>
 <pre><span class="hs-linenum">164: </span><a class="annot" href="#"><span class="annottext">forall a.
 (GHC.Classes.Ord a) =&gt;
@@ -413,7 +440,8 @@ And finally, the predicates on <code>Set</code> values:
 -&gt; ys:(Data.Set.Base.Set a)
 -&gt; {VV : (Data.Set.Base.Set a) | (VV = Set_cap([xs; ys]))}</span><span class="hs-varop">`intersection`</span></a> <a class="annot" href="#"><span class="annottext">{VV : (Data.Set.Base.Set a) | (VV = z)}</span><span class="hs-varid">z</span></a><span class="hs-layout">)</span> 
 </pre>
-<p>Of course, while we’re at it, let’s make sure LiquidHaskell doesn’t prove anything that <em>isn’t</em> true …</p>
+<p>Of course, while we’re at it, let’s make sure LiquidHaskell
+doesn’t prove anything that <em>isn’t</em> true …</p>
 <pre><span class="hs-linenum">190: </span><a class="annot" href="#"><span class="annottext">forall a.
 (GHC.Classes.Ord a) =&gt;
 (Data.Set.Base.Set a) -&gt; (Data.Set.Base.Set a) -&gt; (GHC.Types.Bool)</span><span class="hs-definition">prop_cup_dif_bad</span></a> <a class="annot" href="#"><span class="annottext">(Data.Set.Base.Set a)</span><span class="hs-varid">x</span></a> <a class="annot" href="#"><span class="annottext">(Data.Set.Base.Set a)</span><span class="hs-varid">y</span></a>
@@ -428,12 +456,22 @@ And finally, the predicates on <code>Set</code> values:
 -&gt; ys:(Data.Set.Base.Set a)
 -&gt; {VV : (Data.Set.Base.Set a) | (VV = Set_dif([xs; ys]))}</span><span class="hs-varop">`difference`</span></a> <a class="annot" href="#"><span class="annottext">{VV : (Data.Set.Base.Set a) | (VV = y)}</span><span class="hs-varid">y</span></a>
 </pre>
-<p>Hmm. You do know why the above doesn’t hold, right? It would be nice to get a <em>counterexample</em> wouldn’t it? Well, for the moment, there is QuickCheck!</p>
-<p>Thus, the refined types offer a nice interface for interacting with the SMT solver in order to prove theorems in LiquidHaskell. (BTW, The <a href="https://github.com/LeventErkok/sbv">SBV project</a> describes another approach for using SMT solvers from Haskell, without the indirection of refinement types.)</p>
-<p>While the above is a nice warm up exercise to understanding how LiquidHaskell reasons about sets, our overall goal is not to prove theorems about set operators, but instead to specify and verify properties of programs.</p>
+<p>Hmm. You do know why the above doesn’t hold, right? It would be nice to
+get a <em>counterexample</em> wouldn’t it? Well, for the moment, there is
+QuickCheck!</p>
+<p>Thus, the refined types offer a nice interface for interacting with the SMT
+solver in order to prove theorems in LiquidHaskell. (BTW, The <a href="https://github.com/LeventErkok/sbv">SBV project</a>
+describes another approach for using SMT solvers from Haskell, without the
+indirection of refinement types.)</p>
+<p>While the above is a nice warm up exercise to understanding how
+LiquidHaskell reasons about sets, our overall goal is not to prove
+theorems about set operators, but instead to specify and verify
+properties of programs.</p>
 <h1 id="the-set-of-values-in-a-list">The Set of Values in a List</h1>
 <p>Let’s see how we might reason about sets of values in regular Haskell programs.</p>
-<p>We’ll begin with Lists, the jack-of-all-data-types. Now, instead of just talking about the <strong>number of</strong> elements in a list, we can write a measure that describes the <strong>set of</strong> elements in a list:</p>
+<p>We’ll begin with Lists, the jack-of-all-data-types. Now, instead of just
+talking about the <strong>number of</strong> elements in a list, we can write a measure
+that describes the <strong>set of</strong> elements in a list:</p>
 A measure for the elements of a list, from <a href="https://github.com/ucsd-progsys/liquidhaskell/blob/master/include/Data/Set.spec">Data/Set.spec</a>
 <pre><span class="hs-linenum">221: </span>
 <span class="hs-linenum">222: </span><span class="hs-definition">measure</span> <span class="hs-varid">listElts</span> <span class="hs-keyglyph">::</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-conid">Set</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> 
@@ -475,9 +513,15 @@ x1:[a]
                (listElts([x1]) = Set_cup([listElts([x1]); listElts([VV])])),
                (len([VV]) &gt;= 0)}</span><span class="hs-varid">listId</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a>
 </pre>
-<p>That is, LiquidHaskell checks that the set of elements of the output list is the same as those in the input.</p>
+<p>That is, LiquidHaskell checks that the set of elements of the output list
+is the same as those in the input.</p>
 <h2 id="a-less-trivial-identity">A Less Trivial Identity</h2>
-<p>Next, let’s write a function to <code>reverse</code> a list. Of course, we’d like to verify that <code>reverse</code> doesn’t leave any elements behind; that is that the output has the same set of values as the input list. This is somewhat more interesting because of the <em>tail recursive</em> helper <code>go</code>. Do you understand the type that is inferred for it? (Put your mouse over <code>go</code> to see the inferred type.)</p>
+<p>Next, let’s write a function to <code>reverse</code> a list. Of course, we’d like to
+verify that <code>reverse</code> doesn’t leave any elements behind; that is that the
+output has the same set of values as the input list. This is somewhat more
+interesting because of the <em>tail recursive</em> helper <code>go</code>. Do you understand
+the type that is inferred for it? (Put your mouse over <code>go</code> to see the
+inferred type.)</p>
 <pre><span class="hs-linenum">267: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">reverse</span>       <span class="hs-keyglyph">::</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyword">| (EqElts v xs)}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">268: </span><a class="annot" href="#"><span class="annottext">forall a. xs:[a] -&gt; {VV : [a] | (listElts([VV]) = listElts([xs]))}</span><span class="hs-definition">reverse</span></a>           <span class="hs-keyglyph">=</span> <a class="annot" href="#"><span class="annottext">x1:{VV : [{VV : a | false}]&lt;\_ VV -&gt; false&gt; | (len([VV]) = 0)}
 -&gt; x2:[a]
@@ -506,7 +550,8 @@ y:a
                   (listElts([VV]) = Set_cup([Set_sng([y]); listElts([ys])]))}</span><span class="hs-conop">:</span></a><a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = acc),(len([VV]) &gt;= 0)}</span><span class="hs-varid">acc</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = ys),(len([VV]) &gt;= 0)}</span><span class="hs-varid">ys</span></a>
 </pre>
 <h2 id="appending-lists">Appending Lists</h2>
-<p>Next, here’s good old <code>append</code>, but now with a specification that states that the output indeed includes the elements from both the input lists.</p>
+<p>Next, here’s good old <code>append</code>, but now with a specification that states
+that the output indeed includes the elements from both the input lists.</p>
 <pre><span class="hs-linenum">281: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">append</span>       <span class="hs-keyglyph">::</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">ys</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span><span class="hs-keyword">| (UnionElts v xs ys)}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">282: </span><a class="annot" href="#"><span class="annottext">forall a.
 x1:[a]
@@ -528,7 +573,8 @@ x1:[a]
                (len([VV]) &gt;= 0)}</span><span class="hs-varid">append</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = ys),(len([VV]) &gt;= 0)}</span><span class="hs-varid">ys</span></a>
 </pre>
 <h2 id="filtering-lists">Filtering Lists</h2>
-<p>Let’s round off the list trilogy, with <code>filter</code>. Here, we can verify that it returns a <strong>subset of</strong> the values of the input list.</p>
+<p>Let’s round off the list trilogy, with <code>filter</code>. Here, we can verify
+that it returns a <strong>subset of</strong> the values of the input list.</p>
 <pre><span class="hs-linenum">293: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">filter</span>      <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-varid">a</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-conid">Bool</span><span class="hs-layout">)</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span><span class="hs-keyword">| (SubElts v xs)}</span> <span class="hs-keyword">@-}</span>
 <span class="hs-linenum">294: </span>
 <span class="hs-linenum">295: </span><a class="annot" href="#"><span class="annottext">forall a.
@@ -558,7 +604,9 @@ y:a
                (len([VV]) &gt;= 0)}</span><span class="hs-varid">filter</span></a> <a class="annot" href="#"><span class="annottext">a -&gt; (GHC.Types.Bool)</span><span class="hs-varid">f</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a>
 </pre>
 <h1 id="merge-sort">Merge Sort</h1>
-<p>Let’s conclude this entry with one larger example: <code>mergeSort</code>. We’d like to verify that, well, the list that is returned contains the same set of elements as the input list.</p>
+<p>Let’s conclude this entry with one larger example: <code>mergeSort</code>.
+We’d like to verify that, well, the list that is returned
+contains the same set of elements as the input list.</p>
 <p>And so we will!</p>
 <p>But first, let’s remind ourselves of how <code>mergeSort</code> works:</p>
 <ol type="1">
@@ -648,7 +696,10 @@ x1:[a]
 <p>LiquidHaskell verifies that the relevant property of split is</p>
 <pre><span class="hs-linenum">332: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">split</span> <span class="hs-keyglyph">::</span> <span class="hs-varid">xs</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-layout">(</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span><span class="hs-layout">,</span> <span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span><span class="hs-layout">)</span><span class="hs-keyword">&lt;{\ys zs -&gt; (UnionElts xs ys zs)}&gt;</span> <span class="hs-keyword">@-}</span>
 </pre>
-<p>The funny syntax with angle brackets simply says that the output of <code>split</code> is a <em>pair</em> <code>(ys, zs)</code> whose union is the list of elements of the input <code>xs</code>. (Yes, this is indeed a dependent pair; we will revisit these later to understand whats going on with the odd syntax.)</p>
+<p>The funny syntax with angle brackets simply says that the output of <code>split</code>
+is a <em>pair</em> <code>(ys, zs)</code> whose union is the list of elements of the input <code>xs</code>.
+(Yes, this is indeed a dependent pair; we will revisit these later to
+understand whats going on with the odd syntax.)</p>
 <h2 id="merge">Merge</h2>
 <p>Next, we can <code>merge</code> two (sorted) lists like so:</p>
 <pre><span class="hs-linenum">346: </span><a class="annot" href="#"><span class="annottext">forall a.
@@ -695,7 +746,8 @@ y:a
 -&gt; {VV : [a]&lt;p&gt; | (len([VV]) = (1 + len([ys]))),
                   (listElts([VV]) = Set_cup([Set_sng([y]); listElts([ys])]))}</span><span class="hs-conop">:</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = xs),(len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a><span class="hs-layout">)</span> <a class="annot" href="#"><span class="annottext">{VV : [a] | (VV = ys),(len([VV]) &gt;= 0)}</span><span class="hs-varid">ys</span></a>
 </pre>
-<p>As you might expect, the elements of the returned list are the union of the elements of the input, or as LiquidHaskell might say,</p>
+<p>As you might expect, the elements of the returned list are the union of the
+elements of the input, or as LiquidHaskell might say,</p>
 <pre><span class="hs-linenum">357: </span><span class="hs-keyword">{-@</span> <span class="hs-varid">merge</span> <span class="hs-keyglyph">::</span> <span class="hs-layout">(</span><span class="hs-conid">Ord</span> <span class="hs-varid">a</span><span class="hs-layout">)</span> <span class="hs-keyglyph">=&gt;</span> <span class="hs-varid">x</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-varid">y</span><span class="hs-conop">:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span> <span class="hs-keyglyph">-&gt;</span> <span class="hs-keyword">{v:</span><span class="hs-keyglyph">[</span><span class="hs-varid">a</span><span class="hs-keyglyph">]</span><span class="hs-keyword">| (UnionElts v x y)}</span> <span class="hs-keyword">@-}</span>
 </pre>
 <h2 id="sort">Sort</h2>
@@ -756,7 +808,9 @@ x1:[a]
 -&gt; ([a] , [a])&lt;\ys VV -&gt; (listElts([xs]) = Set_cup([listElts([ys]);
                                                     listElts([VV])]))&gt;</span><span class="hs-varid">split</span></a> <a class="annot" href="#"><span class="annottext">{VV : [a] | (len([VV]) &gt;= 0)}</span><span class="hs-varid">xs</span></a>
 </pre>
-<p>The type given to <code>mergeSort</code>guarantees that the set of elements in the output list is indeed the same as in the input list. Of course, it says nothing about whether the list is <em>actually sorted</em>.</p>
+<p>The type given to <code>mergeSort</code>guarantees that the set of elements in the
+output list is indeed the same as in the input list. Of course, it says
+nothing about whether the list is <em>actually sorted</em>.</p>
 <p>Well, Rome wasn’t built in a day…</p>
                 <hr>
                 <ul class="pager">
